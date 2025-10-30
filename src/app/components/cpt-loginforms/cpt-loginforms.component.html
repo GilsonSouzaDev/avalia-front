@@ -1,0 +1,37 @@
+<section class="login-forms">
+  <img class="login-forms__logo" src="assets/logo/logo-avalia.png" alt="logo avalia" />
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" id="loginForm" class="example-form">
+    <h3 class="login-forms__titulo">Email</h3>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com" />
+
+      @if (email.hasError('email') && !email.hasError('required')) {
+        <mat-error>Por favor, insira um email válido</mat-error>
+      }
+
+      @if (email.hasError('required')) {
+        <mat-error>Email é <strong>obrigatório</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <h3 class="login-forms__titulo">Senha</h3>
+    <mat-form-field class="example-full-width">
+      <mat-label>Senha</mat-label>
+      <input type="password" matInput formControlName="password" placeholder="Ex. **********" />
+
+      @if (password.hasError('required')) {
+        <mat-error>Senha é <strong>obrigatória</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <span class="cadastrar" routerLink="/nova">Esqueci a senha</span>
+  </form>
+
+  <button type="submit" form="loginForm" class="login-forms__button">
+    Login
+  </button>
+
+ </section>

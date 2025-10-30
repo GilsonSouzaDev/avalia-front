@@ -1,0 +1,101 @@
+.senha-forms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+  padding: 1rem;
+  margin: 0 auto;
+  height: 100vh;
+  gap: 1rem;
+
+  &__logo {
+    width: 15rem;
+    height: 6rem;
+  }
+
+  &__titulo {
+    padding-bottom: 0.5rem;
+  }
+
+  &__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: 600;
+    font-size: 20px;
+    background-color: rgba(68, 204, 170, 0.96);
+    margin: 0 auto;
+    margin-top: 2rem;
+    width: 216px;
+    height: 46px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+      background-color: rgba(68, 204, 170, 1);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.cadastrar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  cursor: pointer;
+  color: #0A345B;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    color: #2980b9;
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: #2980b9;
+    transform: scale(0.95);
+  }
+}
+
+
+
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+/* Estilos dos campos Angular Material */
+:host ::ng-deep .senha-forms .mdc-text-field--filled {
+  background-color: #ffffff !important;
+  border-radius: 10px;
+}
+
+:host ::ng-deep .senha-forms .mdc-text-field--filled:focus-within {
+  box-shadow: 0 0 0 2px rgba(68, 204, 170, 0.5);
+  border-radius: 10px;
+}
+
+:host ::ng-deep .senha-forms .mdc-text-field__input,
+:host ::ng-deep .senha-forms .mat-mdc-input-element {
+  background: transparent !important;
+}

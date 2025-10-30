@@ -1,0 +1,50 @@
+<section class="senha-forms">
+  <img class="senha-forms__logo" src="assets/logo/logo-avalia.png" alt="logo avalia" />
+
+  <form [formGroup]="senhaForms" (ngSubmit)="onSubmit()" class="example-form">
+    <!-- Email -->
+    <h3 class="senha-forms__titulo">Email</h3>
+    <mat-form-field class="example-full-width">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com" />
+
+      @if (email.hasError('required') && email.touched) {
+        <mat-error>Email é <strong>obrigatório</strong></mat-error>
+      }
+      @if (email.hasError('email') && !email.hasError('required') && email.touched) {
+        <mat-error>Por favor, insira um email válido</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Senha -->
+    <h3 class="senha-forms__titulo">Senha</h3>
+    <mat-form-field class="example-full-width">
+      <mat-label>Senha</mat-label>
+      <input type="password" matInput formControlName="password" placeholder="Ex. **********" />
+
+      @if (password.hasError('required') && password.touched) {
+        <mat-error>Senha é <strong>obrigatória</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Confirmar Senha -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Confirmar Senha</mat-label>
+      <input type="password" matInput formControlName="confirmPassword" placeholder="Ex. **********" />
+
+      @if (confirmPassword.hasError('required') && confirmPassword.touched) {
+        <mat-error>Confirmar senha é <strong>obrigatório</strong></mat-error>
+      }
+
+      <!-- ✅ Verificação de erro simplificada e correta -->
+      @if (confirmPassword.hasError('senhasNaoCoincidem') && confirmPassword.touched) {
+        <mat-error>As senhas não <strong>correspondem</strong></mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Botão -->
+    <button type="submit" class="senha-forms__button">Salvar</button>
+  </form>
+
+  <span class="cadastrar" routerLink="/login">Voltar</span>
+</section>

@@ -1,0 +1,23 @@
+.banner-container {
+  width: 100%;
+  max-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.banner-image {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  max-height: 100vh;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.4s ease;
+}
+
+/* Efeito opcional de zoom suave no hover */
+.banner-container:hover .banner-image {
+  transform: scale(1.03);
+}
