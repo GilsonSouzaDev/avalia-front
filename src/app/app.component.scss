@@ -1,0 +1,31 @@
+.avalia-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  app-pgs-cabecalho {
+    height: 15%;
+    background-color: rgb(102, 102, 240);
+    color: white;
+  }
+
+  &__main {
+    display: flex;
+    flex: 1;
+    height: 85%;
+
+  app-pgs-navegacao {
+    width: 20%;
+    background-color: rgb(170, 221, 236);
+    color: white;
+  }
+
+}
+  &__conteudo {
+    width: 80%;
+    background-color: rgb(255, 255, 255);
+    overflow-y: auto;
+    color: black;
+  }
+
+}
