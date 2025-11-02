@@ -1,0 +1,29 @@
+<mat-card class="card-disciplina">
+  <div class="cabecalho" (click)="toggleExpand()">
+    <h2 class="titulo">{{ disciplina.nome }}</h2>
+    <mat-icon class="icone" [class.rotated]="expanded">expand_more</mat-icon>
+  </div>
+
+  <div class="conteudo-expandido" *ngIf="expanded">
+    <ng-container *ngIf="paginatedPerguntas.length; else semPerguntas">
+      <app-cpt-card-pergunta
+        *ngFor="let pergunta of paginatedPerguntas"
+        [pergunta]="pergunta">
+      </app-cpt-card-pergunta>
+
+      <mat-paginator
+        [length]="disciplina.perguntas.length"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[3, 5, 10]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </ng-container>
+
+    <ng-template #semPerguntas>
+      <p class="mensagem-vazia">Nenhuma pergunta cadastrada.</p>
+    </ng-template>
+  </div>
+</mat-card>
+
+

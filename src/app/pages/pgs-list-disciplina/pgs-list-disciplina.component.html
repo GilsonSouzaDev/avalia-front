@@ -1,0 +1,9 @@
+<section class="list-disciplina">
+
+  <h2>Minhas Disciplinas</h2>
+
+  @for (disciplina of disciplinas; track $index) {
+    <app-cpt-list-materia [disciplina]="disciplina" class="disciplina"></app-cpt-list-materia>
+  }
+
+</section>

@@ -72,6 +72,15 @@ select {
   font: inherit;
 }
 
+
+ul,
+ol,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* Remove estilos automáticos de botões e links */
 button {
   background: none;

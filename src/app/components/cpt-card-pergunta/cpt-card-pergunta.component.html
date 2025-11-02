@@ -1,1 +1,16 @@
-<p>cpt-card-pergunta works!</p>
+<mat-card class="card-pergunta" (click)="toggleExpand()">
+  <div class="cabecalho">
+    <h3 class="titulo">{{ pergunta.conteudo }}</h3>
+    <mat-icon class="icone" [class.rotated]="expanded">expand_more</mat-icon>
+  </div>
+
+  <div class="conteudo-expandido" *ngIf="expanded">
+    <div class="alternativas">
+      <div *ngFor="let alt of pergunta.alternativas" class="alternativa">
+        {{ alt.texto }}
+      </div>
+    </div>
+    <p class="professor">Professor: {{ pergunta.nomeProfessor }}</p>
+  </div>
+</mat-card>
+
