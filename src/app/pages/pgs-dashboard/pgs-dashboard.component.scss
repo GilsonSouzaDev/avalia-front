@@ -1,3 +1,26 @@
 .dashboard{
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+
+  .dashboard-resumo {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+  .dashboard-materias {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
 }
+
+
+
+
+

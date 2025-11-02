@@ -1,0 +1,30 @@
+.perfil{
+  display: flex;
+  align-items: center;
+
+  .perfil-texto{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+  }
+
+  .perfil-nome{
+    font-size: 24px;
+    font-weight: 500;
+
+  }
+
+  .perfil-tipo{
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  .perfil-icone{
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+
+  }
+
+}

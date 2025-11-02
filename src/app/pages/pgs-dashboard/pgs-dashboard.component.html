@@ -1,1 +1,57 @@
-<div class="dashboard">pgs-dashboard works!</div>
+<section class="dashboard">
+
+
+  <h2>Resumo Geral</h2>
+
+  <section class="dashboard-resumo">
+
+      <app-cpt-card-resumo
+      corTema="#4E9971"
+      titulo="Quantidade de Matérias"
+      valor='3'
+      ></app-cpt-card-resumo>
+
+      <app-cpt-card-resumo
+      corTema="#09A4F2"
+      titulo="Perguntas Cadastradas"
+      valor='42'
+      ></app-cpt-card-resumo>
+
+       <app-cpt-card-resumo
+      corTema="#AA2302"
+      titulo="Quantidade de Professores"
+      valor='5'
+      ></app-cpt-card-resumo>
+
+       <app-cpt-card-resumo
+      corTema="#09234F"
+      titulo="Total Perguntas"
+      valor='120'
+      ></app-cpt-card-resumo>
+
+       <app-cpt-card-resumo
+      corTema="#4E9971"
+      titulo="Matérias Cadastradas"
+      valor='7'
+      ></app-cpt-card-resumo>
+
+  </section>
+
+  <h2>Matérias Lecionadas</h2>
+
+  <section class="dashboard-materias">
+    @for (materia of materias; track $index) {
+      <app-cpt-card-materia
+      materia="{{ materia.materia }}"
+      totalQuestoes="{{ materia.totalQuestoes }}"
+      ></app-cpt-card-materia>
+    }
+  </section>
+
+
+</section>
+
+
+
+
+

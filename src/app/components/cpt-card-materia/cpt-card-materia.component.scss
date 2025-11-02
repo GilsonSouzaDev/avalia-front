@@ -1,0 +1,30 @@
+.materia{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  background-color: #E2EBFB;
+  border-radius: 8px;
+  width: 340px;
+  height: 170px;
+  padding: 16px;
+  gap: 32px;
+
+  .materia-texto{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+
+  .example-button-row{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  span{
+    font-size: 18px;
+  }
+
+
+}

@@ -1,0 +1,22 @@
+.resumo{
+  background-color: #E2EBFB;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: solid 5px;
+  border-radius: 8px;
+  padding: 16px;
+  width: 300px;
+  height: 100px;
+  gap: 8px;
+
+  .resumo-valor{
+    font-size: 32px;
+    font-weight: bold;
+  }
+
+
+  .resumo-titulo{
+    font-size: 18px;
+  }
+}
