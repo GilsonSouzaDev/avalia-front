@@ -1,1 +1,83 @@
-<p>cpt-professor-forms works!</p>
+<div class="form-container">
+  <h2>{{ editando ? 'Atualizar Professor' : 'Cadastrar Professor' }}</h2>
+
+  <form #profForm="ngForm" (ngSubmit)="onSubmit(profForm)">
+    <!-- Nome -->
+    <div class="campo">
+      <label for="nome">Nome</label>
+      <input
+        type="text"
+        id="nome"
+        name="nome"
+        [(ngModel)]="nome"
+        required
+      />
+    </div>
+
+    <!-- Email -->
+    <div class="campo">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        required
+      />
+    </div>
+
+    <!-- Senha -->
+    <div class="campo">
+      <label for="senha">{{ editando ? 'Nova Senha' : 'Senha' }}</label>
+      <input
+        type="password"
+        id="senha"
+        name="senha"
+        [(ngModel)]="senha"
+        (input)="validarSenhas()"
+        [required]="!editando"
+      />
+    </div>
+
+    <!-- Confirmar Senha (só aparece se tiver algo digitado em senha) -->
+    <div class="campo" *ngIf="senha">
+      <label for="confirmarSenha">Confirmar Senha</label>
+      <input
+        type="password"
+        id="confirmarSenha"
+        name="confirmarSenha"
+        [(ngModel)]="confirmarSenha"
+        (input)="validarSenhas()"
+        [required]="!editando"
+      />
+      <div *ngIf="erroSenha" class="erro-senha">{{ erroSenha }}</div>
+    </div>
+
+    <!-- Disciplinas -->
+    <div class="campo" *ngIf="mostrarDisciplinas">
+      <label>Disciplinas</label>
+      <div class="disciplinas-grid">
+        <label
+          *ngFor="let d of disciplinasDisponiveis"
+          class="disciplina-item"
+        >
+          <input
+            type="checkbox"
+            [checked]="isDisciplinaSelecionada(d)"
+            (change)="onDisciplinaChange($event, d)"
+          />
+          {{ d.nome }}
+        </label>
+      </div>
+    </div>
+
+    <!-- Botão -->
+    <button
+      type="submit"
+      class="btn-cadastrar"
+      [disabled]="!isFormValid()"
+    >
+      {{ editando ? 'Atualizar' : 'Cadastrar' }}
+    </button>
+  </form>
+</div>

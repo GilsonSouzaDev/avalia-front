@@ -1,0 +1,75 @@
+.pgs-perfil-detalhes {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 auto;
+  width: 80%;
+  padding: 24px;
+  gap: 24px;
+}
+
+.buttons-perfil {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  margin: 0 auto;
+  gap: 48px;
+  margin-top: 16px;
+}
+
+/* Estilo base para todos os botões */
+.buttons-perfil button {
+  width: 40%;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.buttons-perfil__editar {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.buttons-perfil__editar:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(76, 175, 80, 0.4);
+}
+
+.buttons-perfil__excluir {
+  background-color: #F44336;
+  color: white;
+}
+
+.buttons-perfil__excluir:hover {
+  background-color: #e53935;
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(244, 67, 54, 0.4);
+}
+
+/* Botão de Cancelar (mesmo padrão visual) */
+.buttons-perfil__cancelar {
+  background-color: #607D8B;
+  color: white;
+}
+
+.buttons-perfil__cancelar:hover {
+  background-color: #546E7A;
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(96, 125, 139, 0.4);
+}
+
+/* Se desejar, pode definir .perfil-edicao com o mesmo layout */
+.perfil-edicao {
+  width: 85%;
+  padding: 64px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}

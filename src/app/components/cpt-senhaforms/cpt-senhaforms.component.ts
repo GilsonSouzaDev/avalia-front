@@ -55,10 +55,12 @@ export function senhasCoincidemValidator(): ValidatorFn {
   styleUrls: ['./cpt-senhaforms.component.scss'],
 })
 export class CptSenhaformsComponent implements OnInit {
+
   @Output() submitSenha = new EventEmitter<{
     email: string;
     password: string;
   }>();
+
   senhaForms!: FormGroup;
 
   constructor(private fb: FormBuilder) {}

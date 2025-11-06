@@ -3,7 +3,7 @@ import { Alternativa } from "./Alternativa";
 
 export interface Pergunta {
   id: number;
-  conteudo: string;
+  enunciado: string;
   nomeProfessor: string;
   alternativas: Alternativa[];
 }

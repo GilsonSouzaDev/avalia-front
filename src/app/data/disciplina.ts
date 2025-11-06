@@ -18,7 +18,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
     perguntas: [
       {
         id: 101,
-        conteudo:
+        enunciado:
           'Qual comando SQL é usado para selecionar dados de uma tabela?',
         nomeProfessor: 'Prof. Carlos Mendes',
         alternativas: [
@@ -30,7 +30,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 102,
-        conteudo:
+        enunciado:
           'Qual comando é usado para adicionar uma nova linha em uma tabela?',
         nomeProfessor: 'Prof. Carlos Mendes',
         alternativas: [
@@ -42,7 +42,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 103,
-        conteudo: 'O que significa a sigla SQL?',
+        enunciado: 'O que significa a sigla SQL?',
         nomeProfessor: 'Prof. Carlos Mendes',
         alternativas: [
           { id: 9, texto: 'Structured Query Language' },
@@ -53,7 +53,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 104,
-        conteudo: 'Qual comando remove permanentemente uma tabela?',
+        enunciado: 'Qual comando remove permanentemente uma tabela?',
         nomeProfessor: 'Prof. Carlos Mendes',
         alternativas: [
           { id: 13, texto: 'DROP TABLE' },
@@ -80,7 +80,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
     perguntas: [
       {
         id: 201,
-        conteudo: 'Qual linguagem é usada para estruturar páginas web?',
+        enunciado: 'Qual linguagem é usada para estruturar páginas web?',
         nomeProfessor: 'Profa. Ana Beatriz',
         alternativas: [
           { id: 17, texto: 'HTML' },
@@ -91,7 +91,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 202,
-        conteudo: 'Qual propriedade CSS é usada para alterar a cor do texto?',
+        enunciado: 'Qual propriedade CSS é usada para alterar a cor do texto?',
         nomeProfessor: 'Profa. Ana Beatriz',
         alternativas: [
           { id: 21, texto: 'font-color' },
@@ -102,7 +102,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 203,
-        conteudo: 'Qual framework JavaScript é mantido pelo Facebook?',
+        enunciado: 'Qual framework JavaScript é mantido pelo Facebook?',
         nomeProfessor: 'Profa. Ana Beatriz',
         alternativas: [
           { id: 25, texto: 'React' },
@@ -113,7 +113,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 204,
-        conteudo: 'O que significa a sigla CSS?',
+        enunciado: 'O que significa a sigla CSS?',
         nomeProfessor: 'Profa. Ana Beatriz',
         alternativas: [
           { id: 29, texto: 'Creative Style System' },
@@ -140,7 +140,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
     perguntas: [
       {
         id: 301,
-        conteudo: 'Qual linguagem é mais usada no desenvolvimento back-end?',
+        enunciado: 'Qual linguagem é mais usada no desenvolvimento back-end?',
         nomeProfessor: 'Prof. Renato Souza',
         alternativas: [
           { id: 33, texto: 'Python' },
@@ -151,7 +151,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 302,
-        conteudo: 'O que é uma API?',
+        enunciado: 'O que é uma API?',
         nomeProfessor: 'Prof. Renato Souza',
         alternativas: [
           { id: 37, texto: 'Um tipo de banco de dados' },
@@ -162,7 +162,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 303,
-        conteudo: 'Qual protocolo é mais usado para comunicação web?',
+        enunciado: 'Qual protocolo é mais usado para comunicação web?',
         nomeProfessor: 'Prof. Renato Souza',
         alternativas: [
           { id: 41, texto: 'FTP' },
@@ -173,7 +173,7 @@ export const DISCIPLINAS_MOCK: Disciplina[] = [
       },
       {
         id: 304,
-        conteudo:
+        enunciado:
           'Em Node.js, qual módulo é usado para criar um servidor HTTP?',
         nomeProfessor: 'Prof. Renato Souza',
         alternativas: [
