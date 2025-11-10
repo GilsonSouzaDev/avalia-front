@@ -1,12 +1,15 @@
-<section class="perfil">
-  <div class="perfil-texto">
-    <span class="perfil-tipo">Coordenador</span>
-    <span class="perfil-nome">Gilson</span>
-  </div>
-  <img
-    src="assets/logo/perfil.png"
-    alt="Ícone de usuário"
-    class="perfil-icone"
-    routerLink="/perfil" 
+@if (currentUser; as user) {
+  <section class="perfil">
+    <div class="perfil-texto">
+      <span class="perfil-tipo">{{ user.tipo }}</span>
+      <span class="perfil-nome">{{ user.nome }}</span>
+    </div>
+
+    <img
+      src="assets/logo/perfil.png"
+      alt="Ícone de usuário"
+      class="perfil-icone"
+      routerLink="/perfil"
     />
-</section>
+  </section>
+}

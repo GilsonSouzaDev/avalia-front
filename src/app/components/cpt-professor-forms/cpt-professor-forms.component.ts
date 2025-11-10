@@ -12,7 +12,7 @@ import { DISCIPLINAS_MOCK } from '../../data/disciplina';
   styleUrl: './cpt-professor-forms.component.scss',
 })
 export class CptProfessorFormsComponent {
-  @Input() professor?: Professor;
+  @Input() professor!: Professor;
   @Input() mostrarDisciplinas: boolean = true;
   @Output() salvar = new EventEmitter<Professor>();
 
@@ -84,7 +84,7 @@ export class CptProfessorFormsComponent {
       if (this.senha.trim() && this.confirmarSenha.trim() !== this.senha.trim())
         return false;
     }
-    
+
     if (this.editando && this.senha.trim()) {
       if (
         !this.confirmarSenha.trim() ||

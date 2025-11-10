@@ -4,9 +4,9 @@ import { Disciplina } from '../interfaces/Disciplina';
 export const PROFESSORES_MOCK: Professor[] = [
   {
     id: 1,
-    nome: 'Prof. Carlos Mendes',
+    nome: 'Carlos Mendes',
     email: 'carlos.mendes@escola.com',
-    senha: '',
+    senha: 'carlos123',
     tipo: TipoProfessor.PROFESSOR,
     disciplinas: [
       {
@@ -19,9 +19,9 @@ export const PROFESSORES_MOCK: Professor[] = [
   },
   {
     id: 2,
-    nome: 'Profa. Ana Beatriz',
+    nome: 'Ana Beatriz',
     email: 'ana.beatriz@escola.com',
-    senha: '',
+    senha: 'ana123',
     tipo: TipoProfessor.COORDENADOR,
     disciplinas: [
       {
@@ -34,9 +34,9 @@ export const PROFESSORES_MOCK: Professor[] = [
   },
   {
     id: 3,
-    nome: 'Prof. Renato Souza',
+    nome: 'Renato Souza',
     email: 'renato.souza@escola.com',
-    senha: '',
+    senha: 'renato123',
     tipo: TipoProfessor.PROFESSOR,
     disciplinas: [
       { id: 3, nome: 'Back End', professores: [], perguntas: [] } as Disciplina,

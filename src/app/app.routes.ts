@@ -6,12 +6,40 @@ import { PgsDashboardComponent } from './pages/pgs-dashboard/pgs-dashboard.compo
 import { PgsListDisciplinaComponent } from './pages/pgs-list-disciplina/pgs-list-disciplina.component';
 import { PgsCadastrarProfessorComponent } from './pages/pgs-cadastrar-professor/pgs-cadastrar-professor.component';
 import { PgsCadastrarPerguntaComponent } from './pages/pgs-cadastrar-pergunta/pgs-cadastrar-pergunta.component';
+import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
+import { AppLayoutComponent } from './layout/app-layout/app-layout.component';
+import { authGuard } from './core/auth.guard';
+
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: PgsDashboardComponent },
-  { path: 'disciplina', component: PgsListDisciplinaComponent },
-  { path: 'perfil', component: PgsPerfilDetalhesComponent },
-  { path: 'professor', component: PgsCadastrarProfessorComponent },
-  { path: 'pergunta', component: PgsCadastrarPerguntaComponent },
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', component: PgsLoginComponent },
+      { path: 'nova', component: PgsNovaSenhaComponent },
+    ],
+  },
+  {
+    path: '',
+    component: AppLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: PgsDashboardComponent },
+      { path: 'disciplina', component: PgsListDisciplinaComponent },
+      { path: 'perfil', component: PgsPerfilDetalhesComponent },
+      { path: 'professor', component: PgsCadastrarProfessorComponent },
+      { path: 'pergunta', component: PgsCadastrarPerguntaComponent },
+    ],
+  },
+  { path: '**', redirectTo: 'login' },
 ];
+
+
+
+
+
+
+

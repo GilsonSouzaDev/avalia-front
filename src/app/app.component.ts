@@ -6,7 +6,7 @@ import { PgsLoginComponent } from "./pages/pgs-login/pgs-login.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, PgsCabecalhoComponent, PgsNavegacaoComponent, PgsLoginComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

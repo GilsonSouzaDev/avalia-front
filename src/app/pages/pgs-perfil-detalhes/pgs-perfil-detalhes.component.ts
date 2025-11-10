@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
-import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component';
-import { Professor, TipoProfessor } from '../../interfaces/Professor';
-import { Disciplina } from '../../interfaces/Disciplina';
-import { CptProfessorFormsComponent } from "../../components/cpt-professor-forms/cpt-professor-forms.component";
+// src/app/pages/pgs-perfil-detalhes/pgs-perfil-detalhes.component.ts
 
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component';
+import { CptProfessorFormsComponent } from '../../components/cpt-professor-forms/cpt-professor-forms.component';
+import { Professor } from '../../interfaces/Professor';
+import { AuthService } from '../../core/auth.service'; // 1. Importar o AuthService
 
 @Component({
   selector: 'app-pgs-perfil-detalhes',
@@ -12,37 +19,44 @@ import { CptProfessorFormsComponent } from "../../components/cpt-professor-forms
   templateUrl: './pgs-perfil-detalhes.component.html',
   styleUrls: ['./pgs-perfil-detalhes.component.scss'],
 })
-export class PgsPerfilDetalhesComponent {
-  professor: Professor = {
-    id: 1,
-    nome: 'Prof. Carlos Mendes',
-    email: 'carlos.mendes@escola.com',
-    senha: '',
-    tipo: TipoProfessor.PROFESSOR,
-    disciplinas: [
-      {
-        id: 1,
-        nome: 'Banco de Dados',
-        professores: [],
-        perguntas: [],
-      } as Disciplina,
-    ],
-  };
+export class PgsPerfilDetalhesComponent implements OnInit {
+  // 2. Injetar o AuthService
+  private authService = inject(AuthService);
 
-  atualizarPerfil(professorAtualizado: Professor) {
-    this.professor = { ...professorAtualizado };
-    this.editando = false;
-    console.log('Perfil atualizado:', this.professor);
+  // 3. Criar um signal local para armazenar os dados do professor
+  public professor: WritableSignal<Professor | null> = signal(null);
+
+  public editando = false;
+
+  ngOnInit(): void {
+    // 4. Buscar o usuário atual do AuthService e definir no signal local
+    const currentUser = this.authService.currentUserSig();
+    if (currentUser) {
+      this.professor.set(currentUser);
+    } else {
+      // Lógica de segurança: se por algum motivo não houver usuário,
+      // talvez redirecionar ou mostrar uma mensagem.
+      console.error('Nenhum usuário logado encontrado na página de perfil.');
+    }
   }
 
-  editando = false;
+  atualizarPerfil(professorAtualizado: Professor): void {
+    // 5. Atualizar o signal local e também o estado global no AuthService
+    this.professor.set(professorAtualizado);
+    this.authService.currentUserSig.set(professorAtualizado); 
+    this.editando = false;
+    console.log(
+      'Perfil atualizado no estado local e global:',
+      this.professor()
+    );
+  }
 
-
-  alternarEdicao() {
+  alternarEdicao(): void {
     this.editando = !this.editando;
   }
 
-  excluirPerfil() {
-    console.log('Perfil excluído!');
+  excluirPerfil(): void {
+    // Aqui, futuramente, você chamaria um método no AuthService para exclusão
+    console.log('Perfil a ser excluído:', this.professor()?.nome);
   }
 }
