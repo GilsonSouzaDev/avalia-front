@@ -74,4 +74,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+
+
 }
+
+ .lista-disciplina {
+   display: flex;
+   flex-direction: column;
+   padding: 0 16px ;
+   gap: 4px;
+ }

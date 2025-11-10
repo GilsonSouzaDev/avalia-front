@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DISCIPLINAS_MOCK } from '../../data/disciplina';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-cpt-professor-forms',
@@ -15,6 +16,8 @@ export class CptProfessorFormsComponent {
   @Input() professor!: Professor;
   @Input() mostrarDisciplinas: boolean = true;
   @Output() salvar = new EventEmitter<Professor>();
+
+  public authService = inject(AuthService);
 
   disciplinasDisponiveis: Disciplina[] = DISCIPLINAS_MOCK;
   disciplinasSelecionadas: Disciplina[] = [];
@@ -77,7 +80,6 @@ export class CptProfessorFormsComponent {
   }
 
   isFormValid(): boolean {
-
     if (!this.nome.trim() || !this.email.trim()) return false;
     if (!this.editando) {
       if (!this.senha.trim()) return false;
@@ -109,7 +111,7 @@ export class CptProfessorFormsComponent {
       nome: this.nome,
       email: this.email,
       senha: this.senha || this.professor?.senha || '',
-      tipo: TipoProfessor.PROFESSOR,
+      tipo: this.tipoProfessor,
       disciplinas: this.disciplinasSelecionadas,
     };
 
@@ -118,4 +120,14 @@ export class CptProfessorFormsComponent {
     this.disciplinasSelecionadas = [];
     this.erroSenha = '';
   }
+
+  get currentUser(): Professor | null | undefined {
+    return this.authService.currentUserSig();
+  }
+
+  tipoProfessor = this.currentUser
+    ? this.currentUser.tipo
+    : TipoProfessor.PROFESSOR;
+
+
 }

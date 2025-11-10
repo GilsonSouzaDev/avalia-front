@@ -1,0 +1,51 @@
+<div class="card">
+  <h2 class="card__title">Lista de Professores</h2>
+  <div class="card__content">
+    <div class="table-responsive">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th scope="col">nome</th>
+            <th scope="col">email</th>
+            <th scope="col" class="col-categoria">Questôes</th>
+            <th scope="col" class="col-valor">Disciplinas</th>
+            <th scope="col" class="acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!currentUser; as user) {
+            <tr class="product-table__row--loading">
+              <td colspan="3"><div class="loading-spinner"></div></td>
+            </tr>
+          }
+
+          @if (currentUser && professores && professores.length > 0) {
+            @for (professor of professores; track professor.id) {
+              <tr>
+                <td>{{ professor.nome }}</td>
+                <td>{{ professor.email }}</td>
+                <td class="col-categoria">{{ quantidadeQuestoes }}</td>
+                <td class="col-valor">{{ quantidadeMaterias }}</td>
+                <td>
+                  <button
+                    type="button"
+                    (click)="verDetalhes(professor)"
+                    class="product-table__action product-table__action--details"
+                    title="Ver detalhes">
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+
+          @if (currentUser && (!professores || professores.length === 0)) {
+            <tr class="product-table__row--empty">
+              <td colspan="3">Nenhum brinquedo cadastrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -9,8 +9,10 @@
     </div>
     <div>
       <h3>Disciplinas</h3>
-      @for (disciplina of professor.disciplinas; track $index) {
-        <span class="perfil-texto">{{ disciplina.nome }}</span>
-      }
+      <div class="lista-disciplina">
+        @for (disciplina of professor.disciplinas; track $index) {
+          <span class="perfil-texto">{{ disciplina.nome }}</span>
+        }
+      </div>
     </div>
 </section>
