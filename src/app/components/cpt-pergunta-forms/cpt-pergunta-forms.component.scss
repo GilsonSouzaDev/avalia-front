@@ -32,7 +32,7 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
 
-    .materia-group {
+    .disciplina-group {
       flex-grow: 1;
       margin-right: 30px;
     }
@@ -92,7 +92,6 @@ $shadow-color: rgba(0, 0, 0, 0.1);
 .form-control {
   width: 100%;
   padding: 12px 15px;
-  /* Altura base: 12px (top) + 12px (bottom) + altura do texto */
   border: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 5px;

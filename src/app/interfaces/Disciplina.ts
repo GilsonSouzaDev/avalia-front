@@ -7,8 +7,6 @@ export interface Disciplina {
   nome: string;
   professores: Professor[];
   perguntas: Pergunta[];
-
-
   cor?: string;
 
 }

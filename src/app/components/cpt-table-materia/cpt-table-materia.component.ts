@@ -1,34 +1,34 @@
 import { Component, Input } from '@angular/core';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Disciplina } from '../../interfaces/Disciplina';
+import { Professor } from '../../interfaces/Professor';
+import { Pergunta } from '../../interfaces/Pergunta';
+import { CptCardPerguntaComponent } from "../cpt-card-pergunta/cpt-card-pergunta.component";
+import { MatIcon } from "@angular/material/icon";
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { CptCardPerguntaComponent } from "../cpt-card-pergunta/cpt-card-pergunta.component";
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Pergunta } from '../../interfaces/Pergunta';
-
 
 @Component({
-  selector: 'app-cpt-list-materia',
+  selector: 'app-cpt-table-materia',
   imports: [
+    CptCardPerguntaComponent,
+    MatIcon,
+    MatPaginator,
     CommonModule,
     MatCardModule,
-    MatIconModule,
-    CptCardPerguntaComponent,
-    MatPaginator,
   ],
-  templateUrl: './cpt-list-materia.component.html',
-  styleUrl: './cpt-list-materia.component.scss',
+  templateUrl: './cpt-table-materia.component.html',
+  styleUrl: './cpt-table-materia.component.scss',
 })
-export class CptListMateriaComponent {
+export class CptTableMateriaComponent {
   @Input({ required: true }) disciplina!: Disciplina;
+  @Input() professores: Professor[] = [];
 
   expanded = false;
   pageIndex = 0;
   pageSize = 3;
   paginatedPerguntas: Pergunta[] = [];
 
-  
   ngOnInit(): void {
     this.updatePaginatedPerguntas();
   }

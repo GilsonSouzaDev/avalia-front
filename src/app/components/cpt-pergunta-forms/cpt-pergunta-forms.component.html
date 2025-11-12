@@ -1,52 +1,67 @@
 <div class="form-container">
   <h1 class="form-title">{{ titulo }}</h1>
 
-  <!-- Usando ngForm para Template-Driven Forms -->
   <form #questionForm="ngForm" (ngSubmit)="onSubmit(questionForm)" class="question-form">
     <div class="card">
-      <!-- Cabeçalho: Matéria e Quantidade de Alternativas -->
+      <!-- Cabeçalho: Disciplina e Quantidade de Alternativas -->
       <div class="header-group">
-        <div class="form-group materia-group">
-          <label for="materia">Matéria</label>
-          <!-- ngModel para two-way binding com formModel.materia -->
-          <select id="materia" name="materia" [(ngModel)]="formModel.materia" required class="form-control">
-            <!-- Opções de exemplo. -->
-            <option [ngValue]="''" disabled>Selecione a Matéria</option>
-            <option value="Java">Java</option>
-            <option value="Angular">Angular</option>
-            <option value="TypeScript">TypeScript</option>
+        <div class="form-group disciplina-group">
+          <label for="disciplina">Disciplina</label>
+          <select
+            id="disciplina"
+            name="disciplina"
+            [(ngModel)]="formModel.disciplinaId"
+            required
+            class="form-control"
+          >
+            <option [ngValue]="0" disabled>Selecione a Disciplina</option>
+            <option
+              *ngFor="let disciplina of disciplinas"
+              [ngValue]="disciplina.id"
+            >
+              {{ disciplina.nome }}
+            </option>
           </select>
-          <!-- Validação no template -->
-          <div *ngIf="questionForm.controls['materia']?.invalid && questionForm.controls['materia']?.touched" class="error-message">
-            Matéria é obrigatória.
+          <div
+            *ngIf="questionForm.controls['disciplina']?.invalid && questionForm.controls['disciplina']?.touched"
+            class="error-message"
+          >
+            Disciplina é obrigatória.
           </div>
         </div>
 
         <div class="form-group quantidade-group">
-          <!-- Título corrigido para "Quantidade de Alternativas" -->
           <label>Quantidade de Alternativas</label>
           <div class="question-count-selector">
-            <!-- Iteração sobre o array de contagens [4, 5] -->
+            <!-- Agora usa a variável separada quantidadeAlternativas -->
             <span
               *ngFor="let count of alternativaCounts"
-              [class.active]="formModel.quantidadeAlternativas === count"
+              [class.active]="quantidadeAlternativas === count"
               (click)="setQuantidadeAlternativas(count)"
             >
               {{ count }}
             </span>
           </div>
-          <!-- Campo oculto para garantir que o valor seja enviado no formModel -->
-          <input type="hidden" name="quantidadeAlternativas" [(ngModel)]="formModel.quantidadeAlternativas">
+          <!-- Removeu o input hidden pois não é mais necessário no formModel -->
         </div>
       </div>
 
       <!-- Questão (Corpo da Pergunta) -->
       <div class="form-group">
-        <label for="textoQuestao">Questão</label>
-        <!-- ngModel para two-way binding com formModel.textoQuestao -->
-        <!-- O estilo será ajustado no SCSS para melhor visualização -->
-        <textarea id="textoQuestao" name="textoQuestao" [(ngModel)]="formModel.textoQuestao" required class="form-control question-textarea" rows="5" placeholder="Digite o texto da questão..."></textarea>
-        <div *ngIf="questionForm.controls['textoQuestao']?.invalid && questionForm.controls['textoQuestao']?.touched" class="error-message">
+        <label for="enunciado">Questão</label>
+        <textarea
+          id="enunciado"
+          name="enunciado"
+          [(ngModel)]="formModel.enunciado"
+          required
+          class="form-control question-textarea"
+          rows="5"
+          placeholder="Digite o enunciado da questão..."
+        ></textarea>
+        <div
+          *ngIf="questionForm.controls['enunciado']?.invalid && questionForm.controls['enunciado']?.touched"
+          class="error-message"
+        >
           O texto da questão é obrigatório.
         </div>
       </div>
@@ -55,22 +70,27 @@
       <div class="form-group">
         <label>Alternativas</label>
         <div class="alternativas-list">
-          <!-- Iteração sobre o array de alternativas, limitando pela quantidade selecionada -->
           <div *ngFor="let alternativa of formModel.alternativas; let i = index" class="alternativa-item">
-            <!-- Exibe apenas as alternativas até o limite selecionado -->
-            <ng-container *ngIf="i < formModel.quantidadeAlternativas">
-              <input type="text" name="alternativa-{{i}}" [(ngModel)]="alternativa.texto" required class="form-control alternativa-input" placeholder="Texto da alternativa">
-              <div *ngIf="questionForm.controls['alternativa-' + i]?.invalid && questionForm.controls['alternativa-' + i]?.touched" class="error-message">
+            <!-- Agora usa quantidadeAlternativas em vez de formModel.quantidadeAlternativas -->
+            <ng-container *ngIf="i < quantidadeAlternativas">
+              <input
+                type="text"
+                name="alternativa-{{i}}"
+                [(ngModel)]="alternativa.texto"
+                required
+                class="form-control alternativa-input"
+                placeholder="Texto da alternativa"
+              >
+              <div
+                *ngIf="questionForm.controls['alternativa-' + i]?.invalid && questionForm.controls['alternativa-' + i]?.touched"
+                class="error-message"
+              >
                 O texto da alternativa é obrigatório.
               </div>
             </ng-container>
           </div>
         </div>
-
       </div>
-
-      <!-- A seção "Resposta" foi omitida conforme solicitado pelo usuário. -->
-
     </div>
 
     <!-- Botão de Ação -->

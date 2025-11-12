@@ -1,26 +1,37 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule, MatCard } from '@angular/material/card';
-import { MatIconModule, MatIcon } from '@angular/material/icon';
-import {
-  MatRadioModule,
-  MatRadioGroup,
-  MatRadioButton,
-} from '@angular/material/radio';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Pergunta } from '../../interfaces/Pergunta';
+import { Professor } from '../../interfaces/Professor';
+import { MatCard } from "@angular/material/card";
+import { MatIcon } from "@angular/material/icon";
+import { NomeProfessorPipe } from "../../pipes/nome-professor.pipe";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cpt-card-pergunta',
-  imports: [MatCard, MatIcon, CommonModule],
+  imports: [MatCard, MatIcon, NomeProfessorPipe, CommonModule],
   templateUrl: './cpt-card-pergunta.component.html',
   styleUrl: './cpt-card-pergunta.component.scss',
 })
 export class CptCardPerguntaComponent {
-  @Input({ required: true }) pergunta!: Pergunta;
+
+
+  @Input() pergunta!: Pergunta;
+  @Input() professores: Professor[] = [];
+
+  @Output() edit = new EventEmitter<Pergunta>();
+  @Output() delete = new EventEmitter<number>();
 
   expanded = false;
 
   toggleExpand(): void {
     this.expanded = !this.expanded;
+  }
+
+  onEdit(): void {
+    this.edit.emit(this.pergunta);
+  }
+
+  onDelete(): void {
+    this.delete.emit(this.pergunta.id);
   }
 }

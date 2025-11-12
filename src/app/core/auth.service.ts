@@ -3,8 +3,7 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { Professor, TipoProfessor } from '../interfaces/Professor';
-import { PROFESSORES_MOCK } from '../data/professor';
-
+import { MOCK_PROFESSORES } from '../data/mock-data';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +35,7 @@ export class AuthService {
   }
 
   login(email: string, senha: string): Professor | null {
-    const usuarioEncontrado = PROFESSORES_MOCK.find(
+    const usuarioEncontrado = MOCK_PROFESSORES.find(
       (user) => user.email === email && user.senha === senha
     );
 

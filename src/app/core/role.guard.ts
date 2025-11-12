@@ -12,13 +12,10 @@ export function roleGuard(expectedRole: TipoProfessor): CanActivateFn {
 
     return toObservable(authService.currentUserSig).pipe(
       map((user) => {
-        // Verifica se o usuário está logado E se tem o perfil esperado
         if (user && user.tipo === expectedRole) {
           return true;
         }
 
-        // Se não tiver permissão, redireciona para uma página de 'acesso negado' ou para o login
-        // Poderíamos também redirecionar para uma página inicial do dashboard do usuário.
         console.error(
           `Acesso negado. Rota requer perfil: ${expectedRole}, usuário tem perfil: ${user?.tipo}`
         );

@@ -1,9 +1,9 @@
-import { Alternativa } from "./Alternativa";
-
+import { Alternativa } from './Alternativa';
 
 export interface Pergunta {
   id: number;
   enunciado: string;
-  nomeProfessor: string;
+  codigoProfessor: number;
   alternativas: Alternativa[];
+  disciplinaId: number;
 }

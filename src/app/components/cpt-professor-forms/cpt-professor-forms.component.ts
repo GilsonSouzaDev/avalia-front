@@ -3,8 +3,8 @@ import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DISCIPLINAS_MOCK } from '../../data/disciplina';
 import { AuthService } from '../../core/auth.service';
+import { MOCK_DISCIPLINAS } from '../../data/mock-data';
 
 @Component({
   selector: 'app-cpt-professor-forms',
@@ -19,9 +19,10 @@ export class CptProfessorFormsComponent {
 
   public authService = inject(AuthService);
 
-  disciplinasDisponiveis: Disciplina[] = DISCIPLINAS_MOCK;
+  disciplinasDisponiveis: Disciplina[] = MOCK_DISCIPLINAS;
   disciplinasSelecionadas: Disciplina[] = [];
 
+  codigo = 0;
   nome = '';
   email = '';
   senha = '';
@@ -36,6 +37,7 @@ export class CptProfessorFormsComponent {
     if (this.professor) {
       this.nome = this.professor.nome;
       this.email = this.professor.email;
+      this.codigo = this.professor.codigo;
       this.senha = '';
       this.confirmarSenha = '';
       this.disciplinasSelecionadas = [...this.professor.disciplinas];
@@ -108,6 +110,7 @@ export class CptProfessorFormsComponent {
 
     const novoProfessor: Professor = {
       id: this.professor?.id ?? 0,
+      codigo: this.codigo,
       nome: this.nome,
       email: this.email,
       senha: this.senha || this.professor?.senha || '',
@@ -128,6 +131,4 @@ export class CptProfessorFormsComponent {
   tipoProfessor = this.currentUser
     ? this.currentUser.tipo
     : TipoProfessor.PROFESSOR;
-
-
 }

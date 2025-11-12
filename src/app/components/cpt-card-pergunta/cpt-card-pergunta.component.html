@@ -10,7 +10,23 @@
         {{ alt.texto }}
       </div>
     </div>
-    <p class="professor">Professor: {{ pergunta.nomeProfessor }}</p>
+    <p class="professor">Professor: {{ pergunta.codigoProfessor | nomeProfessor:professores }}</p>
+
+    <!-- OS BOTÕES DE EXCLUIR E EDITAR AGORA ESTÃO AQUI DENTRO DO *ngIf="expanded" -->
+    <div class="action-buttons">
+      <!-- Botão de Editar -->
+      <button mat-icon-button color="primary" (click)="onEdit(); $event.stopPropagation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <!-- Botão de Excluir -->
+      <button mat-icon-button color="warn" (click)="onDelete(); $event.stopPropagation()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
   </div>
+
+  <!-- O bloco anterior foi removido daqui -->
 </mat-card>
+
 

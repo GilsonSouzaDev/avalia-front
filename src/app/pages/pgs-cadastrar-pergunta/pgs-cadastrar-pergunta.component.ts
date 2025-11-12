@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CptPerguntaFormsComponent } from "../../components/cpt-pergunta-forms/cpt-pergunta-forms.component";
+import { Disciplina } from '../../interfaces/Disciplina';
+import { MOCK_DISCIPLINAS, MockDataService } from '../../data/mock-data';
 
 @Component({
   selector: 'app-pgs-cadastrar-pergunta',
@@ -8,5 +10,9 @@ import { CptPerguntaFormsComponent } from "../../components/cpt-pergunta-forms/c
   styleUrl: './pgs-cadastrar-pergunta.component.scss'
 })
 export class PgsCadastrarPerguntaComponent {
+
+
+    disciplinas = MOCK_DISCIPLINAS;
+
 
 }

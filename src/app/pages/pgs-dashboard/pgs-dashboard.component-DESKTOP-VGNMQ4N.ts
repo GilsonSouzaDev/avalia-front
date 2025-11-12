@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { CptCardResumoComponent } from '../../components/cpt-card-resumo/cpt-card-resumo.component';
-import { CptCardMateriaComponent } from '../../components/cpt-card-materia/cpt-card-materia.component';
+import { CptCardResumoComponent } from "../../components/cpt-card-resumo/cpt-card-resumo.component";
+import { CptCardMateriaComponent } from "../../components/cpt-card-materia/cpt-card-materia.component";
 import { AuthService } from '../../core/auth.service';
 import { filtrarDisciplinasPorPerfil } from '../../utils/disicplina-filter-util';
 import { Professor } from '../../interfaces/Professor';
@@ -15,6 +15,7 @@ import { MOCK_DISCIPLINAS } from '../../data/mock-data';
   styleUrl: './pgs-dashboard.component.scss',
 })
 export class PgsDashboardComponent {
+
   disciplinas = MOCK_DISCIPLINAS;
 
   private authService = inject(AuthService);

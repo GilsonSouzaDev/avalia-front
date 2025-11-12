@@ -1,4 +1,4 @@
-import { Disciplina } from "./Disciplina";
+import { Disciplina } from './Disciplina';
 
 export enum TipoProfessor {
   PROFESSOR = 'PROFESSOR',
@@ -7,6 +7,7 @@ export enum TipoProfessor {
 
 export interface Professor {
   id: number;
+  codigo: number;
   nome: string;
   email: string;
   senha: string;

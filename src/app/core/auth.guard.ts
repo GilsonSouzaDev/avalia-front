@@ -10,13 +10,13 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Usamos toObservable para converter o signal em um Observable
+
   return toObservable(authService.currentUserSig).pipe(
     map((user) => {
       if (user) {
-        return true; // Usuário está logado, permite acesso
+        return true;
       }
-      // Usuário não está logado, redireciona para /login
+    
       return router.createUrlTree(['/login']);
     })
   );

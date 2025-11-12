@@ -1,9 +1,29 @@
-<section class="list-disciplina">
+<mat-tab-group>
+  <!-- Tab 1 - Sempre visível -->
+  <mat-tab label="Minhas Disciplinas" class="minhas-disciplinas">
+    <section class="list-disciplina">
+      @for (disciplina of disciplinasFiltradas; track $index) {
+        <app-cpt-table-materia
+          [disciplina]="disciplina"
+          [professores]="professores"
+          class="disciplina"
+        ></app-cpt-table-materia>
+      }
+    </section>
+  </mat-tab>
 
-  <h2>Minhas Disciplinas</h2>
-
-  @for (disciplina of disciplinas; track $index) {
-    <app-cpt-list-materia [disciplina]="disciplina" class="disciplina"></app-cpt-list-materia>
+  <!-- Tab 2 - Apenas para coordenador -->
+  @if (usuario?.tipo === 'COORDENADOR') {
+    <mat-tab label="Todas as Disciplinas">
+      <section class="list-disciplina">
+        @for (disciplina of disciplinas; track $index) {
+          <app-cpt-table-materia
+            [disciplina]="disciplina"
+            [professores]="professores"
+            class="disciplina"
+          ></app-cpt-table-materia>
+        }
+      </section>
+    </mat-tab>
   }
-
-</section>
+</mat-tab-group>

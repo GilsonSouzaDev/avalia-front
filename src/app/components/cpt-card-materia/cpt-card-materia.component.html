@@ -1,10 +1,10 @@
 <section class="materia">
   <div class="materia-texto">
-    <span>Disciplina: <strong>{{ materia }}</strong></span>
+    <span>Disciplina: <strong>{{ disciplina.nome }}</strong></span>
     <span>Questoes Cadastradas: <strong>{{ totalQuestoes }}</strong></span>
   </div>
 
-  <div class="example-button-row" routerLink="#">
+  <div class="example-button-row" routerLink="/disciplina">
     <button mat-button>{{ questoes }}</button>
   </div>
 

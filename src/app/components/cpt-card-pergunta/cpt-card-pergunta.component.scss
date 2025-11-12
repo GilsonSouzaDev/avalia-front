@@ -3,7 +3,13 @@
   border-radius: 0.75rem;
   cursor: pointer;
   transition: box-shadow 0.3s ease;
+
+  position: relative;
   padding: 0.5rem;
+
+  &.expanded-padding {
+    padding-bottom: 3.5rem;
+  }
 
   &:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -52,4 +58,13 @@
       margin-top: 0.75rem;
     }
   }
+}
+
+.action-buttons {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
 }

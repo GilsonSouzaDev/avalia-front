@@ -8,7 +8,9 @@
     <ng-container *ngIf="paginatedPerguntas.length; else semPerguntas">
       <app-cpt-card-pergunta
         *ngFor="let pergunta of paginatedPerguntas"
-        [pergunta]="pergunta">
+        [pergunta]="pergunta"
+        [professores]="professores"
+        >
       </app-cpt-card-pergunta>
 
       <mat-paginator
@@ -25,5 +27,4 @@
     </ng-template>
   </div>
 </mat-card>
-
 
