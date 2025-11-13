@@ -67,7 +67,8 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   private createAlternativa(texto: string): Alternativa {
     return {
       id: 0,
-      texto: texto,
+      texto,
+      perguntaId: this.formModel?.id, // ✅ referência correta
     };
   }
 
@@ -147,10 +148,15 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   }
 
   removeAlternativa(index: number): void {
-    if (this.formModel.alternativas.length > 4) {
-      this.formModel.alternativas.splice(index, 1);
-      this.quantidadeAlternativas = this.formModel.alternativas.length;
+    const total = this.formModel.alternativas.length;
+
+    if (total <= 4) {
+      console.warn('Não é permitido ter menos de 4 alternativas.');
+      return;
     }
+
+    this.formModel.alternativas.splice(index, 1);
+    this.quantidadeAlternativas = this.formModel.alternativas.length;
   }
 
   getDisciplinaSelecionada(): string {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { Professor } from '../../interfaces/Professor';
@@ -21,8 +21,11 @@ import { MatCardModule } from '@angular/material/card';
   styleUrl: './cpt-table-materia.component.scss',
 })
 export class CptTableMateriaComponent {
+
   @Input({ required: true }) disciplina!: Disciplina;
   @Input() professores: Professor[] = [];
+
+  @Output() perguntaSelecionada = new EventEmitter<Pergunta>();
 
   expanded = false;
   pageIndex = 0;

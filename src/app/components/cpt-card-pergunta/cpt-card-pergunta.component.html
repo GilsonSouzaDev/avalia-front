@@ -6,27 +6,36 @@
 
   <div class="conteudo-expandido" *ngIf="expanded">
     <div class="alternativas">
-      <div *ngFor="let alt of pergunta.alternativas" class="alternativa">
-        {{ alt.texto }}
-      </div>
+      <!-- substituímos o texto direto pelo componente -->
+      <app-cpt-alternativa-forms
+        *ngFor="let alt of pergunta.alternativas; let i = index"
+        [alternativa]="alt"
+        [index]="i"
+        (textoChange)="onAlterarTexto($event)"
+        (remover)="onRemoverAlternativa($event)"
+      ></app-cpt-alternativa-forms>
     </div>
-    <p class="professor">Professor: {{ pergunta.codigoProfessor | nomeProfessor:professores }}</p>
 
-    <!-- OS BOTÕES DE EXCLUIR E EDITAR AGORA ESTÃO AQUI DENTRO DO *ngIf="expanded" -->
+    <p class="professor">
+      Professor: {{ pergunta.codigoProfessor | nomeProfessor: professores }}
+    </p>
+
     <div class="action-buttons">
-      <!-- Botão de Editar -->
-      <button mat-icon-button color="primary" (click)="onEdit(); $event.stopPropagation()">
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="onEdit(); $event.stopPropagation()"
+      >
         <mat-icon>edit</mat-icon>
       </button>
 
-      <!-- Botão de Excluir -->
-      <button mat-icon-button color="warn" (click)="onDelete(); $event.stopPropagation()">
+      <button
+        mat-icon-button
+        color="warn"
+        (click)="onDelete(); $event.stopPropagation()"
+      >
         <mat-icon>delete</mat-icon>
       </button>
     </div>
   </div>
-
-  <!-- O bloco anterior foi removido daqui -->
 </mat-card>
-
-

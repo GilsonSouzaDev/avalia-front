@@ -1,0 +1,23 @@
+<div class="alternativa-item">
+  <ng-container *ngIf="!editMode; else editBlock">
+    <span class="alternativa-texto">{{ alternativa.texto || '— sem texto —' }}</span>
+
+    <div class="actions" *ngIf="editavel">
+      <button type="button" class="btn-edit" (click)="habilitarEdicao(); $event.stopPropagation()">✏️</button>
+    </div>
+  </ng-container>
+
+  <ng-template #editBlock>
+    <input
+      type="text"
+      [(ngModel)]="textoTemp"
+      class="alternativa-input"
+      placeholder="Digite o texto..."
+      (click)="$event.stopPropagation()"
+    />
+    <div class="actions">
+      <button type="button" class="btn-save" (click)="confirmarEdicao(); $event.stopPropagation()">💾</button>
+      <button type="button" class="btn-cancel" (click)="cancelarEdicao(); $event.stopPropagation()">❌</button>
+    </div>
+  </ng-template>
+</div>

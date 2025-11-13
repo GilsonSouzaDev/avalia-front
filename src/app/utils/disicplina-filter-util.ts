@@ -1,44 +1,33 @@
-// filtros.ts
-
-import { Disciplina } from "../interfaces/Disciplina";
-import { Professor } from "../interfaces/Professor";
-
-
+import { Disciplina } from '../interfaces/Disciplina';
+import { Professor } from '../interfaces/Professor';
+import { Pergunta } from '../interfaces/Pergunta';
 
 /**
- * Retorna o número de perguntas que um professor específico cadastrou
- * em uma disciplina específica.
+ * Filtra as perguntas de uma disciplina para manter apenas aquelas
+ * pertencentes ao professor cujo código foi informado.
+ * Retorna uma nova lista de perguntas, sem alterar o array original.
  *
- * @param disciplina O objeto da Disciplina que se deseja contar.
- * @param usuario O Professor logado.
- * @returns Um valor numérico (number) representando o total de perguntas
- * do usuário nesta disciplina. Retorna 0 se o usuário ou a disciplina não forem fornecidos.
+ * @param perguntas Lista de perguntas da disciplina
+ * @param codigoProfessor Código do professor logado
+ * @returns Lista de perguntas do professor
  */
-export function contarPerguntasPorDisciplinaEProfessorEspecifico(
-  disciplina: Disciplina,
-  usuario?: Professor | null
-): number {
-  if (!usuario || !disciplina || !disciplina.perguntas) return 0;
-  const codigoProfessor = usuario.codigo;
-  const contagem = disciplina.perguntas.filter((pergunta) => {
-    return pergunta.codigoProfessor === codigoProfessor;
-  }).length;
-  console.log(
-    `Contagem de perguntas para professor "${usuario.nome}" (Código: ${codigoProfessor}) na disciplina "${disciplina.nome}": ${contagem}`
-  );
-
-  return contagem;
+function filtrarPerguntasPorCodigo(
+  perguntas: Pergunta[] = [],
+  codigoProfessor: number
+): Pergunta[] {
+  if (!Array.isArray(perguntas) || perguntas.length === 0) return [];
+  return perguntas.filter((p) => p.codigoProfessor === codigoProfessor);
 }
 
 /**
- * Filtra disciplinas com base no professor informado.
- * - Retorna disciplinas em que o professor leciona (id).
- * - Ou disciplinas que contenham perguntas cujo codigoProfessor corresponde ao codigo do usuário.
+ * Filtra as disciplinas exibidas para um determinado professor.
+ * - Inclui disciplinas em que o professor leciona.
+ * - Inclui disciplinas em que há perguntas cadastradas pelo professor.
+ * - Dentro de cada disciplina, mantém apenas as perguntas do professor.
  *
- * Observação: NÃO faz exceção para coordenador — sempre aplica o filtro.
- *
- * @param disciplinas Lista de disciplinas (mock ou vindo do backend). Default: [].
- * @param usuario Professor logado (ou null/undefined) — se ausente, retorna [].
+ * @param disciplinas Lista completa de disciplinas
+ * @param usuario Professor logado (ou null/undefined)
+ * @returns Lista de disciplinas filtradas
  */
 export function filtrarDisciplinasPorPerfil(
   disciplinas: Disciplina[] = [],
@@ -48,26 +37,70 @@ export function filtrarDisciplinasPorPerfil(
   if (!Array.isArray(disciplinas) || disciplinas.length === 0) return [];
 
   const usuarioId = usuario.id;
-  const usuarioCodigo = usuario.codigo; // Usar o código para comparação com perguntas
+  const usuarioCodigo = usuario.codigo;
 
-  return disciplinas.filter((disciplina) => {
-    const professores = Array.isArray(disciplina.professores)
-      ? disciplina.professores
-      : [];
-    const perguntas = Array.isArray(disciplina.perguntas)
-      ? disciplina.perguntas
-      : [];
-    const leciona = professores.some((prof) => prof?.id === usuarioId);
+  // Aplica o filtro disciplina a disciplina
+  const resultado = disciplinas
+    .map((disciplina) => {
+      const professores = Array.isArray(disciplina.professores)
+        ? disciplina.professores
+        : [];
+      const perguntas = Array.isArray(disciplina.perguntas)
+        ? disciplina.perguntas
+        : [];
 
+      // Verifica se o professor leciona essa disciplina
+      const leciona = professores.some((prof) => prof?.id === usuarioId);
 
-    const possuiPerguntaDoUsuario = perguntas.some((pergunta) => {
-      return pergunta.codigoProfessor === usuarioCodigo;
-    });
+      // Filtra perguntas que pertencem ao professor logado
+      const perguntasDoUsuario = filtrarPerguntasPorCodigo(
+        perguntas,
+        usuarioCodigo
+      );
 
-    console.log(
-      `Filtro: Disciplina "${disciplina.nome}" - Leciona: ${leciona}, Possui Pergunta: ${possuiPerguntaDoUsuario}`
-    );
+      // Cria uma nova cópia da disciplina, mantendo só as perguntas relevantes
+      const disciplinaFiltrada: Disciplina = {
+        ...disciplina,
+        perguntas: perguntasDoUsuario,
+      };
 
-    return leciona || possuiPerguntaDoUsuario;
-  });
+      console.log(
+        `[Filtro] Professor: ${usuario.nome} | Disciplina: ${disciplina.nome} | Leciona: ${leciona} | Perguntas do usuário: ${perguntasDoUsuario.length}`
+      );
+
+      return {
+        disciplinaFiltrada,
+        deveIncluir: leciona || perguntasDoUsuario.length > 0,
+      };
+    })
+    .filter((item) => item.deveIncluir) // Mantém apenas disciplinas relevantes
+    .map((item) => item.disciplinaFiltrada); // Retorna apenas a disciplina
+
+  return resultado;
+}
+
+/**
+ * Conta o número de perguntas que o professor logado cadastrou
+ * em uma disciplina específica.
+ *
+ * @param disciplina Disciplina analisada
+ * @param usuario Professor logado
+ * @returns Quantidade de perguntas cadastradas pelo professor
+ */
+export function contarPerguntasPorDisciplinaEProfessorEspecifico(
+  disciplina: Disciplina,
+  usuario?: Professor | null
+): number {
+  if (!usuario || !disciplina || !disciplina.perguntas) return 0;
+
+  const codigoProfessor = usuario.codigo;
+  const contagem = disciplina.perguntas.filter(
+    (pergunta) => pergunta.codigoProfessor === codigoProfessor
+  ).length;
+
+  console.log(
+    `[Contagem] Professor "${usuario.nome}" (Código: ${codigoProfessor}) | Disciplina "${disciplina.nome}" | Total: ${contagem}`
+  );
+
+  return contagem;
 }

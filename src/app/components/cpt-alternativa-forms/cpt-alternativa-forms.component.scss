@@ -1,0 +1,111 @@
+.alternativa-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  justify-content: space-between;
+
+  .alternativa-label {
+    font-weight: bold;
+    color: #444;
+    width: 20px;
+  }
+
+  .alternativa-texto {
+    flex: 1;
+    margin: 0 10px;
+  }
+
+  .alternativa-input {
+    flex: 1;
+    margin: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 8px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 6px;
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+
+      &.btn-edit:hover {
+        color: #007bff;
+      }
+
+.alternativa-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  .alternativa-texto {
+    flex: 1;
+    margin-right: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .alternativa-input {
+    flex: 1;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 16px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 6px;
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+
+      &.btn-edit:hover {
+        color: #007bff;
+      }
+
+      &.btn-remove:hover {
+        color: #ff4d4d;
+      }
+
+      &.btn-save:hover {
+        color: #38a169;
+      }
+
+      &.btn-cancel:hover {
+        color: #999;
+      }
+    }
+  }
+}        color: #ff4d4d;
+      }
+
+      &.btn-save:hover {
+        color: #38a169;
+      }
+
+      &.btn-cancel:hover {
+        color: #999;
+      }
+    }
+
+}
+

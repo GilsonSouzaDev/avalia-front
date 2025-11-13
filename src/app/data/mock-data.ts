@@ -1,14 +1,11 @@
-// mock-data.ts
+// src/app/mocks/mock-data.ts
 
-import { Alternativa } from "../interfaces/Alternativa";
-import { Disciplina } from "../interfaces/Disciplina";
-import { Pergunta } from "../interfaces/Pergunta";
-import { Professor, TipoProfessor } from "../interfaces/Professor";
-
+import { Alternativa } from '../interfaces/Alternativa';
+import { Disciplina } from '../interfaces/Disciplina';
+import { Pergunta } from '../interfaces/Pergunta';
+import { Professor, TipoProfessor } from '../interfaces/Professor';
 
 // --- MOCK DATA ---
-
-// 1. Declaração inicial dos objetos para lidar com a circularidade
 
 // Professores (10 no total, incluindo 1 Coordenador)
 const profAna: Professor = {
@@ -134,7 +131,7 @@ const discGeografia: Disciplina = {
   id: 3,
   nome: 'Geografia',
   cor: '#2196F3',
-  professores: [profDavid, profAna],
+  professores: [profDavid, profCarla],
   perguntas: [],
 };
 const discIngles: Disciplina = {
@@ -176,19 +173,20 @@ export const MOCK_DISCIPLINAS: Disciplina[] = [
   discBiologia,
 ];
 
-// 2. Ajuste das referências circulares (Professor -> Disciplina)
-profAna.disciplinas.push(discMatematica, discGeografia);
-profBruno.disciplinas.push(discMatematica);
-profCarla.disciplinas.push(discHistoria);
-profDavid.disciplinas.push(discGeografia);
-profEster.disciplinas.push(discIngles);
-profFelipe.disciplinas.push(discQuimica);
-profGiovanna.disciplinas.push(discFisica);
-profHenrique.disciplinas.push(discBiologia);
-profIgor.disciplinas.push(); // Professor sem disciplina
-profJulia.disciplinas.push(); // Professor sem disciplina
+// Relacionamentos Professor <-> Disciplina
+profAna.disciplinas = [discMatematica];
+profBruno.disciplinas = [discMatematica];
+profCarla.disciplinas = [discHistoria, discGeografia];
+profDavid.disciplinas = [discGeografia];
+profEster.disciplinas = [discIngles];
+profFelipe.disciplinas = [discQuimica];
+profGiovanna.disciplinas = [discFisica];
+profHenrique.disciplinas = [discBiologia];
+profIgor.disciplinas = [];
+profJulia.disciplinas = [];
 
-// 3. Perguntas e Alternativas (15 no total, 4 a 5 por pergunta)
+// --- PERGUNTAS E ALTERNATIVAS ---
+
 let perguntaId = 1;
 let alternativaId = 1;
 const MOCK_PERGUNTAS: Pergunta[] = [];
@@ -198,45 +196,44 @@ const criarPergunta = (
   enunciado: string,
   codigoProfessor: number,
   disciplinaId: number,
-  numAlternativas: 4 | 5
+  numAlternativas: number
 ): Pergunta => {
+  const idPergunta = perguntaId++;
+
   const alternativas: Alternativa[] = [];
   for (let i = 0; i < numAlternativas; i++) {
     alternativas.push({
       id: alternativaId++,
-      texto: `Alternativa ${String.fromCharCode(
-        65 + i
-      )} - ${enunciado.substring(0, 10)}`,
+      texto: `Alternativa ${i + 1} - ${enunciado.substring(0, 20)}`,
+      perguntaId: idPergunta, // ✅ referência direta à pergunta
     });
   }
-  const pergunta: Pergunta = {
-    id: perguntaId++,
-    enunciado: enunciado,
-    codigoProfessor: codigoProfessor,
-    alternativas: alternativas,
-    disciplinaId: disciplinaId,
+
+  return {
+    id: idPergunta,
+    enunciado,
+    codigoProfessor,
+    disciplinaId,
+    alternativas,
   };
-  return pergunta;
 };
 
-// 1. Matemática (Prof. Bruno) - 3 perguntas
+// --- PERGUNTAS POR DISCIPLINA ---
+
+// Matemática (Bruno)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'Qual o valor de Pi com duas casas decimais?',
     profBruno.codigo,
     discMatematica.id,
     4
-  )
-);
-MOCK_PERGUNTAS.push(
+  ),
   criarPergunta(
     'Qual a fórmula de Bhaskara?',
     profBruno.codigo,
     discMatematica.id,
     5
-  )
-);
-MOCK_PERGUNTAS.push(
+  ),
   criarPergunta(
     'O que é um número primo?',
     profBruno.codigo,
@@ -245,71 +242,85 @@ MOCK_PERGUNTAS.push(
   )
 );
 
-// 2. História (Prof. Carla) - 3 perguntas
+// História (Carla)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'Qual o marco inicial da Idade Média?',
     profCarla.codigo,
     discHistoria.id,
     5
-  )
-);
-MOCK_PERGUNTAS.push(
-  criarPergunta('Quem foi D. Pedro I?', profCarla.codigo, discHistoria.id, 4)
-);
-MOCK_PERGUNTAS.push(
+  ),
+  criarPergunta('Quem foi D. Pedro I?', profCarla.codigo, discHistoria.id, 4),
   criarPergunta(
     'O que foi a Guerra Fria?',
+    profCarla.codigo,
+    discHistoria.id,
+    5
+  ),
+  criarPergunta(
+    'Quem descobriu o Brasil?',
+    profCarla.codigo,
+    discHistoria.id,
+    4
+  ),
+  criarPergunta(
+    'O que foi a Revolução Francesa?',
     profCarla.codigo,
     discHistoria.id,
     5
   )
 );
 
-// 3. Geografia (Prof. David) - 3 perguntas
+// Geografia (David e Carla)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'Qual o maior deserto do mundo?',
     profDavid.codigo,
     discGeografia.id,
     4
-  )
-);
-MOCK_PERGUNTAS.push(
+  ),
   criarPergunta(
     'O que são placas tectônicas?',
     profDavid.codigo,
     discGeografia.id,
     5
-  )
-);
-MOCK_PERGUNTAS.push(
+  ),
   criarPergunta(
     'Qual a capital do Canadá?',
     profDavid.codigo,
     discGeografia.id,
     4
-  )
+  ),
+  criarPergunta('O que é latitude?', profCarla.codigo, discGeografia.id, 4),
+  criarPergunta(
+    'Explique o que são fusos horários.',
+    profCarla.codigo,
+    discGeografia.id,
+    5
+  ),
+  criarPergunta(
+    'Qual o país mais populoso do mundo?',
+    profCarla.codigo,
+    discGeografia.id,
+    4
+  ),
+  criarPergunta('O que é um continente?', profCarla.codigo, discGeografia.id, 5)
 );
 
-// 4. Inglês (Prof. Ester) - 2 perguntas
+// Inglês (Ester)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'Tradução de "Hello World".',
     profEster.codigo,
     discIngles.id,
     4
-  )
-);
-MOCK_PERGUNTAS.push(
+  ),
   criarPergunta('Qual o plural de "mouse"?', profEster.codigo, discIngles.id, 5)
 );
 
-// 5. Química (Prof. Felipe) - 2 perguntas
+// Química (Felipe)
 MOCK_PERGUNTAS.push(
-  criarPergunta('O que é pH?', profFelipe.codigo, discQuimica.id, 4)
-);
-MOCK_PERGUNTAS.push(
+  criarPergunta('O que é pH?', profFelipe.codigo, discQuimica.id, 4),
   criarPergunta(
     'Qual o número atômico do Oxigênio?',
     profFelipe.codigo,
@@ -318,7 +329,7 @@ MOCK_PERGUNTAS.push(
   )
 );
 
-// 6. Física (Prof. Giovanna) - 1 pergunta
+// Física (Giovanna)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'O que é a Lei da Inércia?',
@@ -328,7 +339,7 @@ MOCK_PERGUNTAS.push(
   )
 );
 
-// 7. Biologia (Prof. Henrique) - 1 pergunta
+// Biologia (Henrique)
 MOCK_PERGUNTAS.push(
   criarPergunta(
     'O que é fotossíntese?',
@@ -338,7 +349,7 @@ MOCK_PERGUNTAS.push(
   )
 );
 
-// 4. Atualização das Disciplinas com as Perguntas
+// --- Associação das perguntas às disciplinas ---
 discMatematica.perguntas = MOCK_PERGUNTAS.filter(
   (p) => p.disciplinaId === discMatematica.id
 );
@@ -361,8 +372,7 @@ discBiologia.perguntas = MOCK_PERGUNTAS.filter(
   (p) => p.disciplinaId === discBiologia.id
 );
 
-// 5. Classe de Serviço Mock para simular a lógica de acesso e a regra de negócio
-
+// --- SERVIÇO MOCK ---
 export class MockDataService {
   getProfessores(): Professor[] {
     return MOCK_PROFESSORES;
@@ -377,10 +387,8 @@ export class MockDataService {
   }
 
   /**
-   * Valida a regra de negócio: "a pergunta só pode ser adicionada por um professor da disciplina".
-   * @param codigoProfessor O código do professor que está tentando adicionar a pergunta.
-   * @param disciplinaId O ID da disciplina onde a pergunta será adicionada.
-   * @returns true se o professor leciona a disciplina, false caso contrário.
+   * Valida a regra de negócio:
+   * "a pergunta só pode ser adicionada por um professor da disciplina".
    */
   validarAdicaoPergunta(
     codigoProfessor: number,
@@ -391,11 +399,8 @@ export class MockDataService {
     );
     const disciplina = MOCK_DISCIPLINAS.find((d) => d.id === disciplinaId);
 
-    if (!professor || !disciplina) {
-      return false;
-    }
+    if (!professor || !disciplina) return false;
 
-    // Verifica se o professor está na lista de professores da disciplina
-     return disciplina.professores.some((p) => p.codigo === codigoProfessor);
+    return disciplina.professores.some((p) => p.codigo === codigoProfessor);
   }
 }
