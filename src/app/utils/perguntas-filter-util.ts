@@ -22,8 +22,5 @@ export function contarPerguntasPorDisciplinaEProfessorEspecifico(
   const contagem = disciplina.perguntas.filter((pergunta) => {
     return pergunta.codigoProfessor === codigoProfessor;
   }).length;
-  console.log(
-    `Contagem de perguntas para professor "${usuario.nome}" (Código: ${codigoProfessor}) na disciplina "${disciplina.nome}": ${contagem}`
-  );
   return contagem;
 }

@@ -64,10 +64,6 @@ export function filtrarDisciplinasPorPerfil(
         perguntas: perguntasDoUsuario,
       };
 
-      console.log(
-        `[Filtro] Professor: ${usuario.nome} | Disciplina: ${disciplina.nome} | Leciona: ${leciona} | Perguntas do usuário: ${perguntasDoUsuario.length}`
-      );
-
       return {
         disciplinaFiltrada,
         deveIncluir: leciona || perguntasDoUsuario.length > 0,

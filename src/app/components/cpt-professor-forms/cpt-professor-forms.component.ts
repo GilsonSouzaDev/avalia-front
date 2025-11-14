@@ -17,6 +17,8 @@ export class CptProfessorFormsComponent {
   @Input() mostrarDisciplinas: boolean = true;
   @Output() salvar = new EventEmitter<Professor>();
 
+  @Output() cancelar = new EventEmitter<void>();
+
   public authService = inject(AuthService);
 
   disciplinasDisponiveis: Disciplina[] = MOCK_DISCIPLINAS;
@@ -131,4 +133,8 @@ export class CptProfessorFormsComponent {
   tipoProfessor = this.currentUser
     ? this.currentUser.tipo
     : TipoProfessor.PROFESSOR;
+
+  cancelarCadastro() {
+    this.cancelar.emit();
+  }
 }

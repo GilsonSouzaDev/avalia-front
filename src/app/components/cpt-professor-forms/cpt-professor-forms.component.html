@@ -2,7 +2,6 @@
   <h2>{{ editando ? 'Atualizar Professor' : 'Cadastrar Professor' }}</h2>
 
   <form #profForm="ngForm" (ngSubmit)="onSubmit(profForm)">
-    <!-- Nome -->
     <div class="campo">
       <label for="nome">Nome</label>
       <input
@@ -14,7 +13,6 @@
       />
     </div>
 
-    <!-- Email -->
     <div class="campo">
       <label for="email">Email</label>
       <input
@@ -26,7 +24,6 @@
       />
     </div>
 
-    <!-- Senha -->
     <div class="campo">
       <label for="senha">{{ editando ? 'Nova Senha' : 'Senha' }}</label>
       <input
@@ -39,7 +36,6 @@
       />
     </div>
 
-    <!-- Confirmar Senha (só aparece se tiver algo digitado em senha) -->
     <div class="campo" *ngIf="senha">
       <label for="confirmarSenha">Confirmar Senha</label>
       <input
@@ -53,7 +49,6 @@
       <div *ngIf="erroSenha" class="erro-senha">{{ erroSenha }}</div>
     </div>
 
-    <!-- Disciplinas -->
     <div class="campo" *ngIf="mostrarDisciplinas">
       <label>Disciplinas</label>
       <div class="disciplinas-grid">
@@ -71,13 +66,23 @@
       </div>
     </div>
 
-    <!-- Botão -->
-    <button
-      type="submit"
-      class="btn-cadastrar"
-      [disabled]="!isFormValid()"
-    >
-      {{ editando ? 'Atualizar' : 'Cadastrar' }}
-    </button>
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn-cadastrar"
+        [disabled]="!isFormValid()"
+      >
+        {{ editando ? 'Atualizar' : 'Cadastrar' }}
+      </button>
+
+      <button
+        type="button"
+        mat-button
+        class="btn-cancelar"
+        (click)="cancelarCadastro()"
+      >
+        Cancelar
+      </button>
+    </div>
   </form>
 </div>

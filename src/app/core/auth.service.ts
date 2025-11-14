@@ -1,5 +1,3 @@
-// src/app/core/auth.service.ts
-
 import { Injectable, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { Professor, TipoProfessor } from '../interfaces/Professor';
@@ -18,15 +16,15 @@ export class AuthService {
     effect(() => {
       const user = this.currentUserSig();
       if (user) {
-        sessionStorage.setItem(this.storageKey, JSON.stringify(user));
+        localStorage.setItem(this.storageKey, JSON.stringify(user));
       } else {
-        sessionStorage.removeItem(this.storageKey);
+        localStorage.removeItem(this.storageKey);
       }
     });
   }
 
   private loadUserFromStorage(): void {
-    const userJson = sessionStorage.getItem(this.storageKey);
+    const userJson = localStorage.getItem(this.storageKey);
     if (userJson) {
       this.currentUserSig.set(JSON.parse(userJson));
     } else {

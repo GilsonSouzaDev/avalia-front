@@ -8,34 +8,44 @@
       <app-cpt-card-resumo
       corTema="#4E9971"
       titulo="Minhas Matérias"
-      valor='3'
+      valor='{{ disciplinasLecionadas }}'
       ></app-cpt-card-resumo>
 
       <app-cpt-card-resumo
       corTema="#09A4F2"
       titulo="Minhas Perguntas"
-      valor='42'
-      ></app-cpt-card-resumo>
-
-       <app-cpt-card-resumo
-      corTema="#AA2302"
-      titulo="Quantidade de Professores"
-      valor='5'
-      ></app-cpt-card-resumo>
-
-       <app-cpt-card-resumo
-      corTema="#09234F"
-      titulo="Total de Perguntas"
-      valor='120'
-      ></app-cpt-card-resumo>
-
-       <app-cpt-card-resumo
-      corTema="#4E9971"
-      titulo="Total de Matérias"
-      valor='7'
+      valor='{{ perguntasLecionadas }}'
       ></app-cpt-card-resumo>
 
   </section>
+
+  @if (usuario?.tipo === 'COORDENADOR') {
+
+    <h2>Coordenadoria</h2>
+
+
+    <section class="dashboard-resumo">
+
+      <app-cpt-card-resumo
+      corTema="#AA2302"
+      titulo="Quantidade de Professores"
+      valor='{{ totalProfessores }}'
+      ></app-cpt-card-resumo>
+
+      <app-cpt-card-resumo
+      corTema="#09234F"
+      titulo="Total de Perguntas"
+      valor='{{ totalPerguntas }}'
+      ></app-cpt-card-resumo>
+
+      <app-cpt-card-resumo
+      corTema="#4E9971"
+      titulo="Total de Matérias"
+      valor='{{ totalDisciplinas }}'
+      ></app-cpt-card-resumo>
+
+    </section>
+  }
 
   <h2>Matérias Lecionadas</h2>
 

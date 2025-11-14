@@ -1,6 +1,29 @@
 @use 'sass:color';
 @use 'sass:math';
 
+$bg-body-color: #EBEBEB;
+$nav-menu-color: #E4E4E4;
+$primary-color: #60A5FA;
+$second-color: #09234F;
+
+$bg-card: #FFFDFD;
+$border-card-color: #E1E1E1;
+$fontcard: 'Baloo 2', sans-serif;
+
+$adm-bg-color: #F3F3F3;
+
+$accent-color: #f8c300;
+$danger-color: #e74c3c;
+$success-color: #2ecc71;
+$warning-color: #f1c40f;
+
+$text-primary: #333333;
+$text-secondary: #777777;
+$text-light: #ffffff;
+
+$bg-light: #f5f5f5;
+$bg-dark: #1a1a1a;
+
 @function rem($pixels, $context: 16) {
   @return math.div($pixels, $context) * 1rem;
 }
@@ -124,18 +147,11 @@
   margin: 0 auto;
 }
 
-// --- Bloco de Responsividade Simplificado ---
-// --- Bloco de Responsividade Simplificado ---
 @media (max-width: 750px) {
-
-  // ADICIONAR ESTA REGRA:
   .product-table {
-    // Isso remove a largura mínima forçada, permitindo que a tabela
-    // encolha junto com a tela novamente.
     min-width: auto;
   }
 
-  // As regras existentes permanecem
   .col-categoria,
   .col-valor {
     display: none;
@@ -146,4 +162,22 @@
     padding-left: rem(12);
     padding-right: rem(12);
   }
+}
+
+.novo-professor-btn {
+  display: inline-block;
+  background-color: $primary-color !important;
+  color: white !important;
+  padding: 0.6rem 1.4rem !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem;
+  margin-right: 0;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.novo-professor-btn:hover {
+  background-color: color.adjust($primary-color, $lightness: -10%) !important;
 }
