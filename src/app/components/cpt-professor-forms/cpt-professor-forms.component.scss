@@ -1,13 +1,16 @@
 .form-container {
   background-color: #e8f0ff;
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 10px;
-  width: 100%;
+  width: 90%;
   margin: 0 auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
@@ -69,6 +72,16 @@ input[type="password"] {
   flex-wrap: wrap;
 }
 
+/* ==========================================
+   BOTÕES — COM EFEITOS MODERNOS
+========================================== */
+button.btn-cadastrar,
+button[mat-button].btn-cancelar {
+  transition: all 0.25s ease !important;
+  transform: translateY(0);
+}
+
+/* --- BOTÃO CADASTRAR --- */
 button.btn-cadastrar {
   display: inline-block;
   background-color: #4a946b;
@@ -79,13 +92,27 @@ button.btn-cadastrar {
   font-weight: bold;
   cursor: pointer;
   min-width: 120px;
+  box-shadow: 0 4px 10px rgba(74, 148, 107, 0.3);
+}
+
+button.btn-cadastrar:hover:not(:disabled) {
+  background-color: #58a87d;
+  box-shadow: 0 6px 14px rgba(74, 148, 107, 0.45);
+  transform: translateY(-2px);
+}
+
+button.btn-cadastrar:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(74, 148, 107, 0.35);
 }
 
 button.btn-cadastrar:disabled {
   background-color: #a0c3aa;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+/* --- BOTÃO CANCELAR --- */
 button[mat-button].btn-cancelar {
   background-color: #e74c3c;
   color: white;
@@ -95,13 +122,23 @@ button[mat-button].btn-cancelar {
   font-weight: bold;
   cursor: pointer;
   min-width: 100px;
-  box-shadow: none;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
 button[mat-button].btn-cancelar:hover {
-  filter: brightness(0.95);
+  background-color: #ff6b5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(231, 76, 60, 0.45);
 }
 
+button[mat-button].btn-cancelar:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.35);
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+========================================== */
 @media (max-width: 600px) {
   .disciplinas-grid {
     grid-template-columns: repeat(1, 1fr);

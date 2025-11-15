@@ -15,6 +15,10 @@
   overflow: hidden;
   animation: fadeInUp 0.6s ease forwards;
 
+  h2{
+    margin: 0 auto;
+  }
+
   // brilho de fundo dinâmico ao passar o mouse
   &:hover {
     background: linear-gradient(145deg, #E2EBFB, #d3e0fa);

@@ -1,13 +1,16 @@
-
 <section *ngIf="!modoCadastro()">
-  <app-cpt-professor-table
+    <app-cpt-professor-table
     [professores]="professores"
+    [quantidadeQuestoes]="quantidadeQuestoes"
+    [quantidadeMaterias]="quantidadeMaterias"
     (novo)="abrirCadastro()"
-  ></app-cpt-professor-table>
-</section>
+    ></app-cpt-professor-table>
+  </section>
 
-<section *ngIf="modoCadastro()">
-  <app-cpt-professor-forms
+  <section *ngIf="modoCadastro()">
+    <app-cpt-professor-forms
     (cancelar)="fecharCadastro()"
-  ></app-cpt-professor-forms>
-</section>
+    ></app-cpt-professor-forms>
+  </section>
+
+

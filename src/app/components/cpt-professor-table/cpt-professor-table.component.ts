@@ -13,9 +13,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   styleUrl: './cpt-professor-table.component.scss',
 })
 export class CptProfessorTableComponent implements OnChanges {
+
   @Input() professores: Professor[] = [];
-  @Input() quantidadeQuestoes: number = 0;
-  @Input() quantidadeMaterias: number = 0;
+  @Input() quantidadeQuestoes!: (professor: any) => number;
+  @Input() quantidadeMaterias!: (professor: any) => number;
 
   @Output() novo = new EventEmitter<void>();
 

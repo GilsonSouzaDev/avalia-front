@@ -3,11 +3,9 @@
 <!-- 1. Bloco principal: Renderiza somente se o professor estiver carregado -->
 @if (professor(); as prof) {
 
-  <!-- 2. Bloco secundário: Alterna entre visualização e edição com base na flag 'editando' -->
   @if (!editando) {
     <!-- MODO DE VISUALIZAÇÃO -->
     <section class="pgs-perfil-detalhes">
-      <h1>Perfil</h1>
       <app-cpt-perfil-datalhes [professor]="prof"></app-cpt-perfil-datalhes>
 
       <div class="buttons-perfil">
@@ -22,21 +20,15 @@
   } @else {
     <!-- MODO DE EDIÇÃO -->
     <section class="perfil-edicao">
-      <h1>Editar Perfil</h1>
       <!-- A variável 'prof' está disponível aqui e é passada para o formulário -->
       <app-cpt-professor-forms
         [professor]="prof"
         (salvar)="atualizarPerfil($event)"
         [mostrarDisciplinas]="mostrarDisciplinas"
+        (cancelar)="alternarEdicao()"
       ></app-cpt-professor-forms>
 
-      <!-- O botão de cancelar também usa o mesmo método para voltar ao modo de visualização -->
-      <div class="buttons-perfil">
-        <button class="buttons-perfil__cancelar" (click)="alternarEdicao()">
-          Cancelar
-        </button>
-      </div>
-    </section>
+      </section>
   }
 
 } @else {
