@@ -32,7 +32,7 @@
                 <td>
                   <button
                     type="button"
-                    (click)="verDetalhes(professor)"
+                    [routerLink]="['/detalhes', professor.id]"
                     class="product-table__action product-table__action--details"
                     title="Ver detalhes">
                     <mat-icon>search</mat-icon>
@@ -50,7 +50,7 @@
         </tbody>
       </table>
     </div>
-    
+
       <mat-paginator
       [length]="length"
       [pageSize]="pageSize"

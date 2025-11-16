@@ -4,11 +4,12 @@ import { AuthService } from '../../core/auth.service';
 import { MatIcon } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { RouterLinkActive, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cpt-professor-table',
   standalone: true,
-  imports: [MatIcon, CommonModule, MatPaginatorModule],
+  imports: [MatIcon, CommonModule, MatPaginatorModule, RouterModule],
   templateUrl: './cpt-professor-table.component.html',
   styleUrl: './cpt-professor-table.component.scss',
 })
@@ -49,7 +50,5 @@ export class CptProfessorTableComponent implements OnChanges {
     return this.authService.currentUserSig();
   }
 
-  verDetalhes(professor: Professor): void {
-    console.log(professor);
-  }
+
 }

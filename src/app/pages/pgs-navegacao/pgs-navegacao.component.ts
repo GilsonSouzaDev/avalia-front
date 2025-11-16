@@ -11,7 +11,19 @@ import { AuthService } from '../../core/auth.service';
 export class PgsNavegacaoComponent {
   private authService = inject(AuthService);
 
-  deslogar(){
+  deslogar() {
     this.authService.logout();
+  }
+
+  get isCoordenador() {
+    return this.authService.isCoordenador();
+  }
+
+  get isProfessor() {
+    return this.authService.isProfessor();
+  }
+
+  get currentUser() {
+    return this.authService.currentUserSig();
   }
 }

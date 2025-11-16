@@ -373,6 +373,12 @@ discBiologia.perguntas = MOCK_PERGUNTAS.filter(
 );
 
 // --- SERVIÇO MOCK ---
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
 export class MockDataService {
   getProfessores(): Professor[] {
     return MOCK_PROFESSORES;

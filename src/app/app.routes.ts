@@ -9,6 +9,7 @@ import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component'
 import { AppLayoutComponent } from './layout/app-layout/app-layout.component';
 import { authGuard } from './core/auth.guard';
 import { PgsGerenciarProfessorComponent } from './pages/pgs-gerenciar-professor/pgs-gerenciar-professor.component';
+import { PgsGerenciarDisciplinaComponent } from './pages/pgs-gerenciar-disciplina/pgs-gerenciar-disciplina.component';
 
 
 export const routes: Routes = [
@@ -29,8 +30,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: PgsDashboardComponent },
       { path: 'disciplina', component: PgsListDisciplinaComponent },
-      { path: 'detalhes', component: PgsPerfilDetalhesComponent },
+      { path: 'detalhes/:id', component: PgsPerfilDetalhesComponent },
       { path: 'gerenciar', component: PgsGerenciarProfessorComponent },
+      { path: 'gerenciar-disc', component: PgsGerenciarDisciplinaComponent },
       { path: 'pergunta', component: PgsCadastrarPerguntaComponent },
     ],
   },

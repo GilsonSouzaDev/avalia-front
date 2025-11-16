@@ -9,7 +9,7 @@
       src="assets/logo/perfil.png"
       alt="Ícone de usuário"
       class="perfil-icone"
-      routerLink="/detalhes"
+      [routerLink]="['/detalhes', user.id]"
     />
   </section>
 }

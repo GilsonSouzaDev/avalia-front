@@ -1,4 +1,8 @@
-<mat-card class="card-disciplina">
+<mat-card class="card-disciplina"
+[ngStyle]="{
+    '--disc-color': disciplina.cor
+  }">
+
   <div class="cabecalho" (click)="toggleExpand()">
     <h2 class="titulo">{{ disciplina.nome }}</h2>
     <mat-icon class="icone" [class.rotated]="expanded">expand_more</mat-icon>

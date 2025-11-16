@@ -1,0 +1,123 @@
+<div class="card">
+  <h2 class="card__title">Gerenciar Disciplinas</h2>
+
+  <div class="card__content">
+    <div class="table-responsive">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Disciplina</th>
+            <th>Questões</th>
+            <th>Professores</th>
+            <th class="acoes">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- LOADING -->
+          @if(!currentUser){
+            <tr>
+              <td colspan="4">
+                <div class="loading-spinner"></div>
+              </td>
+            </tr>
+          }
+
+          <!-- LISTAGEM -->
+          @if(currentUser && disciplinas && disciplinas.length > 0) {
+            @for(disciplina of disciplinasPaginadas; track disciplina.id) {
+
+              <tr>
+                <!-- NOME / EDIÇÃO -->
+                <td>
+                  @if(editandoId() !== disciplina.id) {
+                    <span>
+                      {{ disciplina.nome }}
+                    </span>
+                  } @else {
+                    <div class="edit-container">
+                      <input
+                        type="text"
+                        [ngModel]="nomeEditando()"
+                        (ngModelChange)="nomeEditando.set($event)"
+                      />
+
+                      <button class="ok" (click)="confirmarEdicaoClick(disciplina.id)">
+                        ✔
+                      </button>
+
+                      <button class="cancel" (click)="cancelarEdicaoClick()">
+                        ✖
+                      </button>
+                    </div>
+                  }
+                </td>
+
+                <td>{{ quantidadeQuestoes(disciplina) }}</td>
+                <td>{{ quantidadeMaterias(disciplina) }}</td>
+
+                <td>
+                  <button class="edit" (click)="entrarEdicao(disciplina)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button class="del" (click)="excluir.emit(disciplina.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+
+            }
+          }
+
+          <!-- NENHUMA DISCIPLINA -->
+          @if(currentUser && (!disciplinas || disciplinas.length === 0)){
+            <tr>
+              <td colspan="4">Nenhuma disciplina cadastrada.</td>
+            </tr>
+          }
+
+          <!-- CRIAÇÃO -->
+          @if(criando()){
+            <tr class="criacao-row">
+              <td colspan="4">
+                <div class="novo-container">
+                  <input
+                    type="text"
+                    placeholder="Nome da nova disciplina"
+                    [ngModel]="nomeCriando()"
+                    (ngModelChange)="nomeCriando.set($event)"
+                  />
+
+                  <button class="ok" (click)="confirmarCriacao()">✔</button>
+                  <button class="cancel" (click)="cancelarCriacao()">✖</button>
+                </div>
+              </td>
+            </tr>
+          }
+
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- PAGINADOR -->
+    <mat-paginator
+      [length]="length"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="trocarPagina($event)">
+    </mat-paginator>
+
+    <!-- BOTÃO ADICIONAR -->
+    <button
+      class="novo-professor-btn"
+      (click)="iniciarCriacao()"
+      mat-raised-button>
+      Nova Disciplina
+    </button>
+
+  </div>
+</div>

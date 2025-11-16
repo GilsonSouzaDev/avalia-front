@@ -1,0 +1,16 @@
+<app-cpt-gerenciar-disciplina
+  [disciplinas]="disciplinas()"
+  [quantidadeQuestoes]="qtdQuestoes"
+  [quantidadeMaterias]="qtdMaterias"
+
+  (iniciarEdicao)="iniciarEdicao($event)"
+  (confirmarEdicao)="confirmarEdicao($event)"
+  (cancelarEdicao)="cancelarEdicao()"
+
+  (excluir)="remover($event)"
+
+  (criarIniciar)="iniciarCriacao()"
+  (criarConfirmar)="confirmarCriacao($event)"
+  (criarCancelar)="cancelarCriacao()"
+>
+</app-cpt-gerenciar-disciplina>

@@ -139,6 +139,64 @@ $bg-dark: #1a1a1a;
   }
 }
 
+/* ===========================================================
+    NOVAS CLASSES — totalmente integradas ao tema existente
+   =========================================================== */
+
+
+.edit-container,
+.novo-container {
+  display: flex;
+  align-items: center;
+  gap: rem(10);
+
+  input {
+    padding: rem(6) rem(10);
+    border-radius: rem(6);
+    border: 1px solid $border-card-color;
+    background-color: $bg-light;
+    font-size: rem(14);
+    color: $text-primary;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 rem(2) rgba($primary-color, 0.25);
+    }
+  }
+
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: rem(20);
+    font-weight: bold;
+    line-height: 1;
+    padding: rem(4);
+
+    &.ok {
+      color: $success-color;
+
+      &:hover {
+        color: color.adjust($success-color, $lightness: -10%);
+      }
+    }
+
+    &.cancel {
+      color: $danger-color;
+
+      &:hover {
+        color: color.adjust($danger-color, $lightness: -10%);
+      }
+    }
+  }
+}
+
+/* Mantém padrão visual */
+.criacao-row td {
+  background-color: rgba($primary-color, 0.03);
+}
+
 .loading-spinner {
   border: rem(4) solid rgba($primary-color, 0.2);
   border-top: rem(4) solid $primary-color;
@@ -183,5 +241,3 @@ $bg-dark: #1a1a1a;
 .novo-professor-btn:hover {
   background-color: color.adjust($primary-color, $lightness: -10%) !important;
 }
-
-//vai dar bom
