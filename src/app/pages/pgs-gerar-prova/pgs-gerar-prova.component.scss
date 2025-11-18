@@ -1,0 +1,91 @@
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.global-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.step-card {
+  border: 1px solid #eee;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.profile-button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.discipline-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.available-questions {
+  margin-left: 10px;
+  font-size: 0.9em;
+  color: #6c757d;
+}
+
+.question-count-item {
+  margin-top: 10px;
+}
+
+.question-selection-area {
+  border: 1px solid #ddd;
+  padding: 15px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.discipline-section {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #eee;
+}
+
+.question-item {
+  margin-left: 20px;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-discipline-button {
+  background-color: #ffc107;
+  color: #212529;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}

@@ -14,6 +14,10 @@
         *ngFor="let pergunta of paginatedPerguntas"
         [pergunta]="pergunta"
         [professores]="professores"
+        [isSelectionMode]="isSelectionMode"
+        [isSelected]="isQuestaoSelecionada(pergunta.id)"
+        [isDisabled]="isQuestaoDesabilitada(pergunta.id)"
+        (selectToggle)="onSelectToggle($event)"
         >
       </app-cpt-card-pergunta>
 
@@ -31,4 +35,3 @@
     </ng-template>
   </div>
 </mat-card>
-

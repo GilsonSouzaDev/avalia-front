@@ -1,0 +1,134 @@
+<div class="container">
+  <h1>Gerar Avaliação (SPA)</h1>
+
+  <!-- PASSO 0 - Seleção de Perfil -->
+  <div
+    *ngIf="userProfile?.perfil === 'COORDENADOR' && currentStepValue === 0"
+    class="step-card"
+  >
+    <h2>1. Seleção de Perfil de Criação</h2>
+    <p>Como deseja criar a prova?</p>
+
+    <button (click)="selectProfile(TipoProfessor.PROFESSOR)">
+      Criar como Professor
+    </button>
+
+    <button (click)="selectProfile(TipoProfessor.COORDENADOR)">
+      Criar como Coordenador
+    </button>
+  </div>
+
+  <!-- PASSO 1 - Seleção de disciplina -->
+  <div *ngIf="currentStepValue === 1" class="step-card">
+    <h2>2. Seleção de Disciplinas e Quantidade</h2>
+
+    <form [formGroup]="disciplinaForm" (ngSubmit)="nextStep()">
+      <div class="form-group">
+        <label>Disciplinas Disponíveis:</label>
+
+        <div *ngFor="let disc of getFilteredDisciplines()" class="discipline-item">
+          <input
+            type="checkbox"
+            [id]="'disc-' + disc.id"
+            [checked]="isDisciplineSelected(disc.id)"
+            [disabled]="!isDisciplineSelectable(disc.id)"
+            (change)="onDisciplineChange(disc, $event)"
+          />
+
+          <label [for]="'disc-' + disc.id">{{ disc.nome }}</label>
+
+          <span class="available-questions">
+            ({{ getAvailableQuestions(disc.id) }} perguntas disponíveis)
+          </span>
+        </div>
+      </div>
+
+      <!-- Quantidade por disciplina -->
+      <div *ngIf="selectedDisciplines.length > 0" class="form-group">
+        <h3>Quantidade de Perguntas:</h3>
+
+        <div *ngFor="let disc of selectedDisciplines" class="question-count-item">
+          <label>{{ disc.nome }}:</label>
+
+          <select [formControlName]="'count_' + disc.id">
+            <option [ngValue]="null" disabled>Selecione</option>
+
+            <option *ngFor="let c of getQuestionCounts(disc.id)" [ngValue]="c">
+              {{ c }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="disciplinaForm.invalid">
+        Próxima Etapa
+      </button>
+    </form>
+  </div>
+
+  <!-- PASSO 2 - Seleção de Questões -->
+  <div *ngIf="currentStepValue === 2" class="step-card">
+    <h2>3. Seleção de Questões</h2>
+
+    <p>Total: {{ totalQuestionsToSelect() }}</p>
+    <p>Selecionadas: {{ avaliacaoDraft.questoesSelecionadas.length }}</p>
+
+    <div *ngFor="let disc of selectedDisciplines" class="discipline-section">
+      <h3>{{ disc.nome }} ({{ getQuestionsCountForDiscipline(disc.id) }} a selecionar)</h3>
+
+      <app-cpt-table-materia
+        [disciplina]="disc"
+        [professores]="professores"
+        [isSelectionMode]="true"
+        [selectedQuestionIds]="selectedQuestionIds"
+        [isLimitReached]="isDisciplineLimitReached(disc.id)"
+        (selectToggle)="toggleQuestao($event)"
+      ></app-cpt-table-materia>
+    </div>
+
+    <button (click)="nextStep()" [disabled]="!isSelectionComplete()">
+      Próxima Etapa (Cabeçalho)
+    </button>
+  </div>
+
+  <!-- PASSO 3 - Cabeçalho -->
+  <div *ngIf="currentStepValue === 3" class="step-card">
+    <h2>4. Montagem do Cabeçalho</h2>
+
+    <form [formGroup]="cabecalhoForm" (ngSubmit)="nextStep()">
+      <div class="form-group">
+        <label>Título:</label>
+        <input type="text" formControlName="titulo" />
+      </div>
+
+      <div class="form-group">
+        <label>Turma:</label>
+        <input type="text" formControlName="turma" />
+      </div>
+
+      <div class="form-group">
+        <label>Data:</label>
+        <input type="date" formControlName="data" />
+      </div>
+
+      <button type="submit" [disabled]="cabecalhoForm.invalid">
+        Gerar PDF
+      </button>
+    </form>
+  </div>
+
+  <!-- 🚨 BOTÕES FIXADOS NO RODAPÉ 🚨 -->
+  <div class="footer-controls">
+    <button (click)="cancelarProva()" class="cancel-button">
+      Cancelar Construção da Prova
+    </button>
+
+    <button
+      *ngIf="currentStepValue > 1"
+      (click)="cancelarSelecaoDisciplina()"
+      class="cancel-discipline-button"
+    >
+      Cancelar Seleção da Etapa
+    </button>
+  </div>
+</div>

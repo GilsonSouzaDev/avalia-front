@@ -11,7 +11,6 @@ import { authGuard } from './core/auth.guard';
 import { PgsGerenciarProfessorComponent } from './pages/pgs-gerenciar-professor/pgs-gerenciar-professor.component';
 import { PgsGerenciarDisciplinaComponent } from './pages/pgs-gerenciar-disciplina/pgs-gerenciar-disciplina.component';
 
-
 export const routes: Routes = [
   {
     path: '',
@@ -34,14 +33,14 @@ export const routes: Routes = [
       { path: 'gerenciar', component: PgsGerenciarProfessorComponent },
       { path: 'gerenciar-disc', component: PgsGerenciarDisciplinaComponent },
       { path: 'pergunta', component: PgsCadastrarPerguntaComponent },
+      {
+        path: 'gerar-prova',
+        loadComponent: () =>
+          import('./pages/pgs-gerar-prova/pgs-gerar-prova.component').then(
+            (m) => m.PgsGerarProvaComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'login' },
 ];
-
-
-
-
-
-
-

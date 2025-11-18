@@ -1,10 +1,23 @@
 <mat-card class="card-pergunta" (click)="toggleExpand()">
   <div class="cabecalho">
+    <!-- NOVO: Checkbox de Seleção (visível apenas no modo de seleção) -->
+    <div *ngIf="isSelectionMode" class="selection-control">
+      <input
+        type="checkbox"
+        [checked]="isSelected"
+        [disabled]="isDisabled && !isSelected"
+        (change)="onSelectToggle()"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+
     <h3 class="titulo">{{ pergunta.enunciado }}</h3>
-    <mat-icon class="icone" [class.rotated]="expanded">expand_more</mat-icon>
+    <!-- O ícone de expansão só aparece se não estiver no modo de seleção -->
+    <mat-icon class="icone" [class.rotated]="expanded" *ngIf="!isSelectionMode">expand_more</mat-icon>
   </div>
 
-  <div class="conteudo-expandido" *ngIf="expanded">
+  <!-- O conteúdo expandido só aparece se não estiver no modo de seleção -->
+  <div class="conteudo-expandido" *ngIf="expanded && !isSelectionMode">
     <div class="alternativas">
       <!-- substituímos o texto direto pelo componente -->
       <app-cpt-alternativa-forms
@@ -20,6 +33,7 @@
     </p>
 
     <div class="action-buttons">
+      <!-- Botões de ação só aparecem se não estiver no modo de seleção -->
       <button
         mat-icon-button
         color="primary"
