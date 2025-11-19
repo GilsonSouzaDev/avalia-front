@@ -1,134 +1,156 @@
 <div class="container">
   <h1>Gerar Avaliação (SPA)</h1>
 
-  <!-- PASSO 0 - Seleção de Perfil -->
-  <div
-    *ngIf="userProfile?.perfil === 'COORDENADOR' && currentStepValue === 0"
-    class="step-card"
-  >
-    <h2>1. Seleção de Perfil de Criação</h2>
-    <p>Como deseja criar a prova?</p>
+  <!-- PASSO 0: Escolha de Perfil -->
+  <div *ngIf="userProfile?.tipo === TipoProfessor.COORDENADOR && currentStepValue === 0" class="step-card fade-in">
+    <h2>1. Seleção de Perfil</h2>
+    <div class="profile-actions">
+      <button class="profile-button" (click)="selectProfile(TipoProfessor.PROFESSOR)">
+        <span class="icon">👨‍🏫</span>
+        <span>Criar como Professor</span>
+        <small>(Apenas minhas disciplinas)</small>
+      </button>
 
-    <button (click)="selectProfile(TipoProfessor.PROFESSOR)">
-      Criar como Professor
-    </button>
-
-    <button (click)="selectProfile(TipoProfessor.COORDENADOR)">
-      Criar como Coordenador
-    </button>
+      <button class="profile-button" (click)="selectProfile(TipoProfessor.COORDENADOR)">
+        <span class="icon">🎓</span>
+        <span>Criar como Coordenador</span>
+        <small>(Acesso a todas disciplinas)</small>
+      </button>
+    </div>
   </div>
 
-  <!-- PASSO 1 - Seleção de disciplina -->
-  <div *ngIf="currentStepValue === 1" class="step-card">
-    <h2>2. Seleção de Disciplinas e Quantidade</h2>
+  <!-- PASSO 1: Seleção de Disciplinas e Quantidade Total -->
+  <div *ngIf="currentStepValue === 1" class="step-card fade-in">
+    <h2>2. Configuração da Prova</h2>
 
     <form [formGroup]="disciplinaForm" (ngSubmit)="nextStep()">
+
+      <!-- SELEÇÃO DE DISCIPLINAS -->
       <div class="form-group">
-        <label>Disciplinas Disponíveis:</label>
+        <label>
+          Selecione a(s) disciplina(s):
+          <small *ngIf="perfilCriacao === TipoProfessor.PROFESSOR" style="font-weight:normal; color:#666;">(Apenas suas)</small>
+          <small *ngIf="perfilCriacao === TipoProfessor.COORDENADOR" style="font-weight:normal; color:#3f51b5;">(Multi-seleção com Ctrl)</small>
+        </label>
 
-        <div *ngFor="let disc of getFilteredDisciplines()" class="discipline-item">
-          <input
-            type="checkbox"
-            [id]="'disc-' + disc.id"
-            [checked]="isDisciplineSelected(disc.id)"
-            [disabled]="!isDisciplineSelectable(disc.id)"
-            (change)="onDisciplineChange(disc, $event)"
-          />
+        <select *ngIf="perfilCriacao === TipoProfessor.COORDENADOR"
+          class="form-control disciplina-select" multiple size="8"
+          (change)="onDisciplinaSelectChange($event)">
+          <option *ngFor="let d of disciplinasDisponiveis" [value]="d.id">{{ d.nome }}</option>
+        </select>
 
-          <label [for]="'disc-' + disc.id">{{ disc.nome }}</label>
+        <select *ngIf="perfilCriacao === TipoProfessor.PROFESSOR"
+          class="form-control disciplina-select"
+          (change)="onDisciplinaSelectChange($event)">
+          <option value="" disabled selected>Selecione...</option>
+          <option *ngFor="let d of disciplinasDisponiveis" [value]="d.id">{{ d.nome }}</option>
+        </select>
 
-          <span class="available-questions">
-            ({{ getAvailableQuestions(disc.id) }} perguntas disponíveis)
-          </span>
+        <div *ngIf="disciplinaForm.get('disciplinaIds')?.invalid && disciplinaForm.touched" class="error-message">
+          ⚠️ Selecione ao menos uma disciplina.
         </div>
       </div>
 
-      <!-- Quantidade por disciplina -->
-      <div *ngIf="selectedDisciplines.length > 0" class="form-group">
-        <h3>Quantidade de Perguntas:</h3>
+      <!-- BLOCO ÚNICO DE QUANTIDADE (SIMPLIFICADO) -->
+      <div *ngIf="selectedDisciplines.length > 0" class="total-block fade-in">
+        <div class="total-info">
+          <span class="label">Total de questões disponíveis no Banco:</span>
+          <span class="value">{{ totalPerguntasDisponiveisNoBanco }}</span>
+        </div>
 
-        <div *ngFor="let disc of selectedDisciplines" class="question-count-item">
-          <label>{{ disc.nome }}:</label>
-
-          <select [formControlName]="'count_' + disc.id">
-            <option [ngValue]="null" disabled>Selecione</option>
-
-            <option *ngFor="let c of getQuestionCounts(disc.id)" [ngValue]="c">
-              {{ c }}
-            </option>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="qtdTotal">Quantas questões deseja na prova?</label>
+          <select id="qtdTotal" formControlName="quantidadeTotal" class="form-control">
+             <option [ngValue]="null" disabled>Selecione a quantidade...</option>
+             <option *ngFor="let n of getRangeTotalAvailable()" [ngValue]="n">{{ n }} Questões</option>
           </select>
+
+          <div *ngIf="disciplinaForm.get('quantidadeTotal')?.invalid && disciplinaForm.touched" class="error-message">
+             Defina a quantidade de questões da prova.
+          </div>
         </div>
       </div>
 
-      <button type="submit" [disabled]="disciplinaForm.invalid">
-        Próxima Etapa
-      </button>
+      <div class="actions-right">
+        <button type="submit" class="btn-primary" [disabled]="disciplinaForm.invalid || disciplinasDisponiveis.length === 0">
+          Selecionar Questões &rarr;
+        </button>
+      </div>
     </form>
   </div>
 
-  <!-- PASSO 2 - Seleção de Questões -->
-  <div *ngIf="currentStepValue === 2" class="step-card">
-    <h2>3. Seleção de Questões</h2>
-
-    <p>Total: {{ totalQuestionsToSelect() }}</p>
-    <p>Selecionadas: {{ avaliacaoDraft.questoesSelecionadas.length }}</p>
-
-    <div *ngFor="let disc of selectedDisciplines" class="discipline-section">
-      <h3>{{ disc.nome }} ({{ getQuestionsCountForDiscipline(disc.id) }} a selecionar)</h3>
-
-      <app-cpt-table-materia
-        [disciplina]="disc"
-        [professores]="professores"
-        [isSelectionMode]="true"
-        [selectedQuestionIds]="selectedQuestionIds"
-        [isLimitReached]="isDisciplineLimitReached(disc.id)"
-        (selectToggle)="toggleQuestao($event)"
-      ></app-cpt-table-materia>
+  <!-- PASSO 2: Seleção de Questões (Modo Livre) -->
+  <div *ngIf="currentStepValue === 2" class="step-card fade-in">
+    <div class="step-header">
+      <h2>3. Seleção de Questões</h2>
+      <div class="stats">
+        <span [class.complete]="isSelectionComplete()">
+          Selecionadas: <strong>{{ avaliacaoDraft.questoesSelecionadas.length || 0 }}</strong> / {{ quantidadeDesejada }}
+        </span>
+      </div>
     </div>
 
-    <button (click)="nextStep()" [disabled]="!isSelectionComplete()">
-      Próxima Etapa (Cabeçalho)
-    </button>
+    <p class="instruction-text">
+      Você pode selecionar questões livremente de qualquer uma das disciplinas abaixo até atingir o total de <strong>{{ quantidadeDesejada }}</strong>.
+    </p>
+
+    <div class="question-selection-area">
+      <div *ngFor="let d of selectedDisciplines" class="discipline-section">
+        <h3 class="discipline-title">
+          {{ d.nome }}
+          <!-- Mostra quantas foram pegas dessa matéria, meramente informativo -->
+          <small>({{ getQuestionsCountForDiscipline(d.id) }} selecionadas)</small>
+        </h3>
+
+        <app-cpt-table-materia
+          [disciplina]="d"
+          [professores]="professores"
+          [isSelectionMode]="true"
+          [selectedQuestionIds]="selectedQuestionIds"
+          [isLimitReached]="isSelectionBlocked()"
+          (selectToggle)="toggleQuestao($event)"
+        >
+        </app-cpt-table-materia>
+      </div>
+    </div>
+
+    <div class="actions-right">
+      <button class="btn-primary" (click)="nextStep()" [disabled]="!isSelectionComplete()">
+        Próxima Etapa (Cabeçalho) &rarr;
+      </button>
+    </div>
   </div>
 
-  <!-- PASSO 3 - Cabeçalho -->
-  <div *ngIf="currentStepValue === 3" class="step-card">
+  <!-- PASSO 3: Cabeçalho -->
+  <div *ngIf="currentStepValue === 3" class="step-card fade-in">
     <h2>4. Montagem do Cabeçalho</h2>
-
     <form [formGroup]="cabecalhoForm" (ngSubmit)="nextStep()">
-      <div class="form-group">
-        <label>Título:</label>
-        <input type="text" formControlName="titulo" />
+      <!-- Mesma estrutura de antes -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Título da Prova</label>
+          <input type="text" class="form-control" formControlName="titulo" />
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>Turma:</label>
-        <input type="text" formControlName="turma" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Turma</label>
+          <input type="text" class="form-control" formControlName="turma" />
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" class="form-control" formControlName="data" />
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>Data:</label>
-        <input type="date" formControlName="data" />
+      <div class="actions-right">
+        <button type="submit" class="btn-success" [disabled]="cabecalhoForm.invalid">✅ Gerar PDF</button>
       </div>
-
-      <button type="submit" [disabled]="cabecalhoForm.invalid">
-        Gerar PDF
-      </button>
     </form>
   </div>
 
-  <!-- 🚨 BOTÕES FIXADOS NO RODAPÉ 🚨 -->
+  <!-- Footer -->
   <div class="footer-controls">
-    <button (click)="cancelarProva()" class="cancel-button">
-      Cancelar Construção da Prova
-    </button>
-
-    <button
-      *ngIf="currentStepValue > 1"
-      (click)="cancelarSelecaoDisciplina()"
-      class="cancel-discipline-button"
-    >
-      Cancelar Seleção da Etapa
-    </button>
+    <button class="btn-text-danger" (click)="cancelarProva()">✖ Cancelar Prova</button>
+    <button *ngIf="currentStepValue > 1" class="btn-text-secondary" (click)="cancelarSelecaoDisciplina()">↺ Voltar etapa</button>
   </div>
 </div>

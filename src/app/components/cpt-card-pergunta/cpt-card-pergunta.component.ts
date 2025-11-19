@@ -1,46 +1,46 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
 import { Pergunta } from '../../interfaces/Pergunta';
 import { Professor } from '../../interfaces/Professor';
-import { MatCard } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
 import { NomeProfessorPipe } from '../../pipes/nome-professor.pipe';
-import { CommonModule } from '@angular/common';
 import { CptAlternativaFormsComponent } from '../cpt-alternativa-forms/cpt-alternativa-forms.component';
 
 @Component({
   selector: 'app-cpt-card-pergunta',
-  standalone: true, // Adicionado standalone: true se não estava
+  standalone: true,
   imports: [
-    MatCard,
-    MatIcon,
-    NomeProfessorPipe,
     CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    NomeProfessorPipe,
     CptAlternativaFormsComponent,
   ],
   templateUrl: './cpt-card-pergunta.component.html',
-  styleUrl: './cpt-card-pergunta.component.scss',
+  styleUrls: ['./cpt-card-pergunta.component.scss'],
 })
 export class CptCardPerguntaComponent {
-  @Input() pergunta!: Pergunta;
+  @Input({ required: true }) pergunta!: Pergunta;
   @Input() professores: Professor[] = [];
 
-  // NOVOS INPUTS PARA O MODO DE SELEÇÃO
+  // Inputs de Controle de Estado
   @Input() isSelectionMode: boolean = false;
   @Input() isSelected: boolean = false;
-  @Input() isDisabled: boolean = false; // Para desabilitar se o limite for atingido
+  @Input() isDisabled: boolean = false;
 
   @Output() edit = new EventEmitter<Pergunta>();
   @Output() delete = new EventEmitter<number>();
-  // NOVO OUTPUT PARA A SELEÇÃO
   @Output() selectToggle = new EventEmitter<Pergunta>();
 
   expanded = false;
 
+  // Permite expandir em qualquer modo para ver as alternativas
   toggleExpand(): void {
-    // Só expande se não estiver no modo de seleção
-    if (!this.isSelectionMode) {
-      this.expanded = !this.expanded;
-    }
+    this.expanded = !this.expanded;
   }
 
   onSelectToggle(): void {
@@ -49,25 +49,28 @@ export class CptCardPerguntaComponent {
     }
   }
 
+  // Bloqueia disparo de evento se estiver em modo seleção (segurança extra)
   onEdit(): void {
-    // Só permite edição se não estiver no modo de seleção
     if (!this.isSelectionMode) {
       this.edit.emit(this.pergunta);
     }
   }
 
   onDelete(): void {
-    // Só permite exclusão se não estiver no modo de seleção
     if (!this.isSelectionMode) {
       this.delete.emit(this.pergunta.id);
     }
   }
 
   onAlterarTexto(event: { index: number; texto: string }) {
-    this.pergunta.alternativas[event.index].texto = event.texto;
+    // Apenas atualiza se não estiver em modo seleção (embora o componente nem apareça)
+    if (!this.isSelectionMode) {
+      this.pergunta.alternativas[event.index].texto = event.texto;
+    }
   }
 
-  onRemoverAlternativa(index: number) {
-    this.pergunta.alternativas.splice(index, 1);
+  // Auxiliar visual
+  getLetra(index: number): string {
+    return String.fromCharCode(97 + index); // a, b, c...
   }
 }

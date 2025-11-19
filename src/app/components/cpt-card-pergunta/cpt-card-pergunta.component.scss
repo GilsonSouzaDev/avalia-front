@@ -1,11 +1,13 @@
 .card-pergunta {
+  // --- ESTILOS ORIGINAIS (Mantidos) ---
   margin: 0.5rem 0;
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: all 0.3s ease; // Alterado de box-shadow para all para animar borda/bg também
 
   position: relative;
   padding: 0.5rem;
+  border: 1px solid transparent; // Prepara para a borda de seleção
 
   &.expanded-padding {
     padding-bottom: 3.5rem;
@@ -15,40 +17,117 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 
+  // --- NOVOS ESTILOS (Modo Seleção) ---
+  &.selected {
+    border-color: #3f51b5;
+    background-color: #f0f4ff; // Um fundo azul bem suave para indicar seleção
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    background-color: #f9f9f9;
+    border-color: #e0e0e0;
+  }
+
+  // --- CABEÇALHO ---
   .cabecalho {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; // Mantido original
     align-items: center;
     padding: 0.5rem;
+    gap: 12px; // Adicionado gap para separar checkbox do título
+  }
+
+  // Novo container para checkbox
+  .selection-control {
+    display: flex;
+    align-items: center;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3f51b5;
+    }
+  }
+
+  // Novo container para agrupar Título + Professor (para não quebrar layout flex)
+  .titulo-container {
+    flex: 1; // Ocupa o espaço restante
+    display: flex;
+    flex-direction: column;
   }
 
   .titulo {
     margin: 0;
     font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  .prof-label {
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 4px;
   }
 
   .icone {
     transition: transform 0.3s ease;
+    color: #666; // Cor base para o ícone
 
     &.rotated {
       transform: rotate(180deg);
     }
   }
 
+  // --- CONTEÚDO EXPANDIDO ---
   .conteudo-expandido {
     margin-top: 0.5rem;
     padding: 0 0.75rem;
+    animation: fadeIn 0.2s ease;
 
-    .alternativas {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+    // 1. Modo Edição (Estilos Originais da classe .alternativas)
+    .modo-edicao {
+      .alternativas-editaveis {
+        // Renomeei no HTML para não conflitar, mas mantendo estilo visual
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
 
-      .alternativa {
-        background: #f7f7f7;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        line-height: 1.4;
+      // Estilos para o componente filho (cpt-alternativa-forms) se necessário
+      // O componente filho já deve ter seus estilos, aqui só controlamos o layout
+    }
+
+    // 2. Modo Leitura (Novos Estilos para PDF/Seleção)
+    .modo-leitura {
+      margin-bottom: 1rem;
+
+      .label-alternativas {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.5rem;
+      }
+
+      .lista-alternativas-readonly {
+        margin: 0;
+        padding-left: 1.5rem; // Espaço para os bullets
+        list-style-type: disc; // Bolinhas padrão
+
+        li {
+          margin-bottom: 0.4rem;
+          line-height: 1.4;
+          color: #444;
+          font-size: 0.95rem;
+        }
+      }
+
+      .aviso-vazio {
+        color: #999;
+        font-style: italic;
+        font-size: 0.875rem;
       }
     }
 
@@ -56,10 +135,14 @@
       font-size: 0.875rem;
       color: #555;
       margin-top: 0.75rem;
+      border-top: 1px solid #eee;
+      padding-top: 0.5rem;
     }
   }
 }
 
+// --- BOTÕES DE AÇÃO (Mantidos Originais) ---
+// Eles ficam fora do fluxo normal (absolute), usados apenas no modo edição
 .action-buttons {
   position: absolute;
   bottom: 8px;
@@ -67,4 +150,18 @@
   display: flex;
   gap: 4px;
   z-index: 10;
+
+  // Garante que os botões tenham fundo branco semi-transparente caso fiquem sobre texto
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
