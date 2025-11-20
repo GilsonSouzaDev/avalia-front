@@ -1,111 +1,52 @@
 .alternativa-item {
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 10px 12px;
-  margin-bottom: 8px;
   justify-content: space-between;
 
-  .alternativa-label {
-    font-weight: bold;
-    color: #444;
-    width: 20px;
-  }
-
-  .alternativa-texto {
-    flex: 1;
-    margin: 0 10px;
-  }
-
-  .alternativa-input {
-    flex: 1;
-    margin: 0 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 6px 8px;
-  }
-
-  .actions {
-    display: flex;
-    gap: 6px;
-
-    button {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 16px;
-
-      &.btn-edit:hover {
-        color: #007bff;
-      }
-
-.alternativa-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 10px 12px;
+  border-radius: 8px; // Um pouco mais arredondado para combinar com o card pai
+  border: 1px solid #eee; // Borda sutil
+  padding: 4px 8px 4px 16px; // Padding ajustado para os botões icon
   margin-bottom: 8px;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  }
 
   .alternativa-texto {
     flex: 1;
     margin-right: 10px;
-    font-size: 16px;
+    font-size: 0.95rem;
     color: #333;
+    line-height: 1.4;
   }
 
   .alternativa-input {
     flex: 1;
     margin-right: 10px;
+
+    // Estilo do input mais moderno
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 16px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: #3f51b5; // Azul primary
+    }
   }
 
   .actions {
     display: flex;
-    gap: 6px;
+    align-items: center;
+    gap: 0; // O mat-icon-button já tem seu próprio espaçamento interno
 
-    button {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 16px;
-      transition: color 0.2s;
-
-      &.btn-edit:hover {
-        color: #007bff;
-      }
-
-      &.btn-remove:hover {
-        color: #ff4d4d;
-      }
-
-      &.btn-save:hover {
-        color: #38a169;
-      }
-
-      &.btn-cancel:hover {
-        color: #999;
-      }
+    // Personalização específica para o botão de Salvar ficar verde
+    .btn-save {
+      color: #2e7d32; // Verde Material Design
     }
   }
-}        color: #ff4d4d;
-      }
-
-      &.btn-save:hover {
-        color: #38a169;
-      }
-
-      &.btn-cancel:hover {
-        color: #999;
-      }
-    }
-
 }
-

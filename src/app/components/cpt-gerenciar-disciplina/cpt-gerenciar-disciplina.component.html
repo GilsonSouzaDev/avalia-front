@@ -32,23 +32,33 @@
                 <!-- NOME / EDIÇÃO -->
                 <td>
                   @if(editandoId() !== disciplina.id) {
-                    <span>
-                      {{ disciplina.nome }}
-                    </span>
+                    <span>{{ disciplina.nome }}</span>
                   } @else {
+                    <!-- MODO EDIÇÃO (INPUT) -->
                     <div class="edit-container">
                       <input
                         type="text"
                         [ngModel]="nomeEditando()"
                         (ngModelChange)="nomeEditando.set($event)"
+                        (keydown.enter)="confirmarEdicaoClick(disciplina.id)"
+                        (keydown.escape)="cancelarEdicaoClick()"
+                        autoFocus
                       />
 
-                      <button class="ok" (click)="confirmarEdicaoClick(disciplina.id)">
-                        ✔
+                      <!-- Botão Confirmar (Verde) -->
+                      <button
+                        mat-icon-button
+                        class="btn-success"
+                        (click)="confirmarEdicaoClick(disciplina.id)">
+                        <mat-icon>check</mat-icon>
                       </button>
 
-                      <button class="cancel" (click)="cancelarEdicaoClick()">
-                        ✖
+                      <!-- Botão Cancelar (Vermelho) -->
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="cancelarEdicaoClick()">
+                        <mat-icon>close</mat-icon>
                       </button>
                     </div>
                   }
@@ -57,14 +67,25 @@
                 <td>{{ quantidadeQuestoes(disciplina) }}</td>
                 <td>{{ quantidadeMaterias(disciplina) }}</td>
 
-                <td>
-                  <button class="edit" (click)="entrarEdicao(disciplina)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
+                <!-- AÇÕES (EDITAR / EXCLUIR) -->
+                <td class="col-acoes">
+                  <div class="actions-flex">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="entrarEdicao(disciplina)"
+                      matTooltip="Editar Disciplina">
+                      <mat-icon>edit</mat-icon>
+                    </button>
 
-                  <button class="del" (click)="excluir.emit(disciplina.id)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="excluir.emit(disciplina.id)"
+                      matTooltip="Excluir Disciplina">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
                 </td>
               </tr>
 
@@ -74,11 +95,11 @@
           <!-- NENHUMA DISCIPLINA -->
           @if(currentUser && (!disciplinas || disciplinas.length === 0)){
             <tr>
-              <td colspan="4">Nenhuma disciplina cadastrada.</td>
+              <td colspan="4" class="text-center">Nenhuma disciplina cadastrada.</td>
             </tr>
           }
 
-          <!-- CRIAÇÃO -->
+          <!-- CRIAÇÃO (NOVA LINHA) -->
           @if(criando()){
             <tr class="criacao-row">
               <td colspan="4">
@@ -88,17 +109,32 @@
                     placeholder="Nome da nova disciplina"
                     [ngModel]="nomeCriando()"
                     (ngModelChange)="nomeCriando.set($event)"
+                    (keydown.enter)="confirmarCriacao()"
+                    (keydown.escape)="cancelarCriacao()"
+                    autoFocus
                   />
 
-                  <button class="ok" (click)="confirmarCriacao()">✔</button>
-                  <button class="cancel" (click)="cancelarCriacao()">✖</button>
+                  <!-- Botão Confirmar (Verde) -->
+                  <button
+                    mat-icon-button
+                    class="btn-success"
+                    (click)="confirmarCriacao()">
+                    <mat-icon>check</mat-icon>
+                  </button>
+
+                  <!-- Botão Cancelar (Vermelho) -->
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="cancelarCriacao()">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </div>
               </td>
             </tr>
           }
 
         </tbody>
-
       </table>
     </div>
 
@@ -111,13 +147,17 @@
       (page)="trocarPagina($event)">
     </mat-paginator>
 
-    <!-- BOTÃO ADICIONAR -->
-    <button
-      class="novo-professor-btn"
-      (click)="iniciarCriacao()"
-      mat-raised-button>
-      Nova Disciplina
-    </button>
+    <!-- BOTÃO ADICIONAR (MANTIDO ESTILO RAISED PARA DESTAQUE) -->
+    <div class="footer-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        class="novo-btn"
+        (click)="iniciarCriacao()">
+        <mat-icon>add</mat-icon>
+        Nova Disciplina
+      </button>
+    </div>
 
   </div>
 </div>

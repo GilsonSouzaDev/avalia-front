@@ -6,7 +6,7 @@
   <!-- CABEÇALHO: Clique no card expande/recolhe -->
   <div class="cabecalho" (click)="toggleExpand()">
 
-    <!-- CONTROLE DE SELEÇÃO (Esquerda) -->
+    <!-- CONTROLE DE SELEÇÃO (Apenas modo seleção) -->
     <div *ngIf="isSelectionMode" class="selection-control" (click)="$event.stopPropagation()">
       <input
         type="checkbox"
@@ -22,14 +22,14 @@
       <span class="prof-label">Prof. {{ pergunta.codigoProfessor | nomeProfessor: professores }}</span>
     </div>
 
-    <!-- Ícone de expansão (Sempre visível agora) -->
+    <!-- Ícone de expansão -->
     <mat-icon class="icone-expand" [class.rotated]="expanded">expand_more</mat-icon>
   </div>
 
   <!-- CONTEÚDO EXPANDIDO -->
   <div class="conteudo-expandido" *ngIf="expanded">
 
-    <!-- MODO LEITURA (Geração de Prova) -->
+    <!-- MODO LEITURA (Visualização para Seleção) -->
     <div *ngIf="isSelectionMode" class="modo-leitura">
       <p class="label-alternativas">Alternativas:</p>
       <ul class="lista-alternativas-readonly">
@@ -42,6 +42,8 @@
 
     <!-- MODO EDIÇÃO (CRUD) -->
     <div *ngIf="!isSelectionMode" class="modo-edicao">
+
+      <!-- Lista de Inputs das Alternativas -->
       <div class="alternativas-editaveis">
         <app-cpt-alternativa-forms
           *ngFor="let alt of pergunta.alternativas; let i = index"
@@ -51,8 +53,13 @@
         ></app-cpt-alternativa-forms>
       </div>
 
-      <!-- Botões de Ação (Apenas CRUD) -->
-      <div class="action-buttons">
+      <!--
+        RODAPÉ DE AÇÕES
+        - Layout Flex (não sobrepõe texto)
+        - Estilo: mat-button (Transparente com texto colorido)
+      -->
+      <div class="footer-actions">
+        <!-- Botão Editar: Azul transparente -->
         <button
           mat-button
           color="primary"
@@ -61,7 +68,9 @@
           <mat-icon>edit</mat-icon> Editar
         </button>
 
+        <!-- Botão Excluir: Vermelho transparente (Só COORDENADOR) -->
         <button
+          *ngIf="isCoordenador"
           mat-button
           color="warn"
           (click)="onDelete(); $event.stopPropagation()"
@@ -69,7 +78,7 @@
           <mat-icon>delete</mat-icon> Excluir
         </button>
       </div>
-    </div>
 
+    </div>
   </div>
 </mat-card>

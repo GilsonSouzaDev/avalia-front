@@ -1,17 +1,18 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Alternativa } from '../../interfaces/Alternativa';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Alternativa } from '../../interfaces/Alternativa';
 
 @Component({
   selector: 'app-cpt-alternativa-forms',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatIconModule],
   templateUrl: './cpt-alternativa-forms.component.html',
   styleUrl: './cpt-alternativa-forms.component.scss',
 })
-export class CptAlternativaFormsComponent {
-
+export class CptAlternativaFormsComponent implements OnInit {
   @Input() alternativa!: Alternativa;
   @Input() index!: number;
   @Input() editavel: boolean = true;
@@ -32,6 +33,7 @@ export class CptAlternativaFormsComponent {
 
   confirmarEdicao(): void {
     this.editMode = false;
+    // Se o texto estiver vazio, opcionalmente pode reverter ou salvar vazio
     this.textoChange.emit({ index: this.index, texto: this.textoTemp });
   }
 
@@ -39,8 +41,4 @@ export class CptAlternativaFormsComponent {
     this.editMode = false;
     this.textoTemp = this.alternativa.texto;
   }
-
-
-
-
 }

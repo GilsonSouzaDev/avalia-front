@@ -1,5 +1,5 @@
-import { Cabecalho } from "./Cabecalho";
-import { Pergunta } from "./Pergunta";
+import { Cabecalho } from './Cabecalho';
+import { Pergunta } from './Pergunta';
 
 export interface Avaliacao {
   cabecalho: Cabecalho;
@@ -11,6 +11,7 @@ export interface AvaliacaoDraft {
   disciplinaNome?: string;
   isMista?: boolean;
   quantidadePerguntas?: number;
+  selectedDisciplinaIds?: number[];
   questoesSelecionadas: Pergunta[];
   cabecalho?: Partial<Cabecalho>;
 }

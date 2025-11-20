@@ -71,12 +71,10 @@ export class PgsGerarProvaComponent implements OnInit {
   disciplinaForm!: FormGroup;
   cabecalhoForm!: FormGroup;
 
-  // Variáveis para os novos controles
   minDate: string = '';
   durationOptions: string[] = [];
 
   constructor() {
-    // Define a data mínima como hoje
     this.minDate = new Date().toISOString().split('T')[0];
     this.generateDurationOptions();
 
@@ -129,8 +127,6 @@ export class PgsGerarProvaComponent implements OnInit {
       quantidadeTotal: [null, [Validators.required, Validators.min(1)]],
     });
 
-    // FORMULÁRIO OTIMIZADO:
-    // Removidos: Professor e Disciplina (serão automáticos)
     this.cabecalhoForm = this.fb.group({
       curso: ['', Validators.required],
       titulo: ['', Validators.required],
@@ -138,15 +134,14 @@ export class PgsGerarProvaComponent implements OnInit {
       periodo: ['', Validators.required],
       data: ['', Validators.required],
       totalPontos: ['10.0', Validators.required],
-      duracao: ['', Validators.required], // Agora será um select
+      duracao: ['', Validators.required],
     });
   }
 
-  // Gera opções de 30 min a 4 horas
   private generateDurationOptions() {
     const options = [];
     let minutes = 30;
-    const maxMinutes = 4 * 60; // 4 horas
+    const maxMinutes = 4 * 60;
 
     while (minutes <= maxMinutes) {
       const hours = Math.floor(minutes / 60);
@@ -215,21 +210,37 @@ export class PgsGerarProvaComponent implements OnInit {
     return Array.from({ length: max }, (_, i) => i + 1);
   }
 
+  // --- CORREÇÃO CRÍTICA: syncFormWithDraft ---
+  // Agora prioriza a lista 'selectedDisciplinaIds' salva, em vez de adivinhar pelas perguntas
   private syncFormWithDraft(): void {
     if (!this.avaliacaoDraft) return;
 
-    // Sync Disciplinas e Quantidade
-    const discId = (this.avaliacaoDraft as any).disciplinaId;
     let ids: number[] = [];
-    if (discId) ids = [discId];
-    else
+
+    // 1. Tenta recuperar a lista exata salva no passo 1
+    if (
+      this.avaliacaoDraft.selectedDisciplinaIds &&
+      this.avaliacaoDraft.selectedDisciplinaIds.length > 0
+    ) {
+      ids = this.avaliacaoDraft.selectedDisciplinaIds;
+    }
+    // 2. Fallback para disciplina única (legado ou modo professor simples)
+    else if ((this.avaliacaoDraft as any).disciplinaId) {
+      ids = [(this.avaliacaoDraft as any).disciplinaId];
+    }
+    // 3. Último recurso: recupera das perguntas (apenas se não tiver a lista acima)
+    else {
       ids =
         (this.avaliacaoDraft.questoesSelecionadas || [])
           .map((q: Pergunta) => q.disciplinaId)
           .filter((v: number, i: number, a: number[]) => a.indexOf(v) === i) ||
         [];
+    }
 
-    if (ids.length) this.onDisciplinaSelectChange(ids);
+    if (ids.length) {
+      this.onDisciplinaSelectChange(ids);
+    }
+
     if ((this.avaliacaoDraft as any).quantidadePerguntas) {
       this.disciplinaForm
         .get('quantidadeTotal')
@@ -284,6 +295,8 @@ export class PgsGerarProvaComponent implements OnInit {
     }
   }
 
+  // --- CORREÇÃO CRÍTICA: saveStep1State ---
+  // Salva explicitamente a lista de IDs no campo novo 'selectedDisciplinaIds'
   saveStep1State(): void {
     const ids: number[] = this.disciplinaForm.get('disciplinaIds')?.value || [];
     this.quantidadeDesejada = Number(
@@ -301,6 +314,7 @@ export class PgsGerarProvaComponent implements OnInit {
         : 'Prova Multidisciplinar',
       isMista: ids.length > 1,
       quantidadePerguntas: this.quantidadeDesejada,
+      selectedDisciplinaIds: ids, // <--- AQUI: Salva a seleção para não perder depois
     });
 
     const newSelectedQuestions = (
@@ -357,13 +371,7 @@ export class PgsGerarProvaComponent implements OnInit {
     if (!this.cabecalhoForm) return;
     const val = this.cabecalhoForm.value;
 
-    // LÓGICA AUTOMÁTICA AQUI
-    // 1. Define Professor (Nome do user logado)
     const nomeProfessor = this.userProfile?.nome || 'Professor';
-
-    // 2. Define Disciplina
-    // Se Coordenador -> "Prova Geral"
-    // Se Professor -> Nome da disciplina do Draft (definido no passo 1)
     let nomeDisciplina = '';
     if (this.perfilCriacao === TipoProfessor.COORDENADOR) {
       nomeDisciplina = 'Prova Geral';
@@ -379,7 +387,6 @@ export class PgsGerarProvaComponent implements OnInit {
       totalPontos: val.totalPontos,
       duracao: val.duracao,
       data: val.data ? new Date(val.data) : new Date(),
-      // Campos automáticos
       professor: nomeProfessor,
       disciplina: nomeDisciplina,
     };

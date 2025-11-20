@@ -27,7 +27,11 @@ export class CptCardPerguntaComponent {
   @Input({ required: true }) pergunta!: Pergunta;
   @Input() professores: Professor[] = [];
 
-  // Inputs de Controle de Estado
+  // --- CONTROLE DE PERMISSÃO ---
+  // Recebe o tipo do usuário: 'PROFESSOR' ou 'COORDENADOR'
+  @Input() userTipo: string = '';
+
+  // Estados do Card
   @Input() isSelectionMode: boolean = false;
   @Input() isSelected: boolean = false;
   @Input() isDisabled: boolean = false;
@@ -38,7 +42,11 @@ export class CptCardPerguntaComponent {
 
   expanded = false;
 
-  // Permite expandir em qualquer modo para ver as alternativas
+  // Helper para verificar permissão no template de forma limpa
+  get isCoordenador(): boolean {
+    return this.userTipo === 'COORDENADOR';
+  }
+
   toggleExpand(): void {
     this.expanded = !this.expanded;
   }
@@ -49,7 +57,6 @@ export class CptCardPerguntaComponent {
     }
   }
 
-  // Bloqueia disparo de evento se estiver em modo seleção (segurança extra)
   onEdit(): void {
     if (!this.isSelectionMode) {
       this.edit.emit(this.pergunta);
@@ -57,20 +64,19 @@ export class CptCardPerguntaComponent {
   }
 
   onDelete(): void {
-    if (!this.isSelectionMode) {
+    // Garante que só emite o evento se for coordenador (segurança lógica)
+    if (!this.isSelectionMode && this.isCoordenador) {
       this.delete.emit(this.pergunta.id);
     }
   }
 
   onAlterarTexto(event: { index: number; texto: string }) {
-    // Apenas atualiza se não estiver em modo seleção (embora o componente nem apareça)
     if (!this.isSelectionMode) {
       this.pergunta.alternativas[event.index].texto = event.texto;
     }
   }
 
-  // Auxiliar visual
   getLetra(index: number): string {
-    return String.fromCharCode(97 + index); // a, b, c...
+    return String.fromCharCode(97 + index); // Retorna a, b, c...
   }
 }

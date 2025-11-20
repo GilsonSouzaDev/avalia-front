@@ -18,6 +18,7 @@
         [isSelected]="isQuestaoSelecionada(pergunta.id)"
         [isDisabled]="isQuestaoDesabilitada(pergunta.id)"
         (selectToggle)="onSelectToggle($event)"
+        (edit)="onEdit($event)"
         >
       </app-cpt-card-pergunta>
 

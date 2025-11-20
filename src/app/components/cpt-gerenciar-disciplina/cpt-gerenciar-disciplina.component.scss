@@ -1,28 +1,19 @@
 @use 'sass:color';
 @use 'sass:math';
 
-$bg-body-color: #EBEBEB;
-$nav-menu-color: #E4E4E4;
-$primary-color: #60A5FA;
-$second-color: #09234F;
+// --- VARIÁVEIS (Limpo: Apenas o necessário) ---
+$primary-color: #60A5FA; // Azul Principal
+$second-color: #09234F; // Azul Escuro (Header Tabela)
+$success-color: #2ecc71; // Verde
+$danger-color: #e74c3c; // Vermelho
 
 $bg-card: #FFFDFD;
+$bg-light: #f5f5f5;
 $border-card-color: #E1E1E1;
-$fontcard: 'Baloo 2', sans-serif;
-
-$adm-bg-color: #F3F3F3;
-
-$accent-color: #f8c300;
-$danger-color: #e74c3c;
-$success-color: #2ecc71;
-$warning-color: #f1c40f;
 
 $text-primary: #333333;
 $text-secondary: #777777;
 $text-light: #ffffff;
-
-$bg-light: #f5f5f5;
-$bg-dark: #1a1a1a;
 
 @function rem($pixels, $context: 16) {
   @return math.div($pixels, $context) * 1rem;
@@ -57,6 +48,10 @@ $bg-dark: #1a1a1a;
     text-align: center;
     color: $text-secondary;
   }
+
+  &__content {
+    padding-bottom: rem(16);
+  }
 }
 
 .table-responsive {
@@ -73,12 +68,18 @@ $bg-dark: #1a1a1a;
     padding: rem(16) rem(24);
     text-align: left;
     border-bottom: 1px solid $border-card-color;
+    vertical-align: middle;
   }
 
   thead th {
     background-color: $second-color;
     color: $text-light;
     font-weight: 500;
+
+    &.acoes {
+      width: 120px; // Largura fixa para coluna de ações
+      text-align: center;
+    }
   }
 
   tbody tr {
@@ -88,7 +89,7 @@ $bg-dark: #1a1a1a;
       border-bottom: none;
     }
 
-    &:not(.product-table__row--empty):hover {
+    &:hover {
       background-color: rgba($primary-color, 0.05);
     }
   }
@@ -97,104 +98,55 @@ $bg-dark: #1a1a1a;
     color: $text-secondary;
   }
 
-  &__row--empty td,
-  &__row--loading td {
+  .text-center {
     text-align: center;
     padding: rem(32) rem(24);
-    color: $text-secondary;
-  }
-
-  &__action {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    text-decoration: none;
-    font-weight: 500;
-    margin-right: rem(16);
-    transition: color 0.2s;
-
-    &--edit {
-      color: $primary-color;
-
-      &:hover {
-        color: color.adjust($primary-color, $lightness: -10%);
-      }
-    }
-
-    &--delete {
-      color: $danger-color;
-
-      &:hover {
-        color: color.adjust($danger-color, $lightness: -10%);
-      }
-    }
-  }
-
-  tr.removendo {
-    opacity: 0;
-    transform: translateX(rem(-20));
   }
 }
 
 /* ===========================================================
-    NOVAS CLASSES — totalmente integradas ao tema existente
+    ESTILOS DE EDIÇÃO E INPUTS
    =========================================================== */
-
 
 .edit-container,
 .novo-container {
   display: flex;
   align-items: center;
-  gap: rem(10);
+  gap: rem(4); // Gap menor pq o mat-icon-button tem padding interno
 
   input {
-    padding: rem(6) rem(10);
-    border-radius: rem(6);
+    flex: 1; // Ocupa espaço disponivel
+    padding: rem(8) rem(12);
+    border-radius: rem(4);
     border: 1px solid $border-card-color;
     background-color: $bg-light;
     font-size: rem(14);
     color: $text-primary;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 200px;
 
     &:focus {
-      outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 rem(2) rgba($primary-color, 0.25);
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
     }
   }
 
-  button {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: rem(20);
-    font-weight: bold;
-    line-height: 1;
-    padding: rem(4);
-
-    &.ok {
-      color: $success-color;
-
-      &:hover {
-        color: color.adjust($success-color, $lightness: -10%);
-      }
-    }
-
-    &.cancel {
-      color: $danger-color;
-
-      &:hover {
-        color: color.adjust($danger-color, $lightness: -10%);
-      }
-    }
+  // Classe utilitária para o botão de Check ficar verde
+  .btn-success {
+    color: $success-color;
   }
 }
 
-/* Mantém padrão visual */
+/* Estilo para centralizar botões na coluna de ações */
+.col-acoes .actions-flex {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
 .criacao-row td {
-  background-color: rgba($primary-color, 0.03);
+  background-color: rgba($primary-color, 0.05);
 }
 
 .loading-spinner {
@@ -207,14 +159,23 @@ $bg-dark: #1a1a1a;
   margin: 0 auto;
 }
 
+/* ===========================================================
+    RODAPÉ E BOTÃO NOVO
+   =========================================================== */
+
+.footer-actions {
+  padding: rem(16) rem(24);
+
+  .novo-btn {
+    // Personalização do mat-raised-button se necessário
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
 @media (max-width: 750px) {
   .product-table {
     min-width: auto;
-  }
-
-  .col-categoria,
-  .col-valor {
-    display: none;
   }
 
   .product-table th,
@@ -222,22 +183,4 @@ $bg-dark: #1a1a1a;
     padding-left: rem(12);
     padding-right: rem(12);
   }
-}
-
-.novo-professor-btn {
-  display: inline-block;
-  background-color: $primary-color !important;
-  color: white !important;
-  padding: 0.6rem 1.4rem !important;
-  border-radius: 8px !important;
-  border: none !important;
-  font-weight: 600 !important;
-  margin-bottom: 1rem;
-  margin-left: 0.5rem;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-}
-
-.novo-professor-btn:hover {
-  background-color: color.adjust($primary-color, $lightness: -10%) !important;
 }

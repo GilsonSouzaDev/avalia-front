@@ -1,26 +1,18 @@
 .card-pergunta {
-  // --- ESTILOS ORIGINAIS (Mantidos) ---
+  // --- ESTILOS GERAIS DO CARD ---
   margin: 0.5rem 0;
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: all 0.3s ease; // Alterado de box-shadow para all para animar borda/bg também
-
+  transition: all 0.3s ease;
   position: relative;
   padding: 0.5rem;
-  border: 1px solid transparent; // Prepara para a borda de seleção
+  border: 1px solid transparent;
+  background-color: #fff;
 
-  &.expanded-padding {
-    padding-bottom: 3.5rem;
-  }
-
-  &:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  // --- NOVOS ESTILOS (Modo Seleção) ---
+  // Estados Especiais
   &.selected {
     border-color: #3f51b5;
-    background-color: #f0f4ff; // Um fundo azul bem suave para indicar seleção
+    background-color: #f0f4ff;
   }
 
   &.disabled {
@@ -30,79 +22,68 @@
     border-color: #e0e0e0;
   }
 
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
   // --- CABEÇALHO ---
   .cabecalho {
     display: flex;
-    justify-content: space-between; // Mantido original
+    justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
-    gap: 12px; // Adicionado gap para separar checkbox do título
-  }
+    gap: 12px;
 
-  // Novo container para checkbox
-  .selection-control {
-    display: flex;
-    align-items: center;
+    .selection-control {
+      display: flex;
+      align-items: center;
 
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-      accent-color: #3f51b5;
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #3f51b5;
+      }
     }
-  }
 
-  // Novo container para agrupar Título + Professor (para não quebrar layout flex)
-  .titulo-container {
-    flex: 1; // Ocupa o espaço restante
-    display: flex;
-    flex-direction: column;
-  }
+    .titulo-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
 
-  .titulo {
-    margin: 0;
-    font-size: 1.05rem;
-    line-height: 1.2;
-  }
+      .titulo {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.2;
+        font-weight: 500;
+      }
 
-  .prof-label {
-    font-size: 0.75rem;
-    color: #777;
-    margin-top: 4px;
-  }
+      .prof-label {
+        font-size: 0.75rem;
+        color: #777;
+        margin-top: 4px;
+      }
+    }
 
-  .icone {
-    transition: transform 0.3s ease;
-    color: #666; // Cor base para o ícone
+    .icone-expand {
+      transition: transform 0.3s ease;
+      color: #666;
 
-    &.rotated {
-      transform: rotate(180deg);
+      &.rotated {
+        transform: rotate(180deg);
+      }
     }
   }
 
   // --- CONTEÚDO EXPANDIDO ---
   .conteudo-expandido {
     margin-top: 0.5rem;
-    padding: 0 0.75rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
     animation: fadeIn 0.2s ease;
 
-    // 1. Modo Edição (Estilos Originais da classe .alternativas)
-    .modo-edicao {
-      .alternativas-editaveis {
-        // Renomeei no HTML para não conflitar, mas mantendo estilo visual
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-      }
-
-      // Estilos para o componente filho (cpt-alternativa-forms) se necessário
-      // O componente filho já deve ter seus estilos, aqui só controlamos o layout
-    }
-
-    // 2. Modo Leitura (Novos Estilos para PDF/Seleção)
+    // 1. Modo Leitura
     .modo-leitura {
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
 
       .label-alternativas {
         font-size: 0.9rem;
@@ -113,14 +94,19 @@
 
       .lista-alternativas-readonly {
         margin: 0;
-        padding-left: 1.5rem; // Espaço para os bullets
-        list-style-type: disc; // Bolinhas padrão
+        padding-left: 1.5rem;
+        list-style-type: none;
 
         li {
           margin-bottom: 0.4rem;
           line-height: 1.4;
           color: #444;
           font-size: 0.95rem;
+
+          .letra {
+            font-weight: bold;
+            margin-right: 4px;
+          }
         }
       }
 
@@ -131,37 +117,44 @@
       }
     }
 
-    .professor {
-      font-size: 0.875rem;
-      color: #555;
-      margin-top: 0.75rem;
-      border-top: 1px solid #eee;
-      padding-top: 0.5rem;
+    // 2. Modo Edição
+    .modo-edicao {
+      .alternativas-editaveis {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      // --- NOVO FOOTER DE AÇÕES ---
+      // Botões alinhados à direita, abaixo do conteúdo
+      .footer-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px; // Distância entre editar e excluir
+
+        margin-top: 1rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f1f1f1;
+
+        // Ajustes opcionais para os botões mat-button ficarem perfeitos
+        button {
+          font-weight: 500;
+          // O mat-button já cuida da transparência e cor primary/warn
+        }
+      }
     }
   }
-}
-
-// --- BOTÕES DE AÇÃO (Mantidos Originais) ---
-// Eles ficam fora do fluxo normal (absolute), usados apenas no modo edição
-.action-buttons {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  display: flex;
-  gap: 4px;
-  z-index: 10;
-
-  // Garante que os botões tenham fundo branco semi-transparente caso fiquem sobre texto
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 4px;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(-5px);
   }
 
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }

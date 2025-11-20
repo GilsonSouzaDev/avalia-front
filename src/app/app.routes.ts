@@ -33,6 +33,7 @@ export const routes: Routes = [
       { path: 'gerenciar', component: PgsGerenciarProfessorComponent },
       { path: 'gerenciar-disc', component: PgsGerenciarDisciplinaComponent },
       { path: 'pergunta', component: PgsCadastrarPerguntaComponent },
+      { path: 'pergunta/:id', component: PgsCadastrarPerguntaComponent },
       {
         path: 'gerar-prova',
         loadComponent: () =>

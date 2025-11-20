@@ -21,7 +21,7 @@ import { Alternativa } from '../../interfaces/Alternativa';
   styleUrl: './cpt-pergunta-forms.component.scss',
 })
 export class CptPerguntaFormsComponent implements OnInit, OnChanges {
-  @Input() perguntaParaEdicao!: Pergunta;
+  @Input() perguntaParaEdicao: Pergunta | null = null;
   @Input() disciplinas: Disciplina[] = [];
   @Output() submitForm = new EventEmitter<Pergunta>();
 

@@ -28,6 +28,8 @@ export class PgsListDisciplinaComponent{
     return filtrarDisciplinasPorPerfil(this.disciplinas, this.usuario);
   }
 
+  
+
 
 
 }

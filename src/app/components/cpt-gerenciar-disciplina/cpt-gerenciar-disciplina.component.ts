@@ -1,33 +1,45 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  signal,
+  OnChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+
+// Material Modules
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
 import { Disciplina } from '../../interfaces/Disciplina';
 import { Professor } from '../../interfaces/Professor';
 import { AuthService } from '../../core/auth.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-cpt-gerenciar-disciplina',
   standalone: true,
   imports: [
     CommonModule,
-    MatIcon,
-    MatPaginatorModule,
-    RouterModule,
     FormsModule,
+    RouterModule,
+    MatIconModule,
+    MatButtonModule,
+    MatPaginatorModule,
   ],
   templateUrl: './cpt-gerenciar-disciplina.component.html',
   styleUrl: './cpt-gerenciar-disciplina.component.scss',
 })
-export class CptGerenciarDisciplinaComponent {
-  // Inputs -------------------------------------------------------------------
+export class CptGerenciarDisciplinaComponent implements OnChanges {
+  // Inputs
   @Input() disciplinas: Disciplina[] = [];
   @Input() quantidadeQuestoes!: (disciplina: Disciplina) => number;
   @Input() quantidadeMaterias!: (disciplina: Disciplina) => number;
 
-  // Outputs ------------------------------------------------------------------
+  // Outputs
   @Output() iniciarEdicao = new EventEmitter<number>();
   @Output() confirmarEdicao = new EventEmitter<{ id: number; nome: string }>();
   @Output() cancelarEdicao = new EventEmitter<void>();
@@ -37,14 +49,14 @@ export class CptGerenciarDisciplinaComponent {
   @Output() criarConfirmar = new EventEmitter<string>();
   @Output() criarCancelar = new EventEmitter<void>();
 
-  // Estado interno -----------------------------------------------------------
+  // Estado interno
   editandoId = signal<number | null>(null);
   nomeEditando = signal('');
 
   criando = signal(false);
   nomeCriando = signal('');
 
-  // Paginação ----------------------------------------------------------------
+  // Paginação
   length = 0;
   pageSize = 5;
   pageIndex = 0;
@@ -70,7 +82,7 @@ export class CptGerenciarDisciplinaComponent {
     return this.authService.currentUserSig();
   }
 
-  // ------------------------- EDIÇÃO -----------------------------------------
+  // --- EDIÇÃO ---
   entrarEdicao(disciplina: Disciplina) {
     this.editandoId.set(disciplina.id);
     this.nomeEditando.set(disciplina.nome);
@@ -92,7 +104,7 @@ export class CptGerenciarDisciplinaComponent {
     this.nomeEditando.set('');
   }
 
-  // ------------------------- CRIAÇÃO ----------------------------------------
+  // --- CRIAÇÃO ---
   iniciarCriacao() {
     this.criando.set(true);
     this.nomeCriando.set('');
