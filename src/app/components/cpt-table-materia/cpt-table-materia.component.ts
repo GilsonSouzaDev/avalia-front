@@ -8,6 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
+import { Alternativa } from '../../interfaces/Alternativa';
 
 @Component({
   selector: 'app-cpt-table-materia',
@@ -32,6 +33,7 @@ export class CptTableMateriaComponent {
 
   @Output() perguntaSelecionada = new EventEmitter<Pergunta>();
   @Output() selectToggle = new EventEmitter<Pergunta>();
+  @Output() alterarAlternativa = new EventEmitter<Alternativa>
 
   router = inject(Router);
 
@@ -77,5 +79,10 @@ export class CptTableMateriaComponent {
 
   onEdit(pergunta: Pergunta) {
     this.router.navigate(['/pergunta', pergunta.id]);
+  }
+
+  onAtualizarAlternativa(alternativa: Alternativa){
+    this.alterarAlternativa.emit(alternativa)
+    console.log("card table materia passou aqui", alternativa)
   }
 }

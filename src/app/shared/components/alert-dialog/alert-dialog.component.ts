@@ -11,6 +11,7 @@ export interface AlertDialogData {
   title: string;
   message: string;
   confirmButtonText?: string;
+  titleColor?: string;
 }
 
 @Component({

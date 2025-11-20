@@ -17,7 +17,7 @@ export class CptAlternativaFormsComponent implements OnInit {
   @Input() index!: number;
   @Input() editavel: boolean = true;
 
-  @Output() textoChange = new EventEmitter<{ index: number; texto: string }>();
+  @Output() textoChange = new EventEmitter<Alternativa>();
 
   editMode = false;
   textoTemp: string = '';
@@ -33,8 +33,8 @@ export class CptAlternativaFormsComponent implements OnInit {
 
   confirmarEdicao(): void {
     this.editMode = false;
-    // Se o texto estiver vazio, opcionalmente pode reverter ou salvar vazio
-    this.textoChange.emit({ index: this.index, texto: this.textoTemp });
+    this.textoChange.emit(this.alternativa);
+    console.log("card alternativa passou aqui",this.alternativa)
   }
 
   cancelarEdicao(): void {

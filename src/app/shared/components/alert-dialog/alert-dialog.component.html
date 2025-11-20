@@ -1,6 +1,10 @@
-<h1 mat-dialog-title style="color:rgb(220, 20, 60);">{{ data.title }} </h1>
+<!-- Muda de style="..." para [style.color]="..." -->
+<h1 mat-dialog-title [style.color]="data.titleColor || 'rgb(220, 20, 60)'">
+  {{ data.title }}
+</h1>
+
 <div mat-dialog-content>
-  <p [innerHTML]="data.message" ></p>
+  <p [innerHTML]="data.message"></p>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" (click)="onConfirm()" cdkFocusInitial>

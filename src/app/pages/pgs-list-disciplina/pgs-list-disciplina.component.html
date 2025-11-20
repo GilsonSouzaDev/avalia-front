@@ -8,6 +8,7 @@
           [disciplina]="disciplina"
           [professores]="professores"
           class="disciplina"
+          (alterarAlternativa)="onAlterarAlternativa($event)"
         ></app-cpt-table-materia>
       }
     </section>
@@ -21,6 +22,7 @@
           <app-cpt-table-materia
             [disciplina]="disciplina"
             [professores]="professores"
+            (alterarAlternativa)="onAlterarAlternativa($event)"s
             class="disciplina"
           ></app-cpt-table-materia>
         }

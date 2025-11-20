@@ -8,6 +8,7 @@ import { Pergunta } from '../../interfaces/Pergunta';
 import { Professor } from '../../interfaces/Professor';
 import { NomeProfessorPipe } from '../../pipes/nome-professor.pipe';
 import { CptAlternativaFormsComponent } from '../cpt-alternativa-forms/cpt-alternativa-forms.component';
+import { Alternativa } from '../../interfaces/Alternativa';
 
 @Component({
   selector: 'app-cpt-card-pergunta',
@@ -39,6 +40,7 @@ export class CptCardPerguntaComponent {
   @Output() edit = new EventEmitter<Pergunta>();
   @Output() delete = new EventEmitter<number>();
   @Output() selectToggle = new EventEmitter<Pergunta>();
+  @Output() editVariable = new EventEmitter<Alternativa>
 
   expanded = false;
 
@@ -70,10 +72,11 @@ export class CptCardPerguntaComponent {
     }
   }
 
-  onAlterarTexto(event: { index: number; texto: string }) {
+  onAlterarTexto(alternativa: Alternativa) {
     if (!this.isSelectionMode) {
-      this.pergunta.alternativas[event.index].texto = event.texto;
+      this.editVariable.emit(alternativa);
     }
+    console.log("card pergunta passou aqui",alternativa)
   }
 
   getLetra(index: number): string {

@@ -19,6 +19,7 @@
         [isDisabled]="isQuestaoDesabilitada(pergunta.id)"
         (selectToggle)="onSelectToggle($event)"
         (edit)="onEdit($event)"
+        (editVariable)="onAtualizarAlternativa($event)"
         >
       </app-cpt-card-pergunta>
 
