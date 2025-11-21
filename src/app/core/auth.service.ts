@@ -71,11 +71,11 @@ export class AuthService {
 
   public isCoordenador(): boolean {
     const currentUser = this.currentUserSig();
-    return !!currentUser && currentUser.tipo === TipoProfessor.COORDENADOR;
+    return !!currentUser && currentUser.perfilProfessor === TipoProfessor.COORDENADOR;
   }
 
   public isProfessor(): boolean {
     const currentUser = this.currentUserSig();
-    return !!currentUser && currentUser.tipo === TipoProfessor.PROFESSOR;
+    return !!currentUser && currentUser.perfilProfessor === TipoProfessor.PROFESSOR;
   }
 }

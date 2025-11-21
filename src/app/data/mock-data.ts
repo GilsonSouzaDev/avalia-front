@@ -14,7 +14,7 @@ const profAna: Professor = {
   nome: 'Ana Coordenadora',
   email: 'ana@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.COORDENADOR,
+  perfilProfessor: TipoProfessor.COORDENADOR,
   disciplinas: [],
 };
 const profBruno: Professor = {
@@ -23,7 +23,7 @@ const profBruno: Professor = {
   nome: 'Bruno Matemática',
   email: 'bruno@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profCarla: Professor = {
@@ -32,7 +32,7 @@ const profCarla: Professor = {
   nome: 'Carla História',
   email: 'carla@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profDavid: Professor = {
@@ -41,7 +41,7 @@ const profDavid: Professor = {
   nome: 'David Geografia',
   email: 'david@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profEster: Professor = {
@@ -50,7 +50,7 @@ const profEster: Professor = {
   nome: 'Ester Inglês',
   email: 'ester@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profFelipe: Professor = {
@@ -59,7 +59,7 @@ const profFelipe: Professor = {
   nome: 'Felipe Química',
   email: 'felipe@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profGiovanna: Professor = {
@@ -68,7 +68,7 @@ const profGiovanna: Professor = {
   nome: 'Giovanna Física',
   email: 'gio@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profHenrique: Professor = {
@@ -77,7 +77,7 @@ const profHenrique: Professor = {
   nome: 'Henrique Biologia',
   email: 'henrique@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profIgor: Professor = {
@@ -86,7 +86,7 @@ const profIgor: Professor = {
   nome: 'Igor Sociologia',
   email: 'igor@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 const profJulia: Professor = {
@@ -95,7 +95,7 @@ const profJulia: Professor = {
   nome: 'Julia Filosofia',
   email: 'julia@uni.com',
   senha: 'itachi',
-  tipo: TipoProfessor.PROFESSOR,
+  perfilProfessor: TipoProfessor.PROFESSOR,
   disciplinas: [],
 };
 

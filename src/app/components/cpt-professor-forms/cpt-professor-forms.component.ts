@@ -136,7 +136,7 @@ export class CptProfessorFormsComponent implements OnInit {
       email: this.email,
       // Se editando e senha vazia, mantém a antiga (se existir)
       senha: senha || this.professor?.senha || '',
-      tipo: this.tipoProfessor,
+      perfilProfessor: this.tipoProfessor,
       disciplinas: this.disciplinasSelecionadas,
     };
 
@@ -157,7 +157,7 @@ export class CptProfessorFormsComponent implements OnInit {
   }
 
   tipoProfessor = this.currentUser
-    ? this.currentUser.tipo
+    ? this.currentUser.perfilProfessor
     : TipoProfessor.PROFESSOR;
 
   cancelarCadastro() {

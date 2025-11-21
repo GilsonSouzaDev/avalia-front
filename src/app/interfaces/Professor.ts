@@ -11,6 +11,6 @@ export interface Professor {
   nome: string;
   email: string;
   senha: string;
-  tipo: TipoProfessor;
+  perfilProfessor: TipoProfessor;
   disciplinas: Disciplina[];
 }

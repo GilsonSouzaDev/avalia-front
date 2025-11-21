@@ -12,12 +12,11 @@ export class DisciplinaService {
   private http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/disciplinas`;
 
-  // Estado reativo (Store simples)
   private disciplinasSignal = signal<Disciplina[]>([]);
   public disciplinas = computed(() => this.disciplinasSignal());
 
   constructor() {
-    this.loadAll(); // Carrega dados iniciais ao iniciar o serviço
+    this.loadAll();
   }
 
   // GET - Listar todas
@@ -25,12 +24,14 @@ export class DisciplinaService {
     this.http.get<Disciplina[]>(this.url).subscribe({
       next: (data) => this.disciplinasSignal.set(data),
       error: (err) => console.error('Erro ao carregar disciplinas', err),
+
     });
+
   }
 
-  // GET - Buscar por ID (Retorna Observable para quem chama, ou busca no cache)
   public getById(id: number): Observable<Disciplina> {
     return this.http.get<Disciplina>(`${this.url}/${id}`);
+
   }
 
   // CREATE

@@ -89,11 +89,11 @@ export class PgsGerarProvaComponent implements OnInit {
       }
 
       this.userProfile = user as unknown as Professor;
-      this.perfilCriacao = this.userProfile.tipo;
+      this.perfilCriacao = this.userProfile.perfilProfessor;
       this.loadDisciplinasByProfile();
 
       if (
-        this.userProfile.tipo === TipoProfessor.PROFESSOR &&
+        this.userProfile.perfilProfessor === TipoProfessor.PROFESSOR &&
         this.currentStepValue === 0
       ) {
         this.currentStep.next(1);
@@ -413,7 +413,7 @@ export class PgsGerarProvaComponent implements OnInit {
         if (sucesso) {
           this.avaliacaoStateService.clearState();
           this.currentStep.next(
-            this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
+            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR ? 0 : 1
           );
         }
       });
@@ -443,7 +443,7 @@ export class PgsGerarProvaComponent implements OnInit {
       .subscribe((sucesso) => {
         if (sucesso) {
           this.currentStep.next(
-            this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
+            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR ? 0 : 1
           );
         }
       });

@@ -42,11 +42,11 @@ export class PgsPerfilDetalhesComponent implements OnInit {
         next: (prof) => {
           this.professor.set(prof);
           this.mostrarDisciplinas =
-            currentUser?.tipo === TipoProfessor.COORDENADOR;
+            currentUser?.perfilProfessor === TipoProfessor.COORDENADOR;
+            console.log(prof)
         },
         error: (err) => {
           console.error('Erro ao buscar professor:', err);
-          // Opcional: Redirecionar ou mostrar mensagem se não encontrar
         },
       });
       return;
@@ -55,7 +55,7 @@ export class PgsPerfilDetalhesComponent implements OnInit {
     // Caso não tenha ID na rota, usa o usuário logado
     if (currentUser) {
       this.professor.set(currentUser);
-      this.mostrarDisciplinas = currentUser.tipo === TipoProfessor.COORDENADOR;
+      this.mostrarDisciplinas = currentUser.perfilProfessor === TipoProfessor.COORDENADOR;
     }
   }
 
@@ -65,7 +65,7 @@ export class PgsPerfilDetalhesComponent implements OnInit {
 
     if (!currentUser || !perfilAtual) return false;
 
-    const isCoordenador = currentUser.tipo === TipoProfessor.COORDENADOR;
+    const isCoordenador = currentUser.perfilProfessor === TipoProfessor.COORDENADOR;
     const isOutroUsuario = currentUser.id !== perfilAtual.id;
 
     return isCoordenador && isOutroUsuario;

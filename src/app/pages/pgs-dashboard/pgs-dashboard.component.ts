@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CptCardResumoComponent } from '../../components/cpt-card-resumo/cpt-card-resumo.component';
 import { CptCardMateriaComponent } from '../../components/cpt-card-materia/cpt-card-materia.component';
@@ -26,6 +26,8 @@ export class PgsDashboardComponent {
   private listaPerguntas = this.perguntaService.perguntas;
   private listaProfessores = this.professorService.professores;
 
+
+
   public usuario = this.authService.currentUserSig;
 
   public totalProfessores = computed(() => this.listaProfessores().length);
@@ -51,7 +53,7 @@ export class PgsDashboardComponent {
 
     if (!user) return [];
 
-    if (user.tipo === TipoProfessor.COORDENADOR) {
+    if (user.perfilProfessor === TipoProfessor.COORDENADOR) {
       return todas;
     }
 
@@ -66,7 +68,7 @@ export class PgsDashboardComponent {
       (p) => p.disciplinaId === disciplina.id
     );
 
-    if (user && user.tipo === TipoProfessor.PROFESSOR) {
+    if (user && user.perfilProfessor === TipoProfessor.PROFESSOR) {
       return perguntasDaDisciplina.filter(
         (p) => p.codigoProfessor === user.codigo
       ).length;

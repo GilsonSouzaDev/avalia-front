@@ -15,7 +15,7 @@
   </mat-tab>
 
   <!-- Tab 2 - Apenas para coordenador -->
-  @if (usuario?.tipo === 'COORDENADOR') {
+  @if (usuario?.perfilProfessor === 'COORDENADOR') {
     <mat-tab label="Todas as Disciplinas">
       <section class="list-disciplina">
         @for (disciplina of disciplinas; track $index) {

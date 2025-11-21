@@ -2,7 +2,7 @@
   <h1>Gerar Avaliação (SPA)</h1>
 
   <!-- PASSO 0 -->
-  <div *ngIf="userProfile?.tipo === TipoProfessor.COORDENADOR && currentStepValue === 0" class="step-card fade-in">
+  <div *ngIf="userProfile?.perfilProfessor === TipoProfessor.COORDENADOR && currentStepValue === 0" class="step-card fade-in">
     <h2>1. Seleção de Perfil</h2>
     <div class="profile-actions">
       <button class="profile-button" (click)="selectProfile(TipoProfessor.PROFESSOR)">
