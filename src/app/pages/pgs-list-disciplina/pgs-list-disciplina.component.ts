@@ -42,6 +42,7 @@ export class PgsListDisciplinaComponent {
         message: 'Deseja salvar as alterações no texto da alternativa?',
         confirmButtonText: 'Salvar Alterações',
         cancelButtonText: 'Cancelar',
+        titleColor: '#1565c0', // Azul
         action: () => {
           return of(true).pipe(
             delay(1000),

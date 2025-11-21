@@ -1,7 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
+import { of } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 import { CptGerenciarDisciplinaComponent } from '../../components/cpt-gerenciar-disciplina/cpt-gerenciar-disciplina.component';
 import { DisciplinaService } from '../../services/disciplina.service';
 import { Disciplina } from '../../interfaces/Disciplina';
+import { DialogService } from '../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-pgs-gerenciar-disciplina',
@@ -11,21 +14,20 @@ import { Disciplina } from '../../interfaces/Disciplina';
   styleUrl: './pgs-gerenciar-disciplina.component.scss',
 })
 export class PgsGerenciarDisciplinaComponent {
-  disciplinaService = inject(DisciplinaService);
+  private disciplinaService = inject(DisciplinaService);
+  private dialogService = inject(DialogService);
 
   disciplinas = this.disciplinaService.disciplinas;
 
   editandoId = signal<number | null>(null);
-
   nomeEditando = signal('');
   nomeCriando = signal('');
   criando = signal(false);
 
-  // Helpers usados no template da tabela
-  qtdQuestoes = (d: Disciplina) => d.perguntas.length;
-  qtdMaterias = (d: Disciplina) => d.professores.length;
+  qtdQuestoes = (d: Disciplina) => (d.perguntas ? d.perguntas.length : 0);
+  qtdMaterias = (d: Disciplina) => (d.professores ? d.professores.length : 0);
 
-  // --- CRIAÇÃO ---
+  // --- CRIAÇÃO (VERDE) ---
   iniciarCriacao() {
     this.criando.set(true);
     this.nomeCriando.set('');
@@ -37,22 +39,40 @@ export class PgsGerenciarDisciplinaComponent {
   }
 
   confirmarCriacao(nome: string) {
-    const novo: Disciplina = {
-      id: Date.now(),
-      nome,
-      professores: [],
-      perguntas: [],
-    };
-
-    this.disciplinaService.add(novo);
-    this.cancelarCriacao();
+    this.dialogService
+      .confirmAction({
+        title: 'Confirmar Criação',
+        message: `Deseja adicionar a nova disciplina "${nome}"?`,
+        confirmButtonText: 'Adicionar',
+        cancelButtonText: 'Cancelar',
+        titleColor: '#2e7d32', // Verde
+        action: () => {
+          return of(true).pipe(
+            delay(1000),
+            tap(() => {
+              const novo: Disciplina = {
+                id: Date.now(),
+                nome,
+                professores: [],
+                perguntas: [],
+              };
+              this.disciplinaService.add(novo);
+            })
+          );
+        },
+      })
+      .afterClosed()
+      .subscribe((sucesso) => {
+        if (sucesso) {
+          this.cancelarCriacao();
+        }
+      });
   }
 
-  // --- EDIÇÃO ---
+  // --- EDIÇÃO (AZUL) ---
   iniciarEdicao(id: number) {
     const d = this.disciplinaService.getById(id);
     if (!d) return;
-
     this.editandoId.set(id);
     this.nomeEditando.set(d.nome);
   }
@@ -63,12 +83,49 @@ export class PgsGerenciarDisciplinaComponent {
   }
 
   confirmarEdicao({ id, nome }: { id: number; nome: string }) {
-    this.disciplinaService.update(id, { nome });
-    this.cancelarEdicao();
+    this.dialogService
+      .confirmAction({
+        title: 'Salvar Alterações',
+        message: 'Deseja confirmar a alteração no nome da disciplina?',
+        confirmButtonText: 'Salvar',
+        cancelButtonText: 'Cancelar',
+        titleColor: '#1565c0', // Azul
+        action: () => {
+          return of(true).pipe(
+            delay(1000),
+            tap(() => {
+              this.disciplinaService.update(id, { nome });
+            })
+          );
+        },
+      })
+      .afterClosed()
+      .subscribe((sucesso) => {
+        if (sucesso) {
+          this.cancelarEdicao();
+        }
+      });
   }
 
-  // --- DELETE ---
+  // --- EXCLUSÃO (VERMELHO) ---
   remover(id: number) {
-    this.disciplinaService.delete(id);
+    const disciplina = this.disciplinaService.getById(id);
+    const nome = disciplina ? disciplina.nome : 'esta disciplina';
+
+    this.dialogService.confirmAction({
+      title: 'Excluir Disciplina',
+      message: `Tem certeza que deseja excluir "${nome}"? Esta ação removerá vínculos com professores e excluirá questões de "${nome}" permanentemente.`,
+      confirmButtonText: 'Excluir',
+      cancelButtonText: 'Cancelar',
+      titleColor: '#c62828', // Vermelho
+      action: () => {
+        return of(true).pipe(
+          delay(1000),
+          tap(() => {
+            this.disciplinaService.delete(id);
+          })
+        );
+      },
+    });
   }
 }

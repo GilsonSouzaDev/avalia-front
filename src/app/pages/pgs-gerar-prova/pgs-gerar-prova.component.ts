@@ -8,11 +8,10 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 
-import {
-  AvaliacaoStateService,
-} from '../../services/avaliacao-state.service';
+import { AvaliacaoStateService } from '../../services/avaliacao-state.service';
 import { DisciplinaService } from '../../services/disciplina.service';
 import { PerguntaService } from '../../services/pergunta.service';
 import { PdfGeneratorService } from '../../services/pdf-generator.service';
@@ -24,6 +23,7 @@ import { Pergunta } from '../../interfaces/Pergunta';
 import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Cabecalho } from '../../interfaces/Cabecalho';
 import { AvaliacaoDraft } from '../../interfaces/Avaliacao';
+import { DialogService } from '../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-gerar-prova',
@@ -46,6 +46,7 @@ export class PgsGerarProvaComponent implements OnInit {
   private disciplinaService = inject(DisciplinaService);
   private perguntaService = inject(PerguntaService);
   private pdfGeneratorService = inject(PdfGeneratorService);
+  private dialogService = inject(DialogService); // Injeção do DialogService
 
   public TipoProfessor = TipoProfessor;
 
@@ -210,26 +211,19 @@ export class PgsGerarProvaComponent implements OnInit {
     return Array.from({ length: max }, (_, i) => i + 1);
   }
 
-  // --- CORREÇÃO CRÍTICA: syncFormWithDraft ---
-  // Agora prioriza a lista 'selectedDisciplinaIds' salva, em vez de adivinhar pelas perguntas
   private syncFormWithDraft(): void {
     if (!this.avaliacaoDraft) return;
 
     let ids: number[] = [];
 
-    // 1. Tenta recuperar a lista exata salva no passo 1
     if (
       this.avaliacaoDraft.selectedDisciplinaIds &&
       this.avaliacaoDraft.selectedDisciplinaIds.length > 0
     ) {
       ids = this.avaliacaoDraft.selectedDisciplinaIds;
-    }
-    // 2. Fallback para disciplina única (legado ou modo professor simples)
-    else if ((this.avaliacaoDraft as any).disciplinaId) {
+    } else if ((this.avaliacaoDraft as any).disciplinaId) {
       ids = [(this.avaliacaoDraft as any).disciplinaId];
-    }
-    // 3. Último recurso: recupera das perguntas (apenas se não tiver a lista acima)
-    else {
+    } else {
       ids =
         (this.avaliacaoDraft.questoesSelecionadas || [])
           .map((q: Pergunta) => q.disciplinaId)
@@ -247,7 +241,6 @@ export class PgsGerarProvaComponent implements OnInit {
         ?.setValue((this.avaliacaoDraft as any).quantidadePerguntas);
     }
 
-    // Sync Cabeçalho
     if (this.avaliacaoDraft.cabecalho) {
       const cab = this.avaliacaoDraft.cabecalho;
 
@@ -295,8 +288,6 @@ export class PgsGerarProvaComponent implements OnInit {
     }
   }
 
-  // --- CORREÇÃO CRÍTICA: saveStep1State ---
-  // Salva explicitamente a lista de IDs no campo novo 'selectedDisciplinaIds'
   saveStep1State(): void {
     const ids: number[] = this.disciplinaForm.get('disciplinaIds')?.value || [];
     this.quantidadeDesejada = Number(
@@ -314,7 +305,7 @@ export class PgsGerarProvaComponent implements OnInit {
         : 'Prova Multidisciplinar',
       isMista: ids.length > 1,
       quantidadePerguntas: this.quantidadeDesejada,
-      selectedDisciplinaIds: ids, // <--- AQUI: Salva a seleção para não perder depois
+      selectedDisciplinaIds: ids,
     });
 
     const newSelectedQuestions = (
@@ -394,36 +385,95 @@ export class PgsGerarProvaComponent implements OnInit {
     this.avaliacaoStateService.updateCabecalho(cabData);
   }
 
+  // --- DIALOG EM GERAR PDF ---
   generatePDF(): void {
     this.saveCabecalhoState();
     const finalDraft = this.avaliacaoStateService.getCurrentState();
-    this.pdfGeneratorService
-      .generatePdf(finalDraft)
-      .then(() => {
-        alert('PDF gerado com sucesso!');
-        this.avaliacaoStateService.clearState();
-        this.currentStep.next(
-          this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
-        );
+
+    this.dialogService
+      .confirmAction({
+        title: 'Gerar PDF',
+        message:
+          'Tem certeza que deseja finalizar e gerar o arquivo PDF da prova?',
+        confirmButtonText: 'Gerar Prova',
+        cancelButtonText: 'Voltar',
+        titleColor: '#1565c0', // Azul
+        action: () => {
+          // Usamos 'from' ou criamos um Observable a partir da Promise do serviço
+          return of(true).pipe(
+            delay(1000), // Simula um tempo de processamento para mostrar o spinner
+            tap(async () => {
+              await this.pdfGeneratorService.generatePdf(finalDraft);
+            })
+          );
+        },
       })
-      .catch(() => alert('Erro ao gerar o PDF.'));
+      .afterClosed()
+      .subscribe((sucesso) => {
+        if (sucesso) {
+          this.avaliacaoStateService.clearState();
+          this.currentStep.next(
+            this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
+          );
+        }
+      });
   }
 
+  // --- DIALOG EM CANCELAR PROVA ---
   cancelarProva(): void {
-    if (confirm('Cancelar prova e limpar tudo?')) {
-      this.avaliacaoStateService.clearState();
-      this.initializeForms();
-      this.currentStep.next(
-        this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
-      );
-    }
+    this.dialogService
+      .confirmAction({
+        title: 'Cancelar Prova',
+        message:
+          'Você tem certeza que deseja cancelar a criação desta prova? Todas as seleções serão perdidas.',
+        confirmButtonText: 'Sim, Cancelar',
+        cancelButtonText: 'Voltar',
+        titleColor: '#c62828', // Vermelho
+        action: () => {
+          return of(true).pipe(
+            delay(500),
+            tap(() => {
+              this.avaliacaoStateService.clearState();
+              this.initializeForms();
+            })
+          );
+        },
+      })
+      .afterClosed()
+      .subscribe((sucesso) => {
+        if (sucesso) {
+          this.currentStep.next(
+            this.userProfile?.tipo === TipoProfessor.COORDENADOR ? 0 : 1
+          );
+        }
+      });
   }
 
+  // --- DIALOG EM CANCELAR SELEÇÃO DE DISCIPLINA ---
   cancelarSelecaoDisciplina(): void {
-    if (confirm('Cancelar seleção de disciplina?')) {
-      this.avaliacaoStateService.clearState();
-      this.initializeForms();
-      this.currentStep.next(1);
-    }
+    this.dialogService
+      .confirmAction({
+        title: 'Voltar ao Início',
+        message:
+          'Deseja cancelar a seleção atual e voltar para a escolha de disciplinas?',
+        confirmButtonText: 'Voltar',
+        cancelButtonText: 'Continuar Aqui',
+        titleColor: '#c62828',
+        action: () => {
+          return of(true).pipe(
+            delay(300),
+            tap(() => {
+              this.avaliacaoStateService.clearState();
+              this.initializeForms();
+            })
+          );
+        },
+      })
+      .afterClosed()
+      .subscribe((sucesso) => {
+        if (sucesso) {
+          this.currentStep.next(1);
+        }
+      });
   }
 }

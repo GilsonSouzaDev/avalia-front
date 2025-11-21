@@ -17,6 +17,7 @@ export interface ActionDialogData {
   confirmButtonText: string;
   cancelButtonText: string;
   action: () => Promise<any> | import('rxjs').Observable<any>;
+  titleColor?: string; // <--- ADICIONE ESTA LINHA
 }
 
 export interface ResultStateData {

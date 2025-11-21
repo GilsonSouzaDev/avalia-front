@@ -1,37 +1,44 @@
 <!-- src/app/pages/pgs-perfil-detalhes/pgs-perfil-detalhes.component.html -->
 
-<!-- 1. Bloco principal: Renderiza somente se o professor estiver carregado -->
 @if (professor(); as prof) {
 
+  <!-- MODO VISUALIZAÇÃO -->
   @if (!editando) {
-    <!-- MODO DE VISUALIZAÇÃO -->
     <section class="pgs-perfil-detalhes">
       <app-cpt-perfil-datalhes [professor]="prof"></app-cpt-perfil-datalhes>
 
       <div class="buttons-perfil">
         <button class="buttons-perfil__editar" (click)="alternarEdicao()">
-          Editar
+          Editar Perfil
         </button>
-        <button class="buttons-perfil__excluir" (click)="excluirPerfil()">
-          Excluir
-        </button>
+        @if (podeExcluir) {
+          <button class="buttons-perfil__excluir" (click)="excluirPerfil()">
+            Excluir
+          </button>
+}
       </div>
     </section>
-  } @else {
-    <!-- MODO DE EDIÇÃO -->
+  }
+
+  <!-- MODO EDIÇÃO -->
+  @else {
     <section class="perfil-edicao">
-      <!-- A variável 'prof' está disponível aqui e é passada para o formulário -->
+      <!--
+         'prof' aqui é garantido como objeto Professor completo.
+         Os eventos (salvar) e (cancelar) chamam as funções do pai.
+      -->
       <app-cpt-professor-forms
         [professor]="prof"
-        (salvar)="atualizarPerfil($event)"
         [mostrarDisciplinas]="mostrarDisciplinas"
+        (salvar)="atualizarPerfil($event)"
         (cancelar)="alternarEdicao()"
       ></app-cpt-professor-forms>
-
-      </section>
+    </section>
   }
 
 } @else {
-  <!-- Opcional: Mensagem de carregamento enquanto os dados do perfil não chegam do AuthService -->
-  <p>Carregando dados do perfil...</p>
+  <!-- Feedback visual enquanto o signal é null -->
+  <div class="loading-container">
+    <p>Carregando dados do perfil...</p>
+  </div>
 }

@@ -2,7 +2,9 @@
 
   <!-- Estado 1: CONFIRMAÇÃO INICIAL -->
   <ng-container *ngSwitchCase="'confirmation'">
-    <h1 mat-dialog-title>{{ data.title }}</h1>
+    <h1 mat-dialog-title [style.color]="data.titleColor || 'inherit'">
+        {{ data.title }}
+    </h1>
     <div mat-dialog-content>
       <p>{{ data.message }}</p>
     </div>
