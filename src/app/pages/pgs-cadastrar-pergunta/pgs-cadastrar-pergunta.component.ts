@@ -33,7 +33,9 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
-      this.perguntaParaEdicao = this.preguntaService.getById(id);
+     this.preguntaService.getById(id).subscribe((pergunta) => {
+       this.perguntaParaEdicao = pergunta;
+     });
     }
   }
 

@@ -1,70 +1,76 @@
-import { Injectable, inject } from '@angular/core';
+// src/app/services/alternativa.service.ts
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Alternativa } from '../interfaces/Alternativa';
-import { Pergunta } from '../interfaces/Pergunta';
-import { BaseService } from '../data/base.service';
+import { tap, Observable } from 'rxjs';
+import { environment } from '../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlternativaService {
+  private http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/alternativas`;
 
-  private baseService = inject(BaseService);
+  // Cache local de alternativas
+  private alternativasSignal = signal<Alternativa[]>([]);
 
-  getAlternativasByPergunta(perguntaId: number): Alternativa[] {
-    const pergunta = this.encontrarPergunta(perguntaId);
-    return pergunta ? pergunta.alternativas : [];
+  // Computado para filtrar facilmente no componente se necessário,
+  // mas idealmente o componente chamará getByPerguntaId
+  public todasAlternativas = computed(() => this.alternativasSignal());
+
+  constructor() {
+    this.loadAll();
   }
 
-  addAlternativa(texto: string, perguntaId: number): void {
-    const pergunta = this.encontrarPergunta(perguntaId);
-
-    if (!pergunta) {
-      return;
-    }
-
-    const novoId = new Date().getTime();
-
-    const novaAlternativa: Alternativa = {
-      id: novoId,
-      texto: texto,
-      perguntaId: perguntaId,
-    };
-
-    const novasAlternativas = [...pergunta.alternativas, novaAlternativa];
-
-    this.baseService.updatePergunta(perguntaId, {
-      alternativas: novasAlternativas,
+  public loadAll(): void {
+    this.http.get<Alternativa[]>(this.url).subscribe({
+      next: (data) => this.alternativasSignal.set(data),
+      error: (err) => console.error('Erro ao carregar alternativas', err),
     });
   }
 
-  updateAlternativa(alternativa: Alternativa): void {
-    const pergunta = this.encontrarPergunta(alternativa.perguntaId);
+  /**
+   * Retorna alternativas filtradas por pergunta (Client-side filtering)
+   * Nota: O ideal seria ter um endpoint no backend /api/alternativas?perguntaId=X
+   */
+  public getAlternativasByPergunta(perguntaId: number): Alternativa[] {
+    return this.alternativasSignal().filter((a) => a.perguntaId === perguntaId);
+  }
 
-    if (!pergunta) return;
-
-    const novasAlternativas = pergunta.alternativas.map((alt) =>
-      alt.id === alternativa.id ? alternativa : alt
+  // CREATE
+  public addAlternativa(alternativa: Alternativa): Observable<Alternativa> {
+    return this.http.post<Alternativa>(this.url, alternativa).pipe(
+      tap((created) => {
+        this.alternativasSignal.update((list) => [...list, created]);
+      })
     );
-
-    this.baseService.updatePergunta(alternativa.perguntaId, {
-      alternativas: novasAlternativas,
-    });
   }
 
-  deleteAlternativa(alternativaId: number, perguntaId: number): void {
-    const pergunta = this.encontrarPergunta(perguntaId);
-
-    if (!pergunta) return;
-    const novasAlternativas = pergunta.alternativas.filter(
-      (alt) => alt.id !== alternativaId
+  // DELETE
+  public deleteAlternativa(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`).pipe(
+      tap(() => {
+        this.alternativasSignal.update((list) =>
+          list.filter((a) => a.id !== id)
+        );
+      })
     );
-
-    this.baseService.updatePergunta(perguntaId, {
-      alternativas: novasAlternativas,
-    });
   }
 
-  private encontrarPergunta(perguntaId: number): Pergunta | undefined {
-    return this.baseService.perguntas().find((p) => p.id === perguntaId);
+  public updateAlternativa(alternativa: Alternativa): Observable<Alternativa> {
+    // Nota: Se der erro 404 ou 405, verifique se seu Backend Java tem @PutMapping
+    return this.http.put<Alternativa>(`${this.url}/${alternativa.id}`, alternativa).pipe(
+      tap((updated) => {
+        this.alternativasSignal.update(list =>
+          list.map(a => a.id === alternativa.id ? updated : a)
+        );
+      })
+    );
   }
+
+
+  // O Backend na pág 9 não mostrou PUT explícito, apenas POST (criar/salvar) e DELETE.
+  // Se o método criar/salvar do Java tratar update (se ID existir), use o addAlternativa.
+  // Caso contrário, precisaria adicionar o endpoint PUT no Java.
 }

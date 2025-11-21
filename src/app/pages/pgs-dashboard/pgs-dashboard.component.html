@@ -1,6 +1,5 @@
 <section class="dashboard">
 
-
   <h2>Resumo Geral</h2>
 
   <section class="dashboard-resumo">
@@ -8,40 +7,40 @@
       <app-cpt-card-resumo
       corTema="#4E9971"
       titulo="Minhas Disciplinas"
-      valor='{{ disciplinasLecionadas }}'
+      valor='{{ disciplinasLecionadas() }}'
       ></app-cpt-card-resumo>
 
       <app-cpt-card-resumo
       corTema="#09A4F2"
       titulo="Minhas Perguntas"
-      valor='{{ perguntasLecionadas }}'
+      valor='{{ perguntasLecionadas() }}'
       ></app-cpt-card-resumo>
 
   </section>
 
-  @if (usuario?.tipo === 'COORDENADOR') {
+  <!-- Acessando o signal usuario() -->
+  @if (usuario()?.tipo === 'COORDENADOR') {
 
     <h2>Coordenadoria</h2>
-
 
     <section class="dashboard-resumo">
 
       <app-cpt-card-resumo
       corTema="#AA2302"
       titulo="Total de Professores"
-      valor='{{ totalProfessores }}'
+      valor='{{ totalProfessores() }}'
       ></app-cpt-card-resumo>
 
       <app-cpt-card-resumo
       corTema="#09234F"
       titulo="Total de Perguntas"
-      valor='{{ totalPerguntas }}'
+      valor='{{ totalPerguntas() }}'
       ></app-cpt-card-resumo>
 
       <app-cpt-card-resumo
       corTema="#FF8A3D"
       titulo="Total de Disciplinas"
-      valor='{{ totalDisciplinas }}'
+      valor='{{ totalDisciplinas() }}'
       ></app-cpt-card-resumo>
 
     </section>
@@ -50,18 +49,14 @@
   <h2>Matérias Lecionadas</h2>
 
  <section class="dashboard-materias">
-    @for (disciplina of disciplinasFiltradas; track $index) {
+    <!-- Acessando o signal disciplinasFiltradas() -->
+    @for (disciplina of disciplinasFiltradas(); track $index) {
       <app-cpt-card-materia
       [disciplina]="disciplina"
-      [totalQuestoes]="contarPerguntasNaDisciplina(disciplina, usuario)"
+      [totalQuestoes]="contarPerguntasNaDisciplina(disciplina)"
       ></app-cpt-card-materia>
+      <!-- Removido o segundo argumento ', usuario' pois o método já pega interno -->
     }
   </section>
 
-
 </section>
-
-
-
-
-

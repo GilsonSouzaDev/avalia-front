@@ -6,8 +6,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators'; // Removido 'of' e 'delay' pois usaremos a API real
 import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component';
 import { CptProfessorFormsComponent } from '../../components/cpt-professor-forms/cpt-professor-forms.component';
 import { Professor, TipoProfessor } from '../../interfaces/Professor';
@@ -38,15 +37,22 @@ export class PgsPerfilDetalhesComponent implements OnInit {
     const currentUser = this.authService.currentUserSig();
 
     if (id) {
-      const prof = this.professorService.getById(id);
-      if (prof) {
-        this.professor.set(prof);
-        this.mostrarDisciplinas =
-          currentUser?.tipo === TipoProfessor.COORDENADOR;
-      }
+      // CORREÇÃO 1: Usando subscribe para consumir o Observable
+      this.professorService.getById(id).subscribe({
+        next: (prof) => {
+          this.professor.set(prof);
+          this.mostrarDisciplinas =
+            currentUser?.tipo === TipoProfessor.COORDENADOR;
+        },
+        error: (err) => {
+          console.error('Erro ao buscar professor:', err);
+          // Opcional: Redirecionar ou mostrar mensagem se não encontrar
+        },
+      });
       return;
     }
 
+    // Caso não tenha ID na rota, usa o usuário logado
     if (currentUser) {
       this.professor.set(currentUser);
       this.mostrarDisciplinas = currentUser.tipo === TipoProfessor.COORDENADOR;
@@ -66,6 +72,7 @@ export class PgsPerfilDetalhesComponent implements OnInit {
   }
 
   private sanitizeProfessor(professor: Professor): Professor {
+    // Mantendo sua lógica de limpeza, útil para evitar recursão no JSON
     const copia = { ...professor };
     if (copia.disciplinas) {
       copia.disciplinas = copia.disciplinas.map((d) => {
@@ -87,28 +94,30 @@ export class PgsPerfilDetalhesComponent implements OnInit {
         cancelButtonText: 'Cancelar',
         titleColor: '#1565c0', // Azul
         action: () => {
-          return of(true).pipe(
-            delay(1000),
-            tap(() => {
-              this.professorService.update(
-                professorSanitizado.id,
-                professorSanitizado
-              );
-              this.professor.set(professorSanitizado);
+          // CORREÇÃO 2: Retornar o Observable da requisição HTTP real
+          // O DialogService provavelmente faz o subscribe internamente
+          return this.professorService
+            .update(professorSanitizado.id, professorSanitizado)
+            .pipe(
+              tap((profAtualizadoRetornado) => {
+                // Atualiza o estado local com o retorno da API
+                this.professor.set(profAtualizadoRetornado);
 
-              const currentUser = this.authService.currentUserSig();
-              if (currentUser?.id === professorSanitizado.id) {
-                this.authService.currentUserSig.set(professorSanitizado);
-              }
-            })
-          );
+                const currentUser = this.authService.currentUserSig();
+                // Se estiver editando o próprio perfil, atualiza o Auth também
+                if (currentUser?.id === profAtualizadoRetornado.id) {
+                  this.authService.currentUserSig.set(profAtualizadoRetornado);
+                }
+              })
+            );
         },
       })
       .afterClosed()
       .subscribe((sucesso) => {
         if (sucesso) {
           this.editando = false;
-          this.router.navigate(['/dashboard']);
+          // Opcional: Navegar ou apenas ficar na tela com dados atualizados
+          // this.router.navigate(['/dashboard']);
         }
       });
   }
@@ -125,18 +134,14 @@ export class PgsPerfilDetalhesComponent implements OnInit {
         cancelButtonText: 'Cancelar',
         titleColor: '#c62828',
         action: () => {
-          return of(true).pipe(
-            delay(1000),
-            tap(() => {
-              this.professorService.delete(prof.id);
-            })
-          );
+          // CORREÇÃO 3: Retornar o Observable do Delete real
+          return this.professorService.delete(prof.id);
         },
       })
       .afterClosed()
       .subscribe((sucesso) => {
         if (sucesso) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard']); // Ou para lista de professores
         }
       });
   }

@@ -71,10 +71,13 @@ export class PgsGerenciarDisciplinaComponent {
 
   // --- EDIÇÃO (AZUL) ---
   iniciarEdicao(id: number) {
-    const d = this.disciplinaService.getById(id);
-    if (!d) return;
-    this.editandoId.set(id);
-    this.nomeEditando.set(d.nome);
+    this.disciplinaService.getById(id).subscribe((d) => {
+      if (d) {
+        this.nomeEditando.set(d.nome);
+        // Mova a lógica que usa 'd' para dentro destas chaves
+        const nome = d.nome; // Agora funciona
+      }
+    });
   }
 
   cancelarEdicao() {
@@ -109,23 +112,31 @@ export class PgsGerenciarDisciplinaComponent {
 
   // --- EXCLUSÃO (VERMELHO) ---
   remover(id: number) {
-    const disciplina = this.disciplinaService.getById(id);
-    const nome = disciplina ? disciplina.nome : 'esta disciplina';
+    // 1. Primeiro nos inscrevemos para buscar o dado real
+    this.disciplinaService.getById(id).subscribe((disciplina) => {
+      // 2. Agora 'disciplina' é o objeto real, podemos acessar .nome
+      const nome = disciplina ? disciplina.nome : 'esta disciplina';
 
-    this.dialogService.confirmAction({
-      title: 'Excluir Disciplina',
-      message: `Tem certeza que deseja excluir "${nome}"? Esta ação removerá vínculos com professores e excluirá questões de "${nome}" permanentemente.`,
-      confirmButtonText: 'Excluir',
-      cancelButtonText: 'Cancelar',
-      titleColor: '#c62828', // Vermelho
-      action: () => {
-        return of(true).pipe(
-          delay(1000),
-          tap(() => {
-            this.disciplinaService.delete(id);
-          })
-        );
-      },
+      // 3. Movemos a lógica do Dialog para dentro do subscribe
+      this.dialogService
+        .confirmAction({
+          title: 'Excluir Disciplina',
+          message: `Tem certeza que deseja excluir "${nome}"? essa ação vai EXCLUIR todas as perguntas cadastradas nesta disciplina.` ,
+          confirmButtonText: 'Excluir',
+          cancelButtonText: 'Cancelar',
+          titleColor: '#d32f2f',
+          action: () => {
+            // Retorna o Observable do delete
+            return this.disciplinaService.delete(id);
+          },
+        })
+        .afterClosed()
+        .subscribe((sucesso) => {
+          if (sucesso) {
+            // Opcional: Atualizar lista ou mostrar toast
+            console.log('Disciplina excluída');
+          }
+        });
     });
   }
 }

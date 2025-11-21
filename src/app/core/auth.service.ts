@@ -1,16 +1,21 @@
-import { Injectable, signal, effect } from '@angular/core';
+// src/app/services/auth.service.ts
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { Professor, TipoProfessor } from '../interfaces/Professor';
-import { MOCK_PROFESSORES } from '../data/mock-data';
+import { firstValueFrom } from 'rxjs';
+import { ProfessorService } from '../services/professor.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private router = inject(Router);
+  private professorService = inject(ProfessorService);
+
   public currentUserSig = signal<Professor | null | undefined>(undefined);
   private readonly storageKey = 'currentUser';
 
-  constructor(private router: Router) {
+  constructor() {
     this.loadUserFromStorage();
 
     effect(() => {
@@ -32,16 +37,29 @@ export class AuthService {
     }
   }
 
-  login(email: string, senha: string): Professor | null {
-    const usuarioEncontrado = MOCK_PROFESSORES.find(
-      (user) => user.email === email && user.senha === senha
-    );
+  /**
+   * Simula o login baixando a lista de professores e verificando credenciais no front.
+   */
+  async login(email: string, senha: string): Promise<Professor | null> {
+    try {
+      // 1. Busca a lista atualizada do backend (aguarda a requisição terminar)
+      // Precisamos que o ProfessorService tenha o método .getAll() retornando Observable
+      const professores = await firstValueFrom(this.professorService.getAll());
 
-    if (usuarioEncontrado) {
-      this.currentUserSig.set(usuarioEncontrado);
-      return usuarioEncontrado;
+      // 2. Verifica se o usuário existe na lista baixada
+      const usuarioEncontrado = professores.find(
+        (user) => user.email === email && user.senha === senha
+      );
+
+      if (usuarioEncontrado) {
+        this.currentUserSig.set(usuarioEncontrado);
+        return usuarioEncontrado;
+      }
+    } catch (error) {
+      console.error('Erro ao tentar fazer login (buscar professores)', error);
     }
 
+    // Se falhar ou não encontrar
     this.currentUserSig.set(null);
     return null;
   }
@@ -51,20 +69,11 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Verifica se o usuário logado tem o perfil de COORDENADOR.
-   * @returns true se o usuário for COORDENADOR, caso contrário, false.
-   */
   public isCoordenador(): boolean {
-    // computed() poderia ser usado aqui para otimização, mas um método simples é suficiente.
     const currentUser = this.currentUserSig();
     return !!currentUser && currentUser.tipo === TipoProfessor.COORDENADOR;
   }
 
-  /**
-   * Verifica se o usuário logado tem o perfil de PROFESSOR.
-   * @returns true se o usuário for PROFESSOR, caso contrário, false.
-   */
   public isProfessor(): boolean {
     const currentUser = this.currentUserSig();
     return !!currentUser && currentUser.tipo === TipoProfessor.PROFESSOR;

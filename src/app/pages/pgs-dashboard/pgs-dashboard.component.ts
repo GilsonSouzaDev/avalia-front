@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CptCardResumoComponent } from '../../components/cpt-card-resumo/cpt-card-resumo.component';
 import { CptCardMateriaComponent } from '../../components/cpt-card-materia/cpt-card-materia.component';
 import { AuthService } from '../../core/auth.service';
-import { filtrarDisciplinasPorPerfil } from '../../utils/disicplina-filter-util';
-import { contarPerguntasPorDisciplinaEProfessorEspecifico } from '../../utils/perguntas-filter-util';
-import { MOCK_DISCIPLINAS, MOCK_PROFESSORES } from '../../data/mock-data';
-import { Professor } from '../../interfaces/Professor';
+import { DisciplinaService } from '../../services/disciplina.service';
+import { ProfessorService } from '../../services/professor.service';
+import { PerguntaService } from '../../services/pergunta.service';
 import { Disciplina } from '../../interfaces/Disciplina';
+import { TipoProfessor } from '../../interfaces/Professor';
 
 @Component({
   selector: 'app-pgs-dashboard',
@@ -17,72 +17,61 @@ import { Disciplina } from '../../interfaces/Disciplina';
   styleUrls: ['./pgs-dashboard.component.scss'],
 })
 export class PgsDashboardComponent {
-
   private authService = inject(AuthService);
+  private disciplinaService = inject(DisciplinaService);
+  private professorService = inject(ProfessorService);
+  private perguntaService = inject(PerguntaService);
 
-  // ---- Dados base ----
-  disciplinas = MOCK_DISCIPLINAS;
-  professores = MOCK_PROFESSORES;
+  private listaDisciplinas = this.disciplinaService.disciplinas;
+  private listaPerguntas = this.perguntaService.perguntas;
+  private listaProfessores = this.professorService.professores;
 
-  // ---- Indicadores ----
-  disciplinasLecionadas = 0;
-  perguntasLecionadas = 0;
-  totalProfessores = 0;
-  totalPerguntas = 0;
-  totalDisciplinas = 0;
+  public usuario = this.authService.currentUserSig;
 
-  constructor() {
-    const usuario = this.usuario;
-    this.totalProfessores = this.professores.length;
-    this.totalDisciplinas = this.disciplinas.length;
-    this.totalPerguntas = this.contarPerguntasGerais();
+  public totalProfessores = computed(() => this.listaProfessores().length);
+  public totalDisciplinas = computed(() => this.listaDisciplinas().length);
+  public totalPerguntas = computed(() => this.listaPerguntas().length);
 
-    if (usuario) {
-      this.disciplinasLecionadas = usuario.disciplinas?.length || 0;
-      this.perguntasLecionadas =
-        this.contarPerguntasDasDisciplinasLecionadas(usuario);
+  public disciplinasLecionadas = computed(() => {
+    const user = this.usuario();
+    return user?.disciplinas?.length || 0;
+  });
+
+  public perguntasLecionadas = computed(() => {
+    const user = this.usuario();
+    if (!user) return 0;
+    return this.listaPerguntas().filter(
+      (p) => p.codigoProfessor === user.codigo
+    ).length;
+  });
+
+  public disciplinasFiltradas = computed(() => {
+    const todas = this.listaDisciplinas();
+    const user = this.usuario();
+
+    if (!user) return [];
+
+    if (user.tipo === TipoProfessor.COORDENADOR) {
+      return todas;
     }
-  }
 
-  // ---- Getter do usuário logado ----
-  get usuario(): Professor | null | undefined {
-    return this.authService.currentUserSig();
-  }
+    const meusIds = user.disciplinas?.map((d) => d.id) || [];
+    return todas.filter((d) => meusIds.includes(d.id));
+  });
 
-  // ---- Disciplinas filtradas por perfil ----
-  get disciplinasFiltradas() {
-    return filtrarDisciplinasPorPerfil(this.disciplinas, this.usuario);
-  }
-
-  // ---- Contagem de perguntas ----
-  contarPerguntasNaDisciplina(
-    disciplina: Disciplina,
-    usuario: Professor | null | undefined
-  ): number {
-    return contarPerguntasPorDisciplinaEProfessorEspecifico(
-      disciplina,
-      usuario
+  contarPerguntasNaDisciplina(disciplina: Disciplina): number {
+    const user = this.usuario();
+    const todasPerguntas = this.listaPerguntas();
+    const perguntasDaDisciplina = todasPerguntas.filter(
+      (p) => p.disciplinaId === disciplina.id
     );
-  }
 
-  // ---- Total geral de perguntas (todas as disciplinas) ----
-  contarPerguntasGerais(): number {
-    return this.disciplinas.reduce(
-      (total, disc) => total + (disc.perguntas?.length || 0),
-      0
-    );
-  }
+    if (user && user.tipo === TipoProfessor.PROFESSOR) {
+      return perguntasDaDisciplina.filter(
+        (p) => p.codigoProfessor === user.codigo
+      ).length;
+    }
 
-  // ---- Total de perguntas só das matérias lecionadas pelo professor ----
-  contarPerguntasDasDisciplinasLecionadas(usuario: Professor): number {
-    const disciplinasLecionadas = this.disciplinas.filter((d) =>
-      usuario.disciplinas.some((disc) => disc.id === d.id)
-    );
-  return disciplinasLecionadas.reduce((total, d) => {
-      const perguntasDoProfessor = (d.perguntas || []).filter(
-        (p) => p.codigoProfessor === usuario.codigo
-      );
-      return total + perguntasDoProfessor.length;
-    }, 0);
+    return perguntasDaDisciplina.length;
   }
 }

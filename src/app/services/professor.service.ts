@@ -1,42 +1,77 @@
 // src/app/services/professor.service.ts
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Professor } from '../interfaces/Professor';
-import { MockDataService } from '../data/mock-data';
+import { tap, Observable } from 'rxjs';
+import { environment } from '../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfessorService {
-  private mock = inject(MockDataService);
+  private http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/professores`;
 
-  private professoresSignal = signal<Professor[]>(this.mock.getProfessores());
-  professores = computed(() => this.professoresSignal());
+  private professoresSignal = signal<Professor[]>([]);
+  public professores = computed(() => this.professoresSignal());
 
-  constructor() {}
-
-  // GET
-  getById(id: number): Professor | null {
-    return this.professoresSignal().find((p) => p.id === id) ?? null;
+  constructor() {
+    this.loadAll();
   }
 
-  getByCodigo(codigo: number): Professor | null {
-    return this.professoresSignal().find((p) => p.codigo === codigo) ?? null;
+  // Adicione isso na classe ProfessorService
+  public getAll(): Observable<Professor[]> {
+    return this.http.get<Professor[]>(this.url);
+  }
+
+  public loadAll(): void {
+    this.http.get<Professor[]>(this.url).subscribe({
+      next: (data) => this.professoresSignal.set(data),
+      error: (err) => console.error('Erro ao carregar professores', err),
+    });
+  }
+
+  // GET BY ID
+  public getById(id: number): Observable<Professor> {
+    return this.http.get<Professor>(`${this.url}/${id}`);
+  }
+
+  // Busca local para evitar round-trip se já tivermos os dados (Opcional)
+  public getByIdLocal(id: number): Professor | undefined {
+    return this.professoresSignal().find((p) => p.id === id);
   }
 
   // CREATE
-  add(professor: Professor) {
-    this.professoresSignal.update((list) => [...list, { ...professor }]);
+  public add(professor: Professor): Observable<Professor> {
+    return this.http.post<Professor>(this.url, professor).pipe(
+      tap((created) => {
+        this.professoresSignal.update((list) => [...list, created]);
+      })
+    );
   }
 
   // UPDATE
-  update(id: number, changes: Partial<Professor>) {
-    this.professoresSignal.update((list) =>
-      list.map((p) => (p.id === id ? { ...p, ...changes } : p))
+  public update(
+    id: number,
+    changes: Partial<Professor>
+  ): Observable<Professor> {
+    return this.http.put<Professor>(`${this.url}/${id}`, changes).pipe(
+      tap((updated) => {
+        this.professoresSignal.update((list) =>
+          list.map((p) => (p.id === id ? { ...p, ...updated } : p))
+        );
+      })
     );
   }
 
   // DELETE
-  delete(id: number) {
-    this.professoresSignal.update((list) => list.filter((p) => p.id !== id));
+  public delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`).pipe(
+      tap(() => {
+        this.professoresSignal.update((list) =>
+          list.filter((p) => p.id !== id)
+        );
+      })
+    );
   }
 }

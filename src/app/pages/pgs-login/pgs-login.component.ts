@@ -19,8 +19,13 @@ export class PgsLoginComponent {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  handleLogin(data: { email: string; password: string }) {
-    const usuarioLogado = this.authService.login(data.email, data.password);
+  // Recebe o objeto 'data' do evento de output
+  async handleLogin(data: { email: string; password: string }) {
+    // CORREÇÃO: Usar 'data.email' e 'data.password' em vez de 'this.email'
+    const usuarioLogado = await this.authService.login(
+      data.email,
+      data.password
+    );
 
     if (usuarioLogado) {
       this.openSuccessDialog();
@@ -37,16 +42,14 @@ export class PgsLoginComponent {
         title: 'Login Realizado',
         message: 'Autenticação feita com sucesso! Redirecionando...',
         confirmButtonText: 'OK',
-        titleColor: 'green', // <--- AQUI: Define a cor verde para o sucesso
+        titleColor: 'green',
       },
     });
 
-    // Fecha automaticamente após 3 segundos
     setTimeout(() => {
       dialogRef.close();
     }, 3000);
 
-    // Redireciona ao fechar (seja pelo timer ou clique do usuário)
     dialogRef.afterClosed().subscribe(() => {
       this.router.navigate(['/dashboard']);
     });
@@ -59,7 +62,6 @@ export class PgsLoginComponent {
         title: 'Falha na Autenticação',
         message: 'O e-mail ou a senha que você inseriu estão incorretos.',
         confirmButtonText: 'Tentar Novamente',
-        // Não passamos 'titleColor', então ele usa o vermelho padrão do HTML
       },
     });
   }
