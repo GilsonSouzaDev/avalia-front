@@ -18,6 +18,8 @@ import { ProfessorService } from '../../services/professor.service';
 import { DisciplinaService } from '../../services/disciplina.service';
 import { PerguntaService } from '../../services/pergunta.service';
 import { AuthService } from '../../core/auth.service';
+import { DialogService } from '../../shared/services/dialog.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pgs-gerenciar-professor',
@@ -35,6 +37,8 @@ export class PgsGerenciarProfessorComponent {
   private professorService = inject(ProfessorService);
   private disciplinaService = inject(DisciplinaService);
   private perguntaService = inject(PerguntaService);
+  private dialogService = inject(DialogService);
+  private router = inject(Router);
 
   // Estado Local
   modoCadastro = signal(false);
@@ -61,17 +65,28 @@ export class PgsGerenciarProfessorComponent {
    * Método chamado quando o formulário emite o evento de salvar
    */
   handleSalvarProfessor(professor: Professor) {
-    if (professor.id) {
-      // Edição
-      this.professorService.update(professor.id, professor).subscribe(() => {
-        this.fecharCadastro();
+    // Remove o 'id' usando desestruturação e pega o resto das propriedades
+    const { id, ...professorParaSalvar } = professor;
+    console.log(professorParaSalvar);
+
+    this.dialogService
+      .confirmAction({
+        title: 'Cadastrar Professor',
+        message: 'Tem certeza que deseja cadastrar este novo professor?',
+        confirmButtonText: 'Salvar',
+        cancelButtonText: 'Cancelar',
+        titleColor: '#2e7d32',
+        // O 'as Professor' engana o TS pois removemos o ID obrigatório, mas para o POST é o correto
+        action: () =>
+          this.professorService.add(professorParaSalvar as Professor),
+      })
+      .afterClosed()
+      .subscribe((success) => {
+        if (success) {
+          this.fecharCadastro();
+          this.router.navigate(['/gerenciar']);
+        }
       });
-    } else {
-      // Criação
-      this.professorService.add(professor).subscribe(() => {
-        this.fecharCadastro();
-      });
-    }
   }
 
   /**

@@ -6,7 +6,7 @@ export enum TipoProfessor {
 }
 
 export interface Professor {
-  id: number;
+  id?: number;
   codigo: number;
   nome: string;
   email: string;

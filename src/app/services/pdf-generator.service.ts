@@ -52,11 +52,9 @@ export class PdfGeneratorService {
         author: cab.professor || 'Professor',
       },
       pageSize: 'A4',
-      // Margens: [esquerda, cima, direita, baixo]
-      // Margem superior ajustada para 80 para acomodar o cabeçalho fixo
-      pageMargins: [30, 80, 30, 40],
+      // Margens revertidas para o padrão original [esquerda, cima, direita, baixo]
+      pageMargins: [30, 60, 30, 40],
 
-      // Cabeçalho fixo (Linha superior com Curso e Instituição)
       header: (currentPage, pageCount) => {
         return {
           stack: [
@@ -66,24 +64,13 @@ export class PdfGeneratorService {
                   text: cab.curso || 'Análise e Desenvolvimento de Sistemas',
                   style: 'headerTopLeft',
                 },
-                {
-                  text: this.INSTITUICAO_NOME,
-                  style: 'headerTopRight',
-                },
+                { text: this.INSTITUICAO_NOME, style: 'headerTopRight' },
               ],
-              margin: [30, 20, 30, 2],
+              margin: [30, 20, 30, 0],
             },
             {
               canvas: [
-                {
-                  type: 'line',
-                  x1: 0,
-                  y1: 0,
-                  x2: 535,
-                  y2: 0,
-                  lineWidth: 1,
-                  lineColor: 'black',
-                },
+                { type: 'line', x1: 0, y1: 5, x2: 535, y2: 5, lineWidth: 1 },
               ],
               margin: [30, 0, 30, 0],
             },
@@ -92,8 +79,7 @@ export class PdfGeneratorService {
       },
 
       content: [
-        this.buildMainHeader(cab),
-        this.buildMetadataTable(cab),
+        this.buildExamMetadata(cab),
         this.buildStudentLine(cab),
         this.buildInstructions(cab),
         this.buildQuestions(draft),
@@ -107,7 +93,7 @@ export class PdfGeneratorService {
           alignment: 'center',
           margin: [0, 10, 0, 0],
           fontSize: 9,
-          color: '#333',
+          color: '#555',
         };
       },
     };
@@ -115,89 +101,89 @@ export class PdfGeneratorService {
     pdfMake.createPdf(docDefinition).open();
   }
 
-  private buildMainHeader(cab: any): Content {
-    return {
-      stack: [
-        {
-          text: this.INSTITUICAO_NOME,
-          fontSize: 10,
-          alignment: 'center',
-          margin: [0, 5, 0, 2],
-        },
-        {
-          text: cab.titulo || 'UNI FATEC',
-          fontSize: 16,
-          alignment: 'center',
-          margin: [0, 0, 0, 15],
-        },
-      ],
-    };
-  }
-
-  private buildMetadataTable(cab: any): Content {
-    return {
-      table: {
-        widths: ['*', '*', 80],
-        body: [
-          [
-            {
-              text: [
-                { text: 'Disciplina: ', bold: false },
-                { text: cab.disciplina || '', bold: false },
-              ],
-              style: 'tableCell',
-            },
-            {
-              text: [
-                { text: 'Professor: ', bold: false },
-                { text: cab.professor || '', bold: false },
-              ],
-              style: 'tableCell',
-            },
-            {
-              text: [
-                { text: 'Pontos Totais:\n', bold: false },
-                { text: cab.totalPontos || '10.0', bold: false },
-              ],
-              style: 'tableCell',
-            },
-          ],
-          [
-            {
-              text: [
-                { text: 'Turma: ', bold: false },
-                { text: cab.turma || '', bold: false },
-              ],
-              style: 'tableCell',
-            },
-            {
-              text: [
-                { text: 'Período: ', bold: false },
-                { text: cab.periodo || '', bold: false },
-              ],
-              style: 'tableCell',
-            },
-            {
-              text: '',
-              style: 'tableCell',
-            },
-          ],
+  // Revertido para o nome e estrutura original
+  private buildExamMetadata(cab: any): Content {
+    return [
+      {
+        stack: [
+          {
+            text: this.INSTITUICAO_NOME,
+            fontSize: 10,
+            bold: false,
+            alignment: 'center',
+            margin: [0, 5, 0, 0],
+          },
+          {
+            text: cab.titulo || 'UNI FATEC',
+            fontSize: 16, // Ajustado para ficar parecido com o print
+            bold: false,
+            alignment: 'center',
+            margin: [0, 2, 0, 15],
+          },
         ],
       },
-      layout: {
-        hLineWidth: () => 1,
-        vLineWidth: () => 1,
-        paddingTop: () => 4,
-        paddingBottom: () => 4,
-        paddingLeft: () => 4,
-        paddingRight: () => 4,
+      {
+        table: {
+          headerRows: 0,
+          widths: ['*', '*', 90],
+          body: [
+            [
+              {
+                text: [
+                  { text: 'Disciplina: ', bold: false },
+                  { text: cab.disciplina || '', bold: false },
+                ],
+                style: 'tableCell',
+              },
+              {
+                text: [
+                  { text: 'Professor: ', bold: false },
+                  { text: cab.professor || '', bold: false },
+                ],
+                style: 'tableCell',
+              },
+              {
+                text: [
+                  { text: 'Pontos Totais:\n', bold: false },
+                  { text: cab.totalPontos || '10.0', bold: false },
+                ],
+                style: 'tableCell',
+              },
+            ],
+            [
+              {
+                text: [
+                  { text: 'Turma: ', bold: false },
+                  { text: cab.turma || '', bold: false },
+                ],
+                style: 'tableCell',
+              },
+              {
+                text: [
+                  { text: 'Período: ', bold: false },
+                  { text: cab.periodo || '', bold: false },
+                ],
+                colSpan: 2,
+                style: 'tableCell',
+              },
+              {},
+            ],
+          ],
+        },
+        layout: {
+          hLineWidth: () => 1,
+          vLineWidth: () => 1,
+          paddingTop: () => 5,
+          paddingBottom: () => 5,
+        },
+        margin: [0, 0, 0, 15],
       },
-      margin: [0, 0, 0, 20],
-    };
+    ];
   }
 
+  // Revertido para o método original (sem tabela para a linha, usando underline)
   private buildStudentLine(cab: any): Content {
-    let dataFormatada = '';
+    let dataFormatada = '__/__/____';
     if (cab.data) {
       const d = new Date(cab.data);
       if (!isNaN(d.getTime())) {
@@ -206,51 +192,47 @@ export class PdfGeneratorService {
     }
 
     return {
-      table: {
-        widths: ['auto', '*', 'auto', 80],
-        body: [
-          [
+      stack: [
+        {
+          columns: [
             {
-              text: 'Aluno(a): ',
-              border: [false, false, false, true],
-              margin: [0, 0, 0, 2],
+              text: [
+                { text: 'Aluno(a): ', bold: false },
+                '____________________________________________________________',
+              ],
+              width: '*',
             },
             {
-              text: ' ',
-              border: [false, false, false, true],
-              margin: [0, 0, 0, 2],
-            },
-            {
-              text: 'Data: ',
-              border: [false, false, false, false],
-              margin: [10, 0, 0, 2],
-            },
-            {
-              text: dataFormatada,
-              border: [false, false, false, false],
-              margin: [0, 0, 0, 2],
+              text: [{ text: 'Data: ', bold: false }, dataFormatada],
+              width: 'auto',
             },
           ],
-        ],
-      },
-      margin: [0, 0, 0, 20],
-    };
+        },
+        {
+          canvas: [
+            { type: 'line', x1: 0, y1: 5, x2: 535, y2: 5, lineWidth: 1.5 },
+          ],
+          margin: [0, 5, 0, 10],
+        },
+      ],
+    } as Content;
   }
 
-  // --- AQUI ESTÁ O AJUSTE SOLICITADO ---
+  // AQUI FOI FEITO O AJUSTE DO NEGRITO
   private buildInstructions(cab: any): Content {
     const duracao = cab.duracao || '4 horas';
 
     return [
       { text: 'Instruções Gerais', style: 'sectionTitle' },
       {
-        // Texto composto (array) para permitir formatação individual
+        // Alterado para array de objetos para permitir negrito apenas na variável 'duracao'
         text: [
           'Verifique se sua prova está completa. Leia com atenção cada questão antes de responder. A prova deve ser respondida com caneta esferográfica azul ou preta. Salvo disposição em contrário ou autorização expressa do professor, não é permitido o uso de equipamentos eletrônicos ou materiais de consulta. A interpretação das questões faz parte da avaliação. A duração da prova é de ',
-          { text: duracao, bold: true }, // Apenas a duração em negrito
+          { text: duracao, bold: true },
           '.',
         ],
         style: 'instructionText',
+        // Removida a coluna do quadrado (checkbox) pois não existe no print do PDF
       },
       { text: 'Questões Objetivas', style: 'sectionTitle' },
     ];
@@ -264,7 +246,7 @@ export class PdfGeneratorService {
       content.push({
         stack: [
           { text: `Questão ${index + 1}`, style: 'questionTitle' },
-          { text: q.enunciado, style: 'questionBody' },
+          { text: q.enunciado, margin: [0, 0, 0, 8], alignment: 'justify' },
         ],
         unbreakable: true,
       });
@@ -273,7 +255,7 @@ export class PdfGeneratorService {
         q.alternativas.forEach((alt, i) => {
           content.push({
             text: [{ text: `(${this.getLetra(i)}) `, bold: false }, alt.texto],
-            style: 'alternativeText',
+            margin: [15, 2, 0, 2],
           });
         });
       } else {
@@ -295,50 +277,26 @@ export class PdfGeneratorService {
 
   private getStyles(): StyleDictionary {
     return {
-      headerTopLeft: {
-        fontSize: 9,
-        italics: true,
-        alignment: 'left',
-        color: 'black',
-      },
-      headerTopRight: {
-        fontSize: 9,
-        italics: true,
-        alignment: 'right',
-        color: 'black',
-      },
-      tableCell: {
-        fontSize: 10,
-        color: 'black',
-        alignment: 'left',
-      },
+      headerTopLeft: { fontSize: 9, alignment: 'left', italics: true },
+      headerTopRight: { fontSize: 9, alignment: 'right', italics: true },
+      tableCell: { fontSize: 10, color: 'black' },
       sectionTitle: {
         fontSize: 12,
+        bold: false, // No print parece regular, não bold
         alignment: 'center',
-        margin: [0, 15, 0, 10],
+        margin: [0, 10, 0, 10],
         color: 'black',
       },
       instructionText: {
         fontSize: 10,
         alignment: 'justify',
-        lineHeight: 1.1,
-        margin: [0, 0, 0, 15],
+        margin: [0, 0, 0, 10],
       },
       questionTitle: {
         fontSize: 10,
-        margin: [0, 5, 0, 2],
+        bold: false,
+        margin: [0, 10, 0, 5],
         color: 'black',
-        alignment: 'left',
-      },
-      questionBody: {
-        fontSize: 10,
-        alignment: 'justify',
-        margin: [0, 0, 0, 5],
-      },
-      alternativeText: {
-        fontSize: 10,
-        margin: [10, 2, 0, 2],
-        alignment: 'left',
       },
     };
   }

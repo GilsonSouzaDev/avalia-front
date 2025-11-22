@@ -12,6 +12,10 @@ import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { DisciplinaService } from '../../services/disciplina.service';
 import { AuthService } from '../../core/auth.service';
+// 1. Importe o Service de Professor e a função utilitária
+import { ProfessorService } from '../../services/professor.service';
+import { getNextCodigo } from '../../utils/codigo.util';
+
 
 @Component({
   selector: 'app-cpt-professor-forms',
@@ -24,11 +28,13 @@ export class CptProfessorFormsComponent implements OnInit {
   @Input() professorAtivo: Professor | null = null;
   @Input() mostrarDisciplinas: boolean = true;
 
-  @Output() onSave = new EventEmitter<any>();
+  @Output() onSave = new EventEmitter<Professor>();
   @Output() onCancel = new EventEmitter<void>();
 
   private authService = inject(AuthService);
   private disciplinaService = inject(DisciplinaService);
+  // 2. Injete o ProfessorService
+  private professorService = inject(ProfessorService);
 
   disciplinasDisponiveis = this.disciplinaService.disciplinas;
   disciplinasSelecionadas: Disciplina[] = [];
@@ -47,6 +53,7 @@ export class CptProfessorFormsComponent implements OnInit {
 
   ngOnInit() {
     if (this.professorAtivo) {
+      // MODO EDIÇÃO: Usa os dados existentes
       this.nome = this.professorAtivo.nome || '';
       this.email = this.professorAtivo.email || '';
       this.codigo = this.professorAtivo.codigo;
@@ -64,10 +71,18 @@ export class CptProfessorFormsComponent implements OnInit {
         this.disciplinasSelecionadas = [];
       }
     } else {
+      // MODO CRIAÇÃO (Novo): Define o código automaticamente
       this.perfilSelecionado = TipoProfessor.PROFESSOR;
+      this.gerarCodigoAutomatico();
     }
 
     this.validarSenhas();
+  }
+
+  // Função auxiliar para gerar o código
+  private gerarCodigoAutomatico() {
+    const listaProfessores = this.professorService.professores(); // Pega o valor atual do Signal
+    this.codigo = getNextCodigo(listaProfessores);
   }
 
   isDisciplinaSelecionada(disciplina: Disciplina): boolean {
@@ -109,6 +124,7 @@ export class CptProfessorFormsComponent implements OnInit {
     const senha = this.senha || '';
     const confirmar = this.confirmarSenha || '';
 
+    // A validação !this.codigo agora passará porque o código foi gerado no ngOnInit
     if (!this.codigo || !nome.trim() || !email.trim()) return false;
 
     if (!this.editando) {
@@ -132,6 +148,7 @@ export class CptProfessorFormsComponent implements OnInit {
     const senha = this.senha || '';
     if (!this.editando && !senha) return;
 
+    // O objeto payload já pegará o this.codigo que foi calculado automaticamente
     const professorPayload: any = {
       id: this.professorAtivo?.id,
       codigo: this.codigo,
@@ -156,9 +173,15 @@ export class CptProfessorFormsComponent implements OnInit {
     this.email = '';
     this.senha = '';
     this.confirmarSenha = '';
-    this.codigo = null;
     this.disciplinasSelecionadas = [];
     this.erroSenha = '';
+
+    // Se limpou os campos e não está editando, gera um novo código para o próximo cadastro
+    if (!this.editando) {
+      this.gerarCodigoAutomatico();
+    } else {
+      this.codigo = null;
+    }
   }
 
   cancelarCadastro() {

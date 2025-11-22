@@ -141,7 +141,7 @@ export class PgsGerarProvaComponent implements OnInit {
 
   private generateDurationOptions() {
     const options = [];
-    let minutes = 30;
+    let minutes = 60;
     const maxMinutes = 4 * 60;
 
     while (minutes <= maxMinutes) {
