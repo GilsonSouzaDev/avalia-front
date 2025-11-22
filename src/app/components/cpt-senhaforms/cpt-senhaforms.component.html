@@ -2,12 +2,11 @@
   <img class="senha-forms__logo" src="assets/logo/logo-avalia.png" alt="logo avalia" />
 
   <form [formGroup]="senhaForms" (ngSubmit)="onSubmit()" class="example-form">
-    <!-- Email -->
+    <!-- Email (Sem alterações) -->
     <h3 class="senha-forms__titulo">Email</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Email</mat-label>
       <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com" />
-
       @if (email.hasError('required') && email.touched) {
         <mat-error>Email é <strong>obrigatório</strong></mat-error>
       }
@@ -20,7 +19,25 @@
     <h3 class="senha-forms__titulo">Senha</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Senha</mat-label>
-      <input type="password" matInput formControlName="novaSenha" placeholder="Ex. **********" />
+
+      <!-- 1. O type agora é dinâmico -->
+      <input
+        [type]="ocultarSenha ? 'password' : 'text'"
+        matInput
+        formControlName="novaSenha"
+        placeholder="Ex. **********"
+      />
+
+      <!-- 2. Botão do Olhinho -->
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="ocultarSenha = !ocultarSenha"
+        [attr.aria-label]="'Ocultar senha'"
+        [attr.aria-pressed]="!ocultarSenha"
+        type="button"> <!-- IMPORTANTE: type="button" para não submeter o form -->
+        <mat-icon>{{ ocultarSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
 
       @if (novaSenha.hasError('required') && novaSenha.touched) {
         <mat-error>Senha é <strong>obrigatória</strong></mat-error>
@@ -30,19 +47,35 @@
     <!-- Confirmar Senha -->
     <mat-form-field class="example-full-width">
       <mat-label>Confirmar Senha</mat-label>
-      <input type="password" matInput formControlName="confirmPassword" placeholder="Ex. **********" />
+
+      <!-- Type dinâmico -->
+      <input
+        [type]="ocultarConfirmacao ? 'password' : 'text'"
+        matInput
+        formControlName="confirmPassword"
+        placeholder="Ex. **********"
+      />
+
+      <!-- Botão do Olhinho -->
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="ocultarConfirmacao = !ocultarConfirmacao"
+        [attr.aria-label]="'Ocultar confirmação de senha'"
+        [attr.aria-pressed]="!ocultarConfirmacao"
+        type="button">
+        <mat-icon>{{ ocultarConfirmacao ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
 
       @if (confirmPassword.hasError('required') && confirmPassword.touched) {
         <mat-error>Confirmar senha é <strong>obrigatório</strong></mat-error>
       }
-
-      <!-- ✅ Verificação de erro simplificada e correta -->
       @if (confirmPassword.hasError('senhasNaoCoincidem') && confirmPassword.touched) {
         <mat-error>As senhas não <strong>correspondem</strong></mat-error>
       }
     </mat-form-field>
 
-    <!-- Botão -->
+    <!-- Botão Salvar -->
     <button type="submit" class="senha-forms__button">Salvar</button>
   </form>
 

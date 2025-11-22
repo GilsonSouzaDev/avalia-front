@@ -1,15 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { of } from 'rxjs'; // <--- Importante adicionar isso
-
+import { Router, ActivatedRoute } from '@angular/router'; // Adicionado ActivatedRoute
+import { of } from 'rxjs';
 
 import { ProfessorService } from '../../services/professor.service';
 import { DialogService } from '../../shared/services/dialog.service';
 import { Professor } from '../../interfaces/Professor';
 import { CptProfessorFormsComponent } from '../../components/cpt-professor-forms/cpt-professor-forms.component';
 import { AuthService } from '../../core/auth.service';
-import { CptPerfilDatalhesComponent } from "../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component";
+import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component';
 
 @Component({
   selector: 'app-pgs-perfil-detalhes',
@@ -22,16 +21,43 @@ import { CptPerfilDatalhesComponent } from "../../components/cpt-perfil-datalhes
   templateUrl: './pgs-perfil-detalhes.component.html',
   styleUrl: './pgs-perfil-detalhes.component.scss',
 })
-export class PgsPerfilDetalhesComponent {
+export class PgsPerfilDetalhesComponent implements OnInit {
   private authService = inject(AuthService);
   private professorService = inject(ProfessorService);
   private dialogService = inject(DialogService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  professor = this.authService.currentUserSig;
+  // Mudamos de uma referência direta para um signal local que podemos alterar
+  professor = signal<Professor | null>(null);
+
   editando = signal(false);
 
+  ngOnInit(): void {
+    this.carregarDados();
+  }
+
+  carregarDados(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+
+    if (idParam) {
+      const id = Number(idParam);
+      this.professorService.getById(id).subscribe({
+        next: (prof) => this.professor.set(prof),
+        error: () => {
+          this.router.navigate(['/gerenciar']);
+        },
+      });
+    } else {
+      // MODO: Visualizando meu próprio perfil
+      // O operador ?? null garante que se for undefined, vira null
+      this.professor.set(this.authService.currentUserSig() ?? null);
+    }
+  }
+
   get mostrarDisciplinas(): boolean {
+    // Só mostra disciplinas se quem está vendo for Coordenador
+    // (Pode ajustar essa lógica se o próprio professor puder ver as suas)
     return this.authService.isCoordenador();
   }
 
@@ -45,28 +71,37 @@ export class PgsPerfilDetalhesComponent {
 
   atualizarPerfil(dadosAtualizados: Professor) {
     if (!dadosAtualizados.id) return;
-    console.log(dadosAtualizados);
+
     this.professorService
       .update(dadosAtualizados.id, dadosAtualizados)
       .subscribe({
         next: (profAtualizado) => {
-          this.authService.currentUserSig.set(profAtualizado);
+          // Atualiza o signal local da página
+          this.professor.set(profAtualizado);
+
+          // SE estiver editando a si mesmo, atualiza também o AuthService global
+          const usuarioLogado = this.authService.currentUserSig();
+          if (usuarioLogado && usuarioLogado.id === profAtualizado.id) {
+            this.authService.currentUserSig.set(profAtualizado);
+          }
+
           this.editando.set(false);
 
           this.dialogService
             .confirmAction({
               title: 'Perfil Atualizado',
-              message: 'Seus dados foram alterados com sucesso.',
+              message: 'Os dados foram alterados com sucesso.',
               confirmButtonText: 'OK',
               cancelButtonText: '',
               titleColor: 'green',
-              action: () => of(true), // <--- CORREÇÃO AQUI: Retorna um Observable imediato
+              action: () => of(true),
             })
             .afterClosed()
             .subscribe();
         },
         error: (err) => {
           console.error(err);
+          // Opcional: Mostrar erro via dialog
         },
       });
   }
@@ -75,14 +110,19 @@ export class PgsPerfilDetalhesComponent {
     const prof = this.professor();
     if (!prof || !prof.id) return;
 
+    // Verifica se estou me excluindo
+    const usuarioLogado = this.authService.currentUserSig();
+    const isExcluindoASiMesmo = usuarioLogado?.id === prof.id;
+
     this.dialogService
       .confirmAction({
         title: 'Excluir Conta',
-        message:
-          'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.',
+        message: isExcluindoASiMesmo
+          ? 'Tem certeza que deseja excluir SUA conta? Você será deslogado.'
+          : `Tem certeza que deseja excluir o professor ${prof.nome}?`,
         confirmButtonText: 'Excluir Definitivamente',
         cancelButtonText: 'Cancelar',
-        titleColor: '#d32f2f',
+        titleColor: '#d32f2f', // Vermelho Warn
         action: () => {
           return this.professorService.delete(prof.id!);
         },
@@ -90,7 +130,13 @@ export class PgsPerfilDetalhesComponent {
       .afterClosed()
       .subscribe((sucesso) => {
         if (sucesso) {
-          this.authService.logout();
+          if (isExcluindoASiMesmo) {
+            // Se me excluí, logout
+            this.authService.logout();
+          } else {
+            // Se excluí outro, volta para a lista de gerenciamento
+            this.router.navigate(['/gerenciar']);
+          }
         }
       });
   }

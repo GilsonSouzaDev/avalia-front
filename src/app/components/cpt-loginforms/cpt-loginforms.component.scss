@@ -1,4 +1,4 @@
-.login-forms{
+.login-forms {
   display: flex;
   background-color: #F5F7FA;
   margin: 0 auto;
@@ -11,42 +11,42 @@
   margin: auto;
 
 
-  &__logo{
+  &__logo {
     width: 15rem;
     height: 6rem;
   }
 
-  &__titulo{
+  &__titulo {
     padding-bottom: 0.5rem;
   }
 
 
- &__button {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   color: black;
-   font-weight: 600;
-   font-size: 20px;
-   background-color: rgba(68, 204, 170, 0.96);
-   margin: 0 auto;
-   width: 216px;
-   height: 46px;
-   border-radius: 15px;
-   border: none;
-   cursor: pointer;
-   transition: background-color 0.2s ease, transform 0.1s ease;
+  &__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: 600;
+    font-size: 20px;
+    background-color: rgba(68, 204, 170, 0.96);
+    margin: 0 auto;
+    width: 216px;
+    height: 46px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 
-   &:hover {
-     background-color: rgba(68, 204, 170, 1);
-   }
+    &:hover {
+      background-color: rgba(68, 204, 170, 1);
+    }
 
-   &:active {
-     transform: scale(0.97);
-   }
- }
+    &:active {
+      transform: scale(0.97);
+    }
+  }
 
-  span{
+  span {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -86,6 +86,7 @@
   width: 100%;
 }
 
+/* Estilização profunda para forçar o estilo do Material Design Input */
 :host ::ng-deep .login-forms .mdc-text-field--filled {
   background-color: #FFFFFF !important;
   border-radius: 10px;
@@ -95,5 +96,3 @@
 :host ::ng-deep .login-forms .mat-mdc-input-element {
   background: transparent !important;
 }
-
-

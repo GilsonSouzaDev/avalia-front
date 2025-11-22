@@ -20,7 +20,24 @@
     <h3 class="login-forms__titulo">Senha</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Senha</mat-label>
-      <input type="password" matInput formControlName="password" placeholder="Ex. **********" />
+
+      <!-- ALTERAÇÃO AQUI: type dinâmico e botão suffix -->
+      <input
+        [type]="hide ? 'password' : 'text'"
+        matInput
+        formControlName="password"
+        placeholder="Ex. **********"
+      />
+
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-label]="'Ocultar senha'"
+        [attr.aria-pressed]="hide"
+        type="button"> <!-- type="button" é crucial para não submeter o form ao clicar no olho -->
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
 
       @if (password.hasError('required')) {
         <mat-error>Senha é <strong>obrigatória</strong></mat-error>
@@ -34,4 +51,4 @@
     Login
   </button>
 
- </section>
+</section>

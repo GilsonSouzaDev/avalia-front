@@ -7,28 +7,47 @@
       <div class="header-group">
         <div class="form-group disciplina-group">
           <label for="disciplina">Disciplina</label>
-          <select
-            id="disciplina"
-            name="disciplina"
-            [(ngModel)]="disciplinaId"
-            required
-            class="form-control"
-          >
-            <!-- Valor null pois no TS inicializamos com null -->
-            <option [ngValue]="null" disabled>Selecione a Disciplina</option>
-            <option
-              *ngFor="let disciplina of disciplinas"
-              [ngValue]="disciplina.id"
+
+          <!-- MODO CADASTRO: Mostra o Select para escolher -->
+          <ng-container *ngIf="!isEdicao">
+            <select
+              id="disciplina"
+              name="disciplina"
+              [(ngModel)]="disciplinaId"
+              required
+              class="form-control"
             >
-              {{ disciplina.nome }}
-            </option>
-          </select>
-          <div
-            *ngIf="questionForm.controls['disciplina']?.invalid && questionForm.controls['disciplina']?.touched"
-            class="error-message"
-          >
-            Disciplina é obrigatória.
-          </div>
+              <option [ngValue]="null" disabled>Selecione a Disciplina</option>
+              <option
+                *ngFor="let disciplina of disciplinas"
+                [ngValue]="disciplina.id"
+              >
+                {{ disciplina.nome }}
+              </option>
+            </select>
+            <div
+              *ngIf="questionForm.controls['disciplina']?.invalid && questionForm.controls['disciplina']?.touched"
+              class="error-message"
+            >
+              Disciplina é obrigatória.
+            </div>
+          </ng-container>
+
+          <!-- MODO EDIÇÃO: Mostra apenas o nome da disciplina travado -->
+          <ng-container *ngIf="isEdicao">
+            <input
+              type="text"
+              class="form-control"
+              [value]="perguntaParaEdicao?.disciplina?.nome || 'Disciplina Indefinida'"
+              disabled
+              readonly
+              style="background-color: #e9ecef; cursor: not-allowed;"
+            >
+            <small style="color: #6c757d; margin-top: 5px; display: block; font-size: 0.85em;">
+              * A disciplina não pode ser alterada durante a edição da pergunta.
+            </small>
+          </ng-container>
+
         </div>
 
         <div class="form-group quantidade-group">
@@ -74,7 +93,6 @@
       <div class="form-group">
         <label>Alternativas</label>
         <div class="alternativas-list">
-          <!-- Itera sobre a variável 'alternativas' direta -->
           <div *ngFor="let alternativa of alternativas; let i = index" class="alternativa-item">
             <ng-container *ngIf="i < quantidadeAlternativas">
               <input

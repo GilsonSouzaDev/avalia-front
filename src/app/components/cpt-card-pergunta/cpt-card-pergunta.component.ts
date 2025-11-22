@@ -40,13 +40,14 @@ export class CptCardPerguntaComponent {
   @Output() edit = new EventEmitter<Pergunta>();
   @Output() delete = new EventEmitter<number>();
   @Output() selectToggle = new EventEmitter<Pergunta>();
-  @Output() editVariable = new EventEmitter<Alternativa>
+  @Output() editVariable = new EventEmitter<Alternativa>();
 
   expanded = false;
 
-  // Helper para verificar permissão no template de forma limpa
+  // Helper para verificar permissão.
+  // Usa toUpperCase() para garantir que funcione mesmo se vier 'Coordenador' ou 'coordenador'
   get isCoordenador(): boolean {
-    return this.userTipo === 'COORDENADOR';
+    return this.userTipo?.toUpperCase() === 'COORDENADOR';
   }
 
   toggleExpand(): void {
@@ -75,8 +76,8 @@ export class CptCardPerguntaComponent {
   onAlterarTexto(alternativa: Alternativa) {
     if (!this.isSelectionMode) {
       this.editVariable.emit(alternativa);
+      console.log(" card passou aqui", alternativa)
     }
-    console.log("card pergunta passou aqui",alternativa)
   }
 
   getLetra(index: number): string {

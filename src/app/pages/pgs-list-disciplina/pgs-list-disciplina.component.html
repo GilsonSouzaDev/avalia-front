@@ -1,11 +1,12 @@
 <mat-tab-group>
-  <!-- Tab 1 - Sempre visível -->
+  <!-- Tab 1 - Minhas Disciplinas (Mostra SÓ as do professor logado) -->
   <mat-tab label="Minhas Disciplinas" class="minhas-disciplinas">
     <section class="list-disciplina">
       @for (disciplina of disciplinasFiltradas; track $index) {
         <app-cpt-table-materia
           [disciplina]="disciplina"
           [professores]="professores()"
+          [somenteMinhas]="true"
           class="disciplina"
           (alterarAlternativa)="onAlterarAlternativa($event)"
         ></app-cpt-table-materia>
@@ -13,7 +14,7 @@
     </section>
   </mat-tab>
 
-  <!-- Tab 2 - Apenas para coordenador -->
+  <!-- Tab 2 - Todas as Disciplinas (Apenas COORDENADOR - Mostra TUDO) -->
   @if (usuario?.perfilProfessor === 'COORDENADOR') {
     <mat-tab label="Todas as Disciplinas">
       <section class="list-disciplina">
@@ -21,6 +22,7 @@
           <app-cpt-table-materia
             [disciplina]="disciplina"
             [professores]="professores()"
+            [somenteMinhas]="false"
             (alterarAlternativa)="onAlterarAlternativa($event)"
             class="disciplina"
           ></app-cpt-table-materia>

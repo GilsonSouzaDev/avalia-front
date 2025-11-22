@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { EsqueciSenha } from '../../interfaces/EsqueciSenha';
+import { MatIcon } from "@angular/material/icon";
 
 /**
  * Validador customizado para verificar se os campos 'novaSenha' e 'confirmPassword' coincidem.
@@ -47,11 +48,15 @@ export function senhasCoincidemValidator(): ValidatorFn {
     MatFormFieldModule,
     MatInputModule,
     RouterLink,
-  ],
+    MatIcon
+],
   templateUrl: './cpt-senhaforms.component.html',
   styleUrls: ['./cpt-senhaforms.component.scss'],
 })
 export class CptSenhaformsComponent implements OnInit {
+
+  ocultarSenha = true;
+  ocultarConfirmacao = true;
 
   @Output() submitSenha = new EventEmitter<EsqueciSenha>();
 

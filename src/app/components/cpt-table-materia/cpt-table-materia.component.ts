@@ -7,6 +7,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  effect, // <--- IMPORTANTE
 } from '@angular/core';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
@@ -20,6 +21,8 @@ import { Pergunta } from '../../interfaces/Pergunta';
 import { Alternativa } from '../../interfaces/Alternativa';
 import { CptCardPerguntaComponent } from '../cpt-card-pergunta/cpt-card-pergunta.component';
 import { PerguntaService } from '../../services/pergunta.service';
+import { AuthService } from '../../core/auth.service';
+import { DialogService } from '../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-cpt-table-materia',
@@ -38,6 +41,9 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
   @Input({ required: true }) disciplina!: Disciplina;
   @Input() professores: Professor[] = [];
 
+  // --- NOVO INPUT PARA CONTROLAR O FILTRO ---
+  @Input() somenteMinhas: boolean = false;
+
   @Input() isSelectionMode: boolean = false;
   @Input() selectedQuestionIds: number[] = [];
   @Input() isLimitReached: boolean = false;
@@ -48,6 +54,8 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
   private router = inject(Router);
   private perguntaService = inject(PerguntaService);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
 
   expanded = false;
   pageIndex = 0;
@@ -56,21 +64,52 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
   perguntasDaDisciplina: Pergunta[] = [];
   paginatedPerguntas: Pergunta[] = [];
 
+  constructor() {
+    // --- SOLUÇÃO DO BUG DO REFRESH ---
+    // O effect roda sempre que o Signal 'perguntaService.perguntas()' muda.
+    // Assim, se os dados chegarem atrasados (após o ngOnInit), a lista atualiza sozinha.
+    effect(() => {
+      // Apenas acessamos o signal para registrar a dependência
+      this.perguntaService.perguntas();
+      // Chamamos a função de carga (usando untracked ou deixando reagir, aqui chamar direto funciona bem)
+      this.carregarPerguntas();
+    });
+  }
+
   ngOnInit(): void {
     this.carregarPerguntas();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['disciplina']) {
+    // Atualiza se a disciplina ou o modo de filtro mudar
+    if (changes['disciplina'] || changes['somenteMinhas']) {
       this.carregarPerguntas();
     }
   }
 
+  get userTipo(): string {
+    const usuario = this.authService.currentUserSig();
+    return usuario ? usuario.perfilProfessor : ''; // Ajuste conforme sua interface (perfil ou perfilProfessor)
+  }
+
   carregarPerguntas(): void {
     const todas = this.perguntaService.perguntas();
-    this.perguntasDaDisciplina = todas.filter(
+    const usuarioLogado = this.authService.currentUserSig();
+
+    // 1. Filtra pela Disciplina (Padrão)
+    let filtradas = todas.filter(
       (p) => p.disciplina && p.disciplina.id === this.disciplina.id
     );
+
+    // 2. SOLUÇÃO DO BUG DE PERGUNTAS ALHEIAS
+    // Se a flag 'somenteMinhas' estiver ativa, filtra pelo código do professor
+    if (this.somenteMinhas && usuarioLogado) {
+      filtradas = filtradas.filter(
+        (p) => p.codigoProfessor === usuarioLogado.codigo
+      );
+    }
+
+    this.perguntasDaDisciplina = filtradas;
     this.updatePaginatedPerguntas();
   }
 
@@ -106,7 +145,28 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
     this.router.navigate(['/pergunta', pergunta.id]);
   }
 
+  onDeletePergunta(id: number) {
+    this.dialogService
+      .confirmAction({
+        title: 'Excluir Pergunta',
+        message:
+          'Tem certeza que deseja remover esta pergunta permanentemente?',
+        confirmButtonText: 'Excluir',
+        cancelButtonText: 'Cancelar',
+        titleColor: 'warn',
+        action: () => this.perguntaService.delete(id),
+      })
+      .afterClosed()
+      .subscribe((success: boolean | undefined) => {
+        // O effect cuidará da atualização, mas chamar aqui garante feedback imediato
+        if (success) {
+          this.carregarPerguntas();
+        }
+      });
+  }
+
   onAtualizarAlternativa(alternativa: Alternativa) {
     this.alterarAlternativa.emit(alternativa);
+    console.log("materia table parou por aqui",alternativa)
   }
 }

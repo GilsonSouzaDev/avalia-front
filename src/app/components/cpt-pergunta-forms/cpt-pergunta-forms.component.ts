@@ -53,7 +53,8 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
       this.disciplinas.length > 0 &&
       !this.disciplinaId
     ) {
-      if (this.disciplinas.length === 1) {
+      // Se houver apenas uma disciplina disponível e não estiver editando, seleciona automaticamente
+      if (this.disciplinas.length === 1 && !this.isEdicao) {
         this.disciplinaId = this.disciplinas[0].id;
       }
     }
@@ -79,6 +80,7 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   private loadFormModel(): void {
     if (this.perguntaParaEdicao) {
       this.enunciado = this.perguntaParaEdicao.enunciado;
+      // Carrega o ID da disciplina para memória, para ser enviado no submit
       this.disciplinaId = this.perguntaParaEdicao.disciplina?.id || null;
 
       this.alternativas = this.perguntaParaEdicao.alternativas.map((a) => ({
@@ -105,6 +107,8 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   }
 
   onSubmit(form: NgForm): void {
+    // Em modo edição, o campo select não existe no DOM, então o form pode estar válido
+    // mas precisamos garantir que o disciplinaId esteja setado na variável.
     if (form.valid) {
       if (!this.disciplinaId) {
         return;
@@ -134,21 +138,5 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   setQuantidadeAlternativas(quantidade: number): void {
     this.quantidadeAlternativas = quantidade;
     this.adjustAlternativasArray(quantidade);
-  }
-
-  addAlternativa(): void {
-    if (this.alternativas.length < 5) {
-      this.alternativas.push({ texto: '' });
-      this.quantidadeAlternativas = this.alternativas.length;
-    }
-  }
-
-  removeAlternativa(index: number): void {
-    if (this.alternativas.length <= 2) {
-      return;
-    }
-
-    this.alternativas.splice(index, 1);
-    this.quantidadeAlternativas = this.alternativas.length;
   }
 }

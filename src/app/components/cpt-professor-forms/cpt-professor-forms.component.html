@@ -3,6 +3,7 @@
 
   <form #profForm="ngForm" (ngSubmit)="onSubmit(profForm)">
 
+    <!-- NOME -->
     <div class="campo">
       <label for="nome">Nome</label>
       <input
@@ -14,6 +15,7 @@
       />
     </div>
 
+    <!-- EMAIL -->
     <div class="campo">
       <label for="email">Email</label>
       <input
@@ -25,31 +27,60 @@
       />
     </div>
 
+    <!-- SENHA -->
     <div class="campo">
       <label for="senha">{{ editando ? 'Nova Senha (Opcional)' : 'Senha' }}</label>
-      <input
-        type="password"
-        id="senha"
-        name="senha"
-        [(ngModel)]="senha"
-        (input)="validarSenhas()"
-        [required]="!editando"
-      />
+
+      <!-- Wrapper para posicionar o ícone -->
+      <div class="input-wrapper">
+        <input
+          [type]="ocultarSenha ? 'password' : 'text'"
+          id="senha"
+          name="senha"
+          [(ngModel)]="senha"
+          (input)="validarSenhas()"
+          [required]="!editando"
+          placeholder="Digite a senha"
+        />
+        <!-- Botão do Olho -->
+        <button
+          type="button"
+          class="btn-eye"
+          (click)="ocultarSenha = !ocultarSenha"
+          tabindex="-1">
+          <mat-icon>{{ ocultarSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </div>
     </div>
 
+    <!-- CONFIRMAR SENHA -->
     <div class="campo" *ngIf="senha">
       <label for="confirmarSenha">Confirmar Senha</label>
-      <input
-        type="password"
-        id="confirmarSenha"
-        name="confirmarSenha"
-        [(ngModel)]="confirmarSenha"
-        (input)="validarSenhas()"
-        [required]="!editando"
-      />
+
+      <div class="input-wrapper">
+        <input
+          [type]="ocultarConfirmacao ? 'password' : 'text'"
+          id="confirmarSenha"
+          name="confirmarSenha"
+          [(ngModel)]="confirmarSenha"
+          (input)="validarSenhas()"
+          [required]="!editando"
+          placeholder="Confirme a senha"
+        />
+        <!-- Botão do Olho -->
+        <button
+          type="button"
+          class="btn-eye"
+          (click)="ocultarConfirmacao = !ocultarConfirmacao"
+          tabindex="-1">
+          <mat-icon>{{ ocultarConfirmacao ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </div>
+
       <div *ngIf="erroSenha" class="erro-senha">{{ erroSenha }}</div>
     </div>
 
+    <!-- DISCIPLINAS -->
     <div class="campo" *ngIf="mostrarDisciplinas">
       <label>Disciplinas</label>
       <div class="disciplinas-grid">
@@ -67,6 +98,7 @@
       </div>
     </div>
 
+    <!-- AÇÕES -->
     <div class="form-actions">
       <button
         type="submit"

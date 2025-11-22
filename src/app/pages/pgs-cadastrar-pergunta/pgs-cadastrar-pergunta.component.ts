@@ -57,24 +57,44 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
     if (!this.usuario) return;
 
     if (this.perguntaParaEdicao) {
+      // --- MODO EDIÇÃO ---
       const id = this.perguntaParaEdicao.id;
-      this.perguntaService.update(id, formValue).subscribe(() => {
-        this.openSuccessDialog(
-          'Questão Atualizada',
-          'A questão foi alterada com sucesso!'
-        );
-      });
-    } else {
-      const novaPergunta: CadastrarPergunta = {
+
+      // CRÍTICO: Mescla os dados do form com o codigoProfessor original
+      // para garantir que a questão não perca o dono.
+      const payloadAtualizacao = {
         ...formValue,
-        codigoProfessor: this.usuario.codigo,
+        id: id,
+        codigoProfessor: this.perguntaParaEdicao.codigoProfessor,
       };
 
-      this.perguntaService.add(novaPergunta).subscribe(() => {
-        this.openSuccessDialog(
-          'Questão Cadastrada',
-          'A nova questão foi salva com sucesso!'
-        );
+      this.perguntaService.update(id, payloadAtualizacao).subscribe({
+        next: () => {
+          this.openSuccessDialog(
+            'Questão Atualizada',
+            'A questão foi alterada com sucesso!'
+          );
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar', err);
+          // Aqui você pode adicionar um dialog de erro se quiser
+        },
+      });
+    } else {
+      // --- MODO CADASTRO ---
+      const novaPergunta: CadastrarPergunta = {
+        ...formValue,
+        codigoProfessor: this.usuario.codigo, // Define o dono atual
+      };
+
+      this.perguntaService.add(novaPergunta).subscribe({
+        next: () => {
+          this.openSuccessDialog(
+            'Questão Cadastrada',
+            'A nova questão foi salva com sucesso!'
+          );
+        },
+        error: (err) => console.error('Erro ao criar', err),
       });
     }
   }
@@ -85,18 +105,21 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
       disableClose: true,
       data: {
         title: titulo,
-        message: mensagem + ' Redirecionando...',
+        message: mensagem, // Removido "Redirecionando..." do texto fixo para ficar mais limpo
         confirmButtonText: 'OK',
         titleColor: 'green',
       },
     });
 
+    // Timer de segurança para fechar sozinho após 3s
     const timer = setTimeout(() => {
       dialogRef.close();
     }, 3000);
 
     dialogRef.afterClosed().subscribe(() => {
       clearTimeout(timer);
+      // Redireciona para a lista (Dashboard ou Listagem)
+      // Ajuste a rota conforme a estrutura do seu app
       this.router.navigate(['/dashboard']);
     });
   }

@@ -84,7 +84,7 @@ export class PgsGerenciarProfessorComponent {
       .subscribe((success) => {
         if (success) {
           this.fecharCadastro();
-          this.router.navigate(['/gerenciar']);
+          //this.router.navigate(['/gerenciar']);
         }
       });
   }
@@ -106,26 +106,17 @@ export class PgsGerenciarProfessorComponent {
     this.modoCadastro.set(true);
   }
 
-  // ---- Indicadores (Usados na Tabela) ----
 
-  /**
-   * Conta quantas perguntas no total o professor criou.
-   * Filtra a lista global de perguntas pelo código do professor.
-   */
   quantidadeQuestoes = (professor: Professor) => {
     const todasPerguntas = this.perguntas(); // Pega valor atual do signal
     return todasPerguntas.filter((p) => p.codigoProfessor === professor.codigo)
       .length;
   };
 
-  /**
-   * Conta quantas matérias o professor leciona.
-   */
+
   quantidadeMaterias = (professor: Professor) => {
     return professor.disciplinas?.length ?? 0;
   };
-
-  // ---- Getters e Utilitários ----
 
   get usuario(): Professor | null | undefined {
     return this.authService.currentUserSig();

@@ -9,6 +9,7 @@ import { filtrarDisciplinasPorPerfil } from '../../utils/disicplina-filter-util'
 import { CptTableMateriaComponent } from '../../components/cpt-table-materia/cpt-table-materia.component';
 import { Alternativa } from '../../interfaces/Alternativa';
 import { AuthService } from '../../core/auth.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-pgs-list-disciplina',
@@ -43,14 +44,22 @@ export class PgsListDisciplinaComponent {
         confirmButtonText: 'Salvar Alterações',
         cancelButtonText: 'Cancelar',
         titleColor: '#1565c0',
-        action: () => {
-          return this.alternativaService.updateAlternativa(alternativa);
-        },
+        // SOLUÇÃO ERRO 2: Passamos uma função vazia ou dummy para satisfazer a interface
+        action: () => of(true),
       })
       .afterClosed()
-      .subscribe((sucesso) => {
-        if (sucesso) {
-          console.log('Alternativa atualizada com sucesso!');
+      // SOLUÇÃO ERRO 1: Ajustamos o tipo para aceitar 'undefined'
+      .subscribe((confirmado: boolean | undefined) => {
+        // O 'if' trata tanto o false quanto o undefined
+        if (confirmado) {
+          this.alternativaService.updateAlternativa(alternativa).subscribe({
+            next: (res) => {
+              console.log('Alternativa atualizada com sucesso!', res);
+            },
+            error: (err) => {
+              console.error('Erro ao atualizar:', err);
+            },
+          });
         }
       });
   }

@@ -1,17 +1,20 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
   AbstractControl,
-  ValidatorFn,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
+
+// IMPORTS ADICIONADOS
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-cpt-loginforms',
@@ -22,12 +25,14 @@ import { filter } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     RouterLink,
+    // MÓDULOS ADICIONADOS NO IMPORTS
+    MatIconModule,
+    MatButtonModule,
   ],
   templateUrl: './cpt-loginforms.component.html',
   styleUrls: ['./cpt-loginforms.component.scss'],
 })
 export class CptLoginformsComponent implements OnInit {
-
   @Output() submitLogin = new EventEmitter<{
     email: string;
     password: string;
@@ -35,6 +40,9 @@ export class CptLoginformsComponent implements OnInit {
 
   loginForm!: FormGroup;
   currentRoute = '';
+
+  // VARIÁVEL DE ESTADO ADICIONADA
+  hide = true;
 
   constructor(private fb: FormBuilder, private router: Router) {}
 
@@ -55,10 +63,7 @@ export class CptLoginformsComponent implements OnInit {
     });
 
     this.updateFormValidators();
-
   }
-
-  // cpt-loginforms.component.ts
 
   updateFormValidators() {
     const passwordControl = this.loginForm.get('password');
@@ -78,20 +83,14 @@ export class CptLoginformsComponent implements OnInit {
       this.loginForm.setValidators(this.senhasCoincidem.bind(this));
 
       // 2. Assine o 'valueChanges' dos controles para forçar a revalidação do GRUPO
-      //    Isso garante que o erro de grupo ('senhasNaoCoincidem') seja avaliado imediatamente.
-
       passwordControl?.valueChanges.subscribe(() => {
-        this.loginForm.updateValueAndValidity({ onlySelf: true }); // Apenas revalida o grupo
+        this.loginForm.updateValueAndValidity({ onlySelf: true });
       });
 
       confirmPasswordControl?.valueChanges.subscribe(() => {
-        this.loginForm.updateValueAndValidity({ onlySelf: true }); // Apenas revalida o grupo
+        this.loginForm.updateValueAndValidity({ onlySelf: true });
       });
     }
-
-    // No else, você limpa os observables se estiver voltando para /login
-
-    // ... resto do seu código ...
 
     confirmPasswordControl?.updateValueAndValidity();
     this.loginForm.updateValueAndValidity();

@@ -34,7 +34,7 @@
       <p class="label-alternativas">Alternativas:</p>
       <ul class="lista-alternativas-readonly">
         <li *ngFor="let alt of pergunta.alternativas; let i = index">
-          <span class="letra">{{ getLetra(i) }})</span> {{ alt.texto }}
+          <span class="letra">{{ getLetra(i) }}</span> {{ alt.texto }}
         </li>
       </ul>
       <div *ngIf="!pergunta.alternativas.length" class="aviso-vazio">Sem alternativas cadastradas.</div>
@@ -55,11 +55,9 @@
 
       <!--
         RODAPÉ DE AÇÕES
-        - Layout Flex (não sobrepõe texto)
-        - Estilo: mat-button (Transparente com texto colorido)
       -->
       <div class="footer-actions">
-        <!-- Botão Editar: Azul transparente -->
+        <!-- Botão Editar: Azul (Primary) -->
         <button
           mat-button
           color="primary"
@@ -68,7 +66,7 @@
           <mat-icon>edit</mat-icon> Editar
         </button>
 
-        <!-- Botão Excluir: Vermelho transparente (Só COORDENADOR) -->
+        <!-- Botão Excluir: Vermelho (Warn) - Só COORDENADOR -->
         <button
           *ngIf="isCoordenador"
           mat-button

@@ -9,8 +9,8 @@
 
   <section *ngIf="modoCadastro()">
     <app-cpt-professor-forms
-    (cancelar)="fecharCadastro()"
-    (onSave)="handleSalvarProfessor($event)"
+      (onCancel)="fecharCadastro()"
+      (onSave)="handleSalvarProfessor($event)"
     ></app-cpt-professor-forms>
   </section>
 
