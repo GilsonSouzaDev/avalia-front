@@ -10,11 +10,12 @@
           <select
             id="disciplina"
             name="disciplina"
-            [(ngModel)]="formModel.disciplinaId"
+            [(ngModel)]="disciplinaId"
             required
             class="form-control"
           >
-            <option [ngValue]="0" disabled>Selecione a Disciplina</option>
+            <!-- Valor null pois no TS inicializamos com null -->
+            <option [ngValue]="null" disabled>Selecione a Disciplina</option>
             <option
               *ngFor="let disciplina of disciplinas"
               [ngValue]="disciplina.id"
@@ -33,16 +34,19 @@
         <div class="form-group quantidade-group">
           <label>Quantidade de Alternativas</label>
           <div class="question-count-selector">
-            <!-- Agora usa a variável separada quantidadeAlternativas -->
             <span
-              *ngFor="let count of alternativaCounts"
-              [class.active]="quantidadeAlternativas === count"
-              (click)="setQuantidadeAlternativas(count)"
+              [class.active]="quantidadeAlternativas === 4"
+              (click)="setQuantidadeAlternativas(4)"
             >
-              {{ count }}
+              4
+            </span>
+            <span
+              [class.active]="quantidadeAlternativas === 5"
+              (click)="setQuantidadeAlternativas(5)"
+            >
+              5
             </span>
           </div>
-          <!-- Removeu o input hidden pois não é mais necessário no formModel -->
         </div>
       </div>
 
@@ -52,7 +56,7 @@
         <textarea
           id="enunciado"
           name="enunciado"
-          [(ngModel)]="formModel.enunciado"
+          [(ngModel)]="enunciado"
           required
           class="form-control question-textarea"
           rows="5"
@@ -70,8 +74,8 @@
       <div class="form-group">
         <label>Alternativas</label>
         <div class="alternativas-list">
-          <div *ngFor="let alternativa of formModel.alternativas; let i = index" class="alternativa-item">
-            <!-- Agora usa quantidadeAlternativas em vez de formModel.quantidadeAlternativas -->
+          <!-- Itera sobre a variável 'alternativas' direta -->
+          <div *ngFor="let alternativa of alternativas; let i = index" class="alternativa-item">
             <ng-container *ngIf="i < quantidadeAlternativas">
               <input
                 type="text"

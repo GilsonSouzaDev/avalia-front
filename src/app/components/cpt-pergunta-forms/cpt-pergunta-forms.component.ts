@@ -23,17 +23,21 @@ import { Alternativa } from '../../interfaces/Alternativa';
 export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   @Input() perguntaParaEdicao: Pergunta | null = null;
   @Input() disciplinas: Disciplina[] = [];
-  @Output() submitForm = new EventEmitter<Pergunta>();
+  @Output() submitForm = new EventEmitter<any>();
 
   titulo: string = 'Cadastro de Questão';
   textoBotao: string = 'Salvar';
   isEdicao: boolean = false;
 
-  formModel: Pergunta = this.getInitialFormModel();
-  quantidadeAlternativas: number = 4; // Variável separada para controle de UI
-  readonly alternativaCounts: number[] = [4, 5];
+  enunciado: string = '';
+  disciplinaId: number | null = null;
+  alternativas: Partial<Alternativa>[] = [];
 
-  constructor() {}
+  quantidadeAlternativas: number = 4;
+
+  constructor() {
+    this.resetForm();
+  }
 
   ngOnInit(): void {}
 
@@ -44,32 +48,27 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
       this.loadFormModel();
     }
 
-    if (changes['disciplinas'] && this.disciplinas.length > 0) {
-      this.updateDisciplinaSelection();
+    if (
+      changes['disciplinas'] &&
+      this.disciplinas.length > 0 &&
+      !this.disciplinaId
+    ) {
+      if (this.disciplinas.length === 1) {
+        this.disciplinaId = this.disciplinas[0].id;
+      }
     }
   }
 
-  private getInitialFormModel(): Pergunta {
-    return {
-      id: 0,
-      enunciado: '',
-      codigoProfessor: 0,
-      disciplinaId: 0,
-      alternativas: [
-        this.createAlternativa(''),
-        this.createAlternativa(''),
-        this.createAlternativa(''),
-        this.createAlternativa(''),
-      ],
-    };
-  }
-
-  private createAlternativa(texto: string): Alternativa {
-    return {
-      id: 0,
-      texto,
-      perguntaId: this.formModel?.id, // ✅ referência correta
-    };
+  private resetForm(): void {
+    this.enunciado = '';
+    this.disciplinaId = null;
+    this.alternativas = [
+      { texto: '' },
+      { texto: '' },
+      { texto: '' },
+      { texto: '' },
+    ];
+    this.quantidadeAlternativas = 4;
   }
 
   private updateUI(): void {
@@ -79,58 +78,55 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
 
   private loadFormModel(): void {
     if (this.perguntaParaEdicao) {
-      this.formModel = JSON.parse(JSON.stringify(this.perguntaParaEdicao));
-      // Se estiver editando, usa a quantidade baseada nas alternativas existentes
-      this.quantidadeAlternativas = this.formModel.alternativas.length;
+      this.enunciado = this.perguntaParaEdicao.enunciado;
+      this.disciplinaId = this.perguntaParaEdicao.disciplina?.id || null;
+
+      this.alternativas = this.perguntaParaEdicao.alternativas.map((a) => ({
+        ...a,
+      }));
+
+      this.quantidadeAlternativas = this.alternativas.length;
       this.adjustAlternativasArray(this.quantidadeAlternativas);
     } else {
-      this.formModel = this.getInitialFormModel();
-    }
-  }
-
-  private updateDisciplinaSelection(): void {
-    if (this.disciplinas.length === 1 && this.formModel.disciplinaId === 0) {
-      this.formModel.disciplinaId = this.disciplinas[0].id;
+      this.resetForm();
     }
   }
 
   private adjustAlternativasArray(targetCount: number): void {
-    const currentCount = this.formModel.alternativas.length;
+    const currentCount = this.alternativas.length;
 
     if (currentCount < targetCount) {
       for (let i = currentCount; i < targetCount; i++) {
-        this.formModel.alternativas.push(this.createAlternativa(''));
+        this.alternativas.push({ texto: '' });
       }
     } else if (currentCount > targetCount) {
-      this.formModel.alternativas.splice(targetCount);
+      this.alternativas.splice(targetCount);
     }
   }
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
-      if (!this.formModel.disciplinaId || this.formModel.disciplinaId === 0) {
-        console.error('Selecione uma disciplina');
+      if (!this.disciplinaId) {
         return;
       }
 
-      const alternativasParaEnviar = this.formModel.alternativas
+      const alternativasParaEnviar = this.alternativas
         .slice(0, this.quantidadeAlternativas)
+        .map((alt) => ({ texto: alt.texto || '' }))
         .filter((alt) => alt.texto.trim() !== '');
 
-      const dataToEmit: Pergunta = {
-        ...this.formModel,
+      const payload = {
+        id: this.perguntaParaEdicao?.id,
+        enunciado: this.enunciado,
+        disciplinaId: this.disciplinaId,
         alternativas: alternativasParaEnviar,
       };
 
-      delete (dataToEmit as any).quantidadeAlternativas;
-
-      this.submitForm.emit(dataToEmit);
+      this.submitForm.emit(payload);
 
       if (!this.isEdicao) {
-        this.formModel = this.getInitialFormModel();
-        this.quantidadeAlternativas = 4;
-        this.updateDisciplinaSelection();
-        form.resetForm(this.formModel);
+        form.resetForm();
+        this.resetForm();
       }
     }
   }
@@ -141,28 +137,18 @@ export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   }
 
   addAlternativa(): void {
-    if (this.formModel.alternativas.length < 5) {
-      this.formModel.alternativas.push(this.createAlternativa(''));
-      this.quantidadeAlternativas = this.formModel.alternativas.length;
+    if (this.alternativas.length < 5) {
+      this.alternativas.push({ texto: '' });
+      this.quantidadeAlternativas = this.alternativas.length;
     }
   }
 
   removeAlternativa(index: number): void {
-    const total = this.formModel.alternativas.length;
-
-    if (total <= 4) {
-      console.warn('Não é permitido ter menos de 4 alternativas.');
+    if (this.alternativas.length <= 2) {
       return;
     }
 
-    this.formModel.alternativas.splice(index, 1);
-    this.quantidadeAlternativas = this.formModel.alternativas.length;
-  }
-
-  getDisciplinaSelecionada(): string {
-    const disciplina = this.disciplinas.find(
-      (d) => d.id === this.formModel.disciplinaId
-    );
-    return disciplina ? disciplina.nome : 'Selecione uma disciplina';
+    this.alternativas.splice(index, 1);
+    this.quantidadeAlternativas = this.alternativas.length;
   }
 }

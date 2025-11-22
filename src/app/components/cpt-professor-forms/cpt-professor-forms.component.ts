@@ -10,53 +10,61 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Disciplina } from '../../interfaces/Disciplina';
+import { DisciplinaService } from '../../services/disciplina.service';
 import { AuthService } from '../../core/auth.service';
-import { MOCK_DISCIPLINAS } from '../../data/mock-data';
 
 @Component({
   selector: 'app-cpt-professor-forms',
-  standalone: true, // Garanta que é standalone se estiver usando imports diretos
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './cpt-professor-forms.component.html',
   styleUrl: './cpt-professor-forms.component.scss',
 })
 export class CptProfessorFormsComponent implements OnInit {
-  // ATENÇÃO: Se no pai você usa [professorParaEdicao], renomeie aqui ou mude no HTML do pai.
-  // Vou manter 'professor' conforme seu código atual, mas verifique o bind no pai.
-  @Input() professor: Professor | null = null;
+  @Input() professorAtivo: Professor | null = null;
   @Input() mostrarDisciplinas: boolean = true;
 
-  @Output() salvar = new EventEmitter<Professor>();
-  @Output() cancelar = new EventEmitter<void>();
+  @Output() onSave = new EventEmitter<any>();
+  @Output() onCancel = new EventEmitter<void>();
 
-  public authService = inject(AuthService);
+  private authService = inject(AuthService);
+  private disciplinaService = inject(DisciplinaService);
 
-  disciplinasDisponiveis: Disciplina[] = MOCK_DISCIPLINAS;
+  disciplinasDisponiveis = this.disciplinaService.disciplinas;
   disciplinasSelecionadas: Disciplina[] = [];
 
-  // Inicializando com strings vazias para evitar undefined
-  codigo = 0;
+  codigo: number | null = null;
   nome = '';
   email = '';
   senha = '';
   confirmarSenha = '';
   erroSenha = '';
+  perfilSelecionado: TipoProfessor = TipoProfessor.PROFESSOR;
 
   get editando(): boolean {
-    return !!this.professor;
+    return !!this.professorAtivo;
   }
 
   ngOnInit() {
-    if (this.professor) {
-      // Proteção || '' caso venha null do backend/mock
-      this.nome = this.professor.nome || '';
-      this.email = this.professor.email || '';
-      this.codigo = this.professor.codigo;
+    if (this.professorAtivo) {
+      this.nome = this.professorAtivo.nome || '';
+      this.email = this.professorAtivo.email || '';
+      this.codigo = this.professorAtivo.codigo;
+      this.perfilSelecionado = this.professorAtivo.perfilProfessor;
       this.senha = '';
       this.confirmarSenha = '';
-      this.disciplinasSelecionadas = this.professor.disciplinas
-        ? [...this.professor.disciplinas]
-        : [];
+
+      if (this.professorAtivo.disciplinas) {
+        const todas = this.disciplinasDisponiveis();
+        const idsProfessor = this.professorAtivo.disciplinas.map((d) => d.id);
+        this.disciplinasSelecionadas = todas.filter((d) =>
+          idsProfessor.includes(d.id)
+        );
+      } else {
+        this.disciplinasSelecionadas = [];
+      }
+    } else {
+      this.perfilSelecionado = TipoProfessor.PROFESSOR;
     }
 
     this.validarSenhas();
@@ -80,7 +88,6 @@ export class CptProfessorFormsComponent implements OnInit {
   }
 
   validarSenhas() {
-    // Garante que senha não seja null antes de comparar
     const s = this.senha || '';
     const c = this.confirmarSenha || '';
 
@@ -96,22 +103,19 @@ export class CptProfessorFormsComponent implements OnInit {
     }
   }
 
-  // AQUI ESTAVA O ERRO: Adicionada proteção (|| '') antes do .trim()
   isFormValid(): boolean {
     const nome = this.nome || '';
     const email = this.email || '';
     const senha = this.senha || '';
     const confirmar = this.confirmarSenha || '';
 
-    if (!nome.trim() || !email.trim()) return false;
+    if (!this.codigo || !nome.trim() || !email.trim()) return false;
 
-    // Regras para cadastro (Senha obrigatória)
     if (!this.editando) {
       if (!senha.trim()) return false;
       if (senha.trim() && confirmar.trim() !== senha.trim()) return false;
     }
 
-    // Regras para edição (Senha opcional, mas se digitada deve conferir)
     if (this.editando && senha.trim()) {
       if (!confirmar.trim() || confirmar.trim() !== senha.trim()) return false;
     }
@@ -125,42 +129,41 @@ export class CptProfessorFormsComponent implements OnInit {
     this.validarSenhas();
     if (this.erroSenha) return;
 
-    // Proteção extra
     const senha = this.senha || '';
     if (!this.editando && !senha) return;
 
-    const novoProfessor: Professor = {
-      id: this.professor?.id ?? 0,
+    const professorPayload: any = {
+      id: this.professorAtivo?.id,
       codigo: this.codigo,
       nome: this.nome,
       email: this.email,
-      // Se editando e senha vazia, mantém a antiga (se existir)
-      senha: senha || this.professor?.senha || '',
-      perfilProfessor: this.tipoProfessor,
-      disciplinas: this.disciplinasSelecionadas,
+      perfilProfessor: this.perfilSelecionado,
+      disciplinasIds: this.disciplinasSelecionadas.map((d) => d.id),
     };
 
-    this.salvar.emit(novoProfessor);
+    if (senha) {
+      professorPayload.senha = senha;
+    } else if (this.editando) {
+      professorPayload.senha = this.professorAtivo?.senha || '';
+    }
 
-    // Reset cuidadoso para evitar nulls indesejados
+    this.onSave.emit(professorPayload);
+
     form.resetForm();
+    this.limparCampos();
+  }
+
+  limparCampos() {
     this.nome = '';
     this.email = '';
     this.senha = '';
     this.confirmarSenha = '';
+    this.codigo = null;
     this.disciplinasSelecionadas = [];
     this.erroSenha = '';
   }
 
-  get currentUser(): Professor | null | undefined {
-    return this.authService.currentUserSig();
-  }
-
-  tipoProfessor = this.currentUser
-    ? this.currentUser.perfilProfessor
-    : TipoProfessor.PROFESSOR;
-
   cancelarCadastro() {
-    this.cancelar.emit();
+    this.onCancel.emit();
   }
 }

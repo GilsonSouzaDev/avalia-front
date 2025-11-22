@@ -1,6 +1,6 @@
 <section *ngIf="!modoCadastro()">
     <app-cpt-professor-table
-    [professores]="professores"
+    [professores]="professores()"
     [quantidadeQuestoes]="quantidadeQuestoes"
     [quantidadeMaterias]="quantidadeMaterias"
     (novo)="abrirCadastro()"

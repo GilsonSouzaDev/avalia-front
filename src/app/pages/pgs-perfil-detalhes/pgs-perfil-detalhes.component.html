@@ -1,21 +1,20 @@
-<!-- src/app/pages/pgs-perfil-detalhes/pgs-perfil-detalhes.component.html -->
-
 @if (professor(); as prof) {
 
   <!-- MODO VISUALIZAÇÃO -->
-  @if (!editando) {
+  @if (!editando()) {
     <section class="pgs-perfil-detalhes">
       <app-cpt-perfil-datalhes [professor]="prof"></app-cpt-perfil-datalhes>
-
+      
       <div class="buttons-perfil">
         <button class="buttons-perfil__editar" (click)="alternarEdicao()">
           Editar Perfil
         </button>
+
         @if (podeExcluir) {
           <button class="buttons-perfil__excluir" (click)="excluirPerfil()">
-            Excluir
+            Excluir Conta
           </button>
-}
+        }
       </div>
     </section>
   }
@@ -23,15 +22,11 @@
   <!-- MODO EDIÇÃO -->
   @else {
     <section class="perfil-edicao">
-      <!--
-         'prof' aqui é garantido como objeto Professor completo.
-         Os eventos (salvar) e (cancelar) chamam as funções do pai.
-      -->
       <app-cpt-professor-forms
-        [professor]="prof"
+        [professorAtivo]="prof"
         [mostrarDisciplinas]="mostrarDisciplinas"
-        (salvar)="atualizarPerfil($event)"
-        (cancelar)="alternarEdicao()"
+        (onSave)="atualizarPerfil($event)"
+        (onCancel)="alternarEdicao()"
       ></app-cpt-professor-forms>
     </section>
   }

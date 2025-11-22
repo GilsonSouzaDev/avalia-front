@@ -1,8 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
 import { CptGerenciarDisciplinaComponent } from '../../components/cpt-gerenciar-disciplina/cpt-gerenciar-disciplina.component';
 import { DisciplinaService } from '../../services/disciplina.service';
+import { ProfessorService } from '../../services/professor.service';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { DialogService } from '../../shared/services/dialog.service';
 
@@ -15,19 +14,30 @@ import { DialogService } from '../../shared/services/dialog.service';
 })
 export class PgsGerenciarDisciplinaComponent {
   private disciplinaService = inject(DisciplinaService);
+  private professorService = inject(ProfessorService);
   private dialogService = inject(DialogService);
 
   disciplinas = this.disciplinaService.disciplinas;
+  professores = this.professorService.professores;
 
   editandoId = signal<number | null>(null);
   nomeEditando = signal('');
   nomeCriando = signal('');
   criando = signal(false);
 
-  qtdQuestoes = (d: Disciplina) => (d.perguntas ? d.perguntas.length : 0);
-  qtdMaterias = (d: Disciplina) => (d.professores ? d.professores.length : 0);
+  // Conta a quantidade de IDs de perguntas vinculados à disciplina
+  qtdQuestoes = (d: Disciplina) => d.perguntasIds?.length ?? 0;
 
-  // --- CRIAÇÃO (VERDE) ---
+  // CORREÇÃO: Mantive o nome 'qtdMaterias' para bater com seu HTML,
+  // mas a lógica conta PROFESSORES, pois é isso que faz sentido numa tabela de disciplinas.
+  qtdMaterias = (d: Disciplina) => {
+    const listaProfessores = this.professores();
+    // Filtra quantos professores têm essa disciplina na lista deles
+    return listaProfessores.filter((p) =>
+      p.disciplinas?.some((disc) => disc.id === d.id)
+    ).length;
+  };
+
   iniciarCriacao() {
     this.criando.set(true);
     this.nomeCriando.set('');
@@ -45,20 +55,10 @@ export class PgsGerenciarDisciplinaComponent {
         message: `Deseja adicionar a nova disciplina "${nome}"?`,
         confirmButtonText: 'Adicionar',
         cancelButtonText: 'Cancelar',
-        titleColor: '#2e7d32', // Verde
+        titleColor: '#2e7d32',
         action: () => {
-          return of(true).pipe(
-            delay(1000),
-            tap(() => {
-              const novo: Disciplina = {
-                id: Date.now(),
-                nome,
-                professores: [],
-                perguntas: [],
-              };
-              this.disciplinaService.add(novo);
-            })
-          );
+          const novaDisciplina: any = { nome };
+          return this.disciplinaService.add(novaDisciplina);
         },
       })
       .afterClosed()
@@ -69,15 +69,12 @@ export class PgsGerenciarDisciplinaComponent {
       });
   }
 
-  // --- EDIÇÃO (AZUL) ---
   iniciarEdicao(id: number) {
-    this.disciplinaService.getById(id).subscribe((d) => {
-      if (d) {
-        this.nomeEditando.set(d.nome);
-        // Mova a lógica que usa 'd' para dentro destas chaves
-        const nome = d.nome; // Agora funciona
-      }
-    });
+    this.editandoId.set(id);
+    const disciplina = this.disciplinas().find((d) => d.id === id);
+    if (disciplina) {
+      this.nomeEditando.set(disciplina.nome);
+    }
   }
 
   cancelarEdicao() {
@@ -92,14 +89,9 @@ export class PgsGerenciarDisciplinaComponent {
         message: 'Deseja confirmar a alteração no nome da disciplina?',
         confirmButtonText: 'Salvar',
         cancelButtonText: 'Cancelar',
-        titleColor: '#1565c0', // Azul
+        titleColor: '#1565c0',
         action: () => {
-          return of(true).pipe(
-            delay(1000),
-            tap(() => {
-              this.disciplinaService.update(id, { nome });
-            })
-          );
+          return this.disciplinaService.update(id, { nome });
         },
       })
       .afterClosed()
@@ -110,33 +102,22 @@ export class PgsGerenciarDisciplinaComponent {
       });
   }
 
-  // --- EXCLUSÃO (VERMELHO) ---
   remover(id: number) {
-    // 1. Primeiro nos inscrevemos para buscar o dado real
-    this.disciplinaService.getById(id).subscribe((disciplina) => {
-      // 2. Agora 'disciplina' é o objeto real, podemos acessar .nome
-      const nome = disciplina ? disciplina.nome : 'esta disciplina';
+    const disciplina = this.disciplinas().find((d) => d.id === id);
+    const nome = disciplina ? disciplina.nome : 'esta disciplina';
 
-      // 3. Movemos a lógica do Dialog para dentro do subscribe
-      this.dialogService
-        .confirmAction({
-          title: 'Excluir Disciplina',
-          message: `Tem certeza que deseja excluir "${nome}"? essa ação vai EXCLUIR todas as perguntas cadastradas nesta disciplina.` ,
-          confirmButtonText: 'Excluir',
-          cancelButtonText: 'Cancelar',
-          titleColor: '#d32f2f',
-          action: () => {
-            // Retorna o Observable do delete
-            return this.disciplinaService.delete(id);
-          },
-        })
-        .afterClosed()
-        .subscribe((sucesso) => {
-          if (sucesso) {
-            // Opcional: Atualizar lista ou mostrar toast
-            console.log('Disciplina excluída');
-          }
-        });
-    });
+    this.dialogService
+      .confirmAction({
+        title: 'Excluir Disciplina',
+        message: `Tem certeza que deseja excluir "${nome}"? Essa ação vai EXCLUIR todas as perguntas cadastradas nesta disciplina.`,
+        confirmButtonText: 'Excluir',
+        cancelButtonText: 'Cancelar',
+        titleColor: '#d32f2f',
+        action: () => {
+          return this.disciplinaService.delete(id);
+        },
+      })
+      .afterClosed()
+      .subscribe();
   }
 }

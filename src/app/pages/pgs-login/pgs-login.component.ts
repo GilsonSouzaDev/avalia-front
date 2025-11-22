@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { CptBannerComponent } from '../../components/cpt-banner/cpt-banner.component';
 import { CptLoginformsComponent } from '../../components/cpt-loginforms/cpt-loginforms.component';
-import { AuthService } from '../../core/auth.service';
 import { AlertDialogComponent } from '../../shared/components/alert-dialog/alert-dialog.component';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-pgs-login',
@@ -19,9 +19,7 @@ export class PgsLoginComponent {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  // Recebe o objeto 'data' do evento de output
   async handleLogin(data: { email: string; password: string }) {
-    // CORREÇÃO: Usar 'data.email' e 'data.password' em vez de 'this.email'
     const usuarioLogado = await this.authService.login(
       data.email,
       data.password
@@ -46,11 +44,12 @@ export class PgsLoginComponent {
       },
     });
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       dialogRef.close();
     }, 3000);
 
     dialogRef.afterClosed().subscribe(() => {
+      clearTimeout(timer);
       this.router.navigate(['/dashboard']);
     });
   }

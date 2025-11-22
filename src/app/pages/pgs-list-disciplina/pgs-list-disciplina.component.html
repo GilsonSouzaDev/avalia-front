@@ -1,4 +1,3 @@
-
 <mat-tab-group>
   <!-- Tab 1 - Sempre visível -->
   <mat-tab label="Minhas Disciplinas" class="minhas-disciplinas">
@@ -6,7 +5,7 @@
       @for (disciplina of disciplinasFiltradas; track $index) {
         <app-cpt-table-materia
           [disciplina]="disciplina"
-          [professores]="professores"
+          [professores]="professores()"
           class="disciplina"
           (alterarAlternativa)="onAlterarAlternativa($event)"
         ></app-cpt-table-materia>
@@ -18,11 +17,11 @@
   @if (usuario?.perfilProfessor === 'COORDENADOR') {
     <mat-tab label="Todas as Disciplinas">
       <section class="list-disciplina">
-        @for (disciplina of disciplinas; track $index) {
+        @for (disciplina of disciplinas(); track $index) {
           <app-cpt-table-materia
             [disciplina]="disciplina"
-            [professores]="professores"
-            (alterarAlternativa)="onAlterarAlternativa($event)"s
+            [professores]="professores()"
+            (alterarAlternativa)="onAlterarAlternativa($event)"
             class="disciplina"
           ></app-cpt-table-materia>
         }

@@ -1,5 +1,5 @@
 // src/app/mocks/mock-data.ts
-
+/*
 import { Alternativa } from '../interfaces/Alternativa';
 import { Disciplina } from '../interfaces/Disciplina';
 import { Pergunta } from '../interfaces/Pergunta';
@@ -396,6 +396,9 @@ export class MockDataService {
    * Valida a regra de negócio:
    * "a pergunta só pode ser adicionada por um professor da disciplina".
    */
+
+
+  /*
   validarAdicaoPergunta(
     codigoProfessor: number,
     disciplinaId: number
@@ -410,3 +413,4 @@ export class MockDataService {
     return disciplina.professores.some((p) => p.codigo === codigoProfessor);
   }
 }
+  */

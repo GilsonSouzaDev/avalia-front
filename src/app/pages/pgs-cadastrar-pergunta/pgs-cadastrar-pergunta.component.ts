@@ -4,13 +4,12 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CptPerguntaFormsComponent } from '../../components/cpt-pergunta-forms/cpt-pergunta-forms.component';
-import { Disciplina } from '../../interfaces/Disciplina';
-import { MOCK_DISCIPLINAS } from '../../data/mock-data';
-import { AuthService } from '../../core/auth.service';
-import { filtrarDisciplinasPorPerfil } from '../../utils/disicplina-filter-util';
-import { Pergunta } from '../../interfaces/Pergunta';
+import { DisciplinaService } from '../../services/disciplina.service';
 import { PerguntaService } from '../../services/pergunta.service';
+import { filtrarDisciplinasPorPerfil } from '../../utils/disicplina-filter-util';
+import { Pergunta, CadastrarPergunta } from '../../interfaces/Pergunta';
 import { AlertDialogComponent } from '../../shared/components/alert-dialog/alert-dialog.component';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-pgs-cadastrar-pergunta',
@@ -20,22 +19,29 @@ import { AlertDialogComponent } from '../../shared/components/alert-dialog/alert
   styleUrl: './pgs-cadastrar-pergunta.component.scss',
 })
 export class PgsCadastrarPerguntaComponent implements OnInit {
-  disciplinas = MOCK_DISCIPLINAS;
   perguntaParaEdicao: Pergunta | null = null;
 
-  private preguntaService = inject(PerguntaService);
+  private perguntaService = inject(PerguntaService);
+  private disciplinaService = inject(DisciplinaService);
   private route = inject(ActivatedRoute);
-  private router = inject(Router); // <--- Injetado
+  private router = inject(Router);
   private authService = inject(AuthService);
-  private dialog = inject(MatDialog); // <--- Injetado
+  private dialog = inject(MatDialog);
+
+  disciplinas = this.disciplinaService.disciplinas;
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
-     this.preguntaService.getById(id).subscribe((pergunta) => {
-       this.perguntaParaEdicao = pergunta;
-     });
+      this.perguntaService.getById(id).subscribe({
+        next: (pergunta) => {
+          this.perguntaParaEdicao = pergunta;
+        },
+        error: () => {
+          this.router.navigate(['/dashboard']);
+        },
+      });
     }
   }
 
@@ -44,26 +50,32 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
   }
 
   get disciplinasFiltradas() {
-    return filtrarDisciplinasPorPerfil(this.disciplinas, this.usuario);
+    return filtrarDisciplinasPorPerfil(this.disciplinas(), this.usuario);
   }
 
-  // Método chamado quando o filho emite o evento (submitForm)
-  handleSave(pergunta: Pergunta): void {
-    // Lógica simples para diferenciar Edição de Criação
+  handleSave(formValue: any): void {
+    if (!this.usuario) return;
+
     if (this.perguntaParaEdicao) {
-      // MODO EDIÇÃO
-      // this.preguntaService.update(pergunta); // Supondo que exista esse método no service
-      this.openSuccessDialog(
-        'Questão Atualizada',
-        'A questão foi alterada com sucesso!'
-      );
+      const id = this.perguntaParaEdicao.id;
+      this.perguntaService.update(id, formValue).subscribe(() => {
+        this.openSuccessDialog(
+          'Questão Atualizada',
+          'A questão foi alterada com sucesso!'
+        );
+      });
     } else {
-      // MODO CRIAÇÃO
-      // this.preguntaService.create(pergunta); // Supondo que exista esse método no service
-      this.openSuccessDialog(
-        'Questão Cadastrada',
-        'A nova questão foi salva com sucesso!'
-      );
+      const novaPergunta: CadastrarPergunta = {
+        ...formValue,
+        codigoProfessor: this.usuario.codigo,
+      };
+
+      this.perguntaService.add(novaPergunta).subscribe(() => {
+        this.openSuccessDialog(
+          'Questão Cadastrada',
+          'A nova questão foi salva com sucesso!'
+        );
+      });
     }
   }
 
@@ -75,18 +87,16 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
         title: titulo,
         message: mensagem + ' Redirecionando...',
         confirmButtonText: 'OK',
-        titleColor: 'green', // <--- Cor VERDE para sucesso
+        titleColor: 'green',
       },
     });
 
-    // Fecha automaticamente após 3 segundos
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       dialogRef.close();
     }, 3000);
 
-    // Redireciona ao fechar
     dialogRef.afterClosed().subscribe(() => {
-      // Ajuste a rota para onde deseja ir (ex: lista de questões ou dashboard)
+      clearTimeout(timer);
       this.router.navigate(['/dashboard']);
     });
   }

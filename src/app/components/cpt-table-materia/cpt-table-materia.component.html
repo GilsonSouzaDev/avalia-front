@@ -9,7 +9,7 @@
   </div>
 
   <div class="conteudo-expandido" *ngIf="expanded">
-    <ng-container *ngIf="paginatedPerguntas.length; else semPerguntas">
+    <ng-container *ngIf="perguntasDaDisciplina.length; else semPerguntas">
       <app-cpt-card-pergunta
         *ngFor="let pergunta of paginatedPerguntas"
         [pergunta]="pergunta"
@@ -24,7 +24,7 @@
       </app-cpt-card-pergunta>
 
       <mat-paginator
-        [length]="disciplina.perguntas.length"
+        [length]="perguntasDaDisciplina.length"
         [pageSize]="pageSize"
         [pageIndex]="pageIndex"
         [pageSizeOptions]="[3, 5, 10]"

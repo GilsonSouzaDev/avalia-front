@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from './auth.service';
-import { TipoProfessor } from '../interfaces/Professor'; // Ajuste o caminho
+import { TipoProfessor } from '../interfaces/Professor';
 import { map } from 'rxjs/operators';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { AuthService } from './auth.service';
 
 export function roleGuard(expectedRole: TipoProfessor): CanActivateFn {
   return (route, state) => {
@@ -12,13 +12,9 @@ export function roleGuard(expectedRole: TipoProfessor): CanActivateFn {
 
     return toObservable(authService.currentUserSig).pipe(
       map((user) => {
-        if (user && user.tipo === expectedRole) {
+        if (user && user.perfilProfessor === expectedRole) {
           return true;
         }
-
-        console.error(
-          `Acesso negado. Rota requer perfil: ${expectedRole}, usuário tem perfil: ${user?.tipo}`
-        );
         return router.createUrlTree(['/login']);
       })
     );

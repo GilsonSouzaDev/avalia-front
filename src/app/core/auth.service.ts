@@ -1,16 +1,18 @@
-// src/app/services/auth.service.ts
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
-import { Professor, TipoProfessor } from '../interfaces/Professor';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { ProfessorService } from '../services/professor.service';
+import { Professor, TipoProfessor } from '../interfaces/Professor';
+import { environment } from '../../environments/environments';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private router = inject(Router);
-  private professorService = inject(ProfessorService);
+  private http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/professores`;
 
   public currentUserSig = signal<Professor | null | undefined>(undefined);
   private readonly storageKey = 'currentUser';
@@ -31,37 +33,29 @@ export class AuthService {
   private loadUserFromStorage(): void {
     const userJson = localStorage.getItem(this.storageKey);
     if (userJson) {
-      this.currentUserSig.set(JSON.parse(userJson));
+      try {
+        this.currentUserSig.set(JSON.parse(userJson));
+      } catch (e) {
+        this.currentUserSig.set(null);
+      }
     } else {
       this.currentUserSig.set(null);
     }
   }
 
-  /**
-   * Simula o login baixando a lista de professores e verificando credenciais no front.
-   */
   async login(email: string, senha: string): Promise<Professor | null> {
     try {
-      // 1. Busca a lista atualizada do backend (aguarda a requisição terminar)
-      // Precisamos que o ProfessorService tenha o método .getAll() retornando Observable
-      const professores = await firstValueFrom(this.professorService.getAll());
-
-      // 2. Verifica se o usuário existe na lista baixada
-      const usuarioEncontrado = professores.find(
-        (user) => user.email === email && user.senha === senha
+      const loginData = { email, senha };
+      const professorLogado = await firstValueFrom(
+        this.http.post<Professor>(`${this.apiUrl}/login`, loginData)
       );
 
-      if (usuarioEncontrado) {
-        this.currentUserSig.set(usuarioEncontrado);
-        return usuarioEncontrado;
-      }
+      this.currentUserSig.set(professorLogado);
+      return professorLogado;
     } catch (error) {
-      console.error('Erro ao tentar fazer login (buscar professores)', error);
+      this.currentUserSig.set(null);
+      return null;
     }
-
-    // Se falhar ou não encontrar
-    this.currentUserSig.set(null);
-    return null;
   }
 
   logout(): void {
@@ -71,11 +65,15 @@ export class AuthService {
 
   public isCoordenador(): boolean {
     const currentUser = this.currentUserSig();
-    return !!currentUser && currentUser.perfilProfessor === TipoProfessor.COORDENADOR;
+    return (
+      !!currentUser && currentUser.perfilProfessor === TipoProfessor.COORDENADOR
+    );
   }
 
   public isProfessor(): boolean {
     const currentUser = this.currentUserSig();
-    return !!currentUser && currentUser.perfilProfessor === TipoProfessor.PROFESSOR;
+    return (
+      !!currentUser && currentUser.perfilProfessor === TipoProfessor.PROFESSOR
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Disciplina } from './Disciplina';
+import { Disciplina } from "./Disciplina";
 
 export enum TipoProfessor {
   PROFESSOR = 'PROFESSOR',
@@ -10,7 +10,7 @@ export interface Professor {
   codigo: number;
   nome: string;
   email: string;
-  senha: string;
   perfilProfessor: TipoProfessor;
-  disciplinas: Disciplina[];
+  senha?: string;
+  disciplinas?: Disciplina[]; // Podemos tipar melhor depois se precisar
 }

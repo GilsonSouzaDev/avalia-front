@@ -1,13 +1,13 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CptCardResumoComponent } from '../../components/cpt-card-resumo/cpt-card-resumo.component';
 import { CptCardMateriaComponent } from '../../components/cpt-card-materia/cpt-card-materia.component';
-import { AuthService } from '../../core/auth.service';
 import { DisciplinaService } from '../../services/disciplina.service';
 import { ProfessorService } from '../../services/professor.service';
 import { PerguntaService } from '../../services/pergunta.service';
 import { Disciplina } from '../../interfaces/Disciplina';
 import { TipoProfessor } from '../../interfaces/Professor';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-pgs-dashboard',
@@ -25,8 +25,6 @@ export class PgsDashboardComponent {
   private listaDisciplinas = this.disciplinaService.disciplinas;
   private listaPerguntas = this.perguntaService.perguntas;
   private listaProfessores = this.professorService.professores;
-
-
 
   public usuario = this.authService.currentUserSig;
 
@@ -53,10 +51,11 @@ export class PgsDashboardComponent {
 
     if (!user) return [];
 
+    /*
     if (user.perfilProfessor === TipoProfessor.COORDENADOR) {
       return todas;
     }
-
+    */
     const meusIds = user.disciplinas?.map((d) => d.id) || [];
     return todas.filter((d) => meusIds.includes(d.id));
   });
@@ -64,8 +63,9 @@ export class PgsDashboardComponent {
   contarPerguntasNaDisciplina(disciplina: Disciplina): number {
     const user = this.usuario();
     const todasPerguntas = this.listaPerguntas();
+
     const perguntasDaDisciplina = todasPerguntas.filter(
-      (p) => p.disciplinaId === disciplina.id
+      (p) => p.disciplina && p.disciplina.id === disciplina.id
     );
 
     if (user && user.perfilProfessor === TipoProfessor.PROFESSOR) {

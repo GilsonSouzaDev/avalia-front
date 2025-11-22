@@ -46,7 +46,7 @@ export class PgsGerarProvaComponent implements OnInit {
   private disciplinaService = inject(DisciplinaService);
   private perguntaService = inject(PerguntaService);
   private pdfGeneratorService = inject(PdfGeneratorService);
-  private dialogService = inject(DialogService); // Injeção do DialogService
+  private dialogService = inject(DialogService);
 
   public TipoProfessor = TipoProfessor;
 
@@ -201,7 +201,7 @@ export class PgsGerarProvaComponent implements OnInit {
 
   private calculateTotalAvailable(disciplineIds: number[]): void {
     this.totalPerguntasDisponiveisNoBanco = this.todasPerguntas.filter((q) =>
-      disciplineIds.includes(q.disciplinaId)
+      disciplineIds.includes(q.disciplina.id)
     ).length;
   }
 
@@ -226,7 +226,7 @@ export class PgsGerarProvaComponent implements OnInit {
     } else {
       ids =
         (this.avaliacaoDraft.questoesSelecionadas || [])
-          .map((q: Pergunta) => q.disciplinaId)
+          .map((q: Pergunta) => q.disciplina.id)
           .filter((v: number, i: number, a: number[]) => a.indexOf(v) === i) ||
         [];
     }
@@ -310,7 +310,7 @@ export class PgsGerarProvaComponent implements OnInit {
 
     const newSelectedQuestions = (
       this.avaliacaoDraft.questoesSelecionadas || []
-    ).filter((q) => ids.includes(q.disciplinaId));
+    ).filter((q) => ids.includes(q.disciplina.id));
 
     if (newSelectedQuestions.length > this.quantidadeDesejada) {
       newSelectedQuestions.splice(this.quantidadeDesejada);
@@ -354,7 +354,7 @@ export class PgsGerarProvaComponent implements OnInit {
 
   getQuestionsCountForDiscipline(id: number): number {
     return (this.avaliacaoDraft.questoesSelecionadas || []).filter(
-      (q) => q.disciplinaId === id
+      (q) => q.disciplina.id === id
     ).length;
   }
 
@@ -385,7 +385,6 @@ export class PgsGerarProvaComponent implements OnInit {
     this.avaliacaoStateService.updateCabecalho(cabData);
   }
 
-  // --- DIALOG EM GERAR PDF ---
   generatePDF(): void {
     this.saveCabecalhoState();
     const finalDraft = this.avaliacaoStateService.getCurrentState();
@@ -397,11 +396,10 @@ export class PgsGerarProvaComponent implements OnInit {
           'Tem certeza que deseja finalizar e gerar o arquivo PDF da prova?',
         confirmButtonText: 'Gerar Prova',
         cancelButtonText: 'Voltar',
-        titleColor: '#1565c0', // Azul
+        titleColor: '#1565c0',
         action: () => {
-          // Usamos 'from' ou criamos um Observable a partir da Promise do serviço
           return of(true).pipe(
-            delay(1000), // Simula um tempo de processamento para mostrar o spinner
+            delay(1000),
             tap(async () => {
               await this.pdfGeneratorService.generatePdf(finalDraft);
             })
@@ -413,13 +411,14 @@ export class PgsGerarProvaComponent implements OnInit {
         if (sucesso) {
           this.avaliacaoStateService.clearState();
           this.currentStep.next(
-            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR ? 0 : 1
+            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR
+              ? 0
+              : 1
           );
         }
       });
   }
 
-  // --- DIALOG EM CANCELAR PROVA ---
   cancelarProva(): void {
     this.dialogService
       .confirmAction({
@@ -428,7 +427,7 @@ export class PgsGerarProvaComponent implements OnInit {
           'Você tem certeza que deseja cancelar a criação desta prova? Todas as seleções serão perdidas.',
         confirmButtonText: 'Sim, Cancelar',
         cancelButtonText: 'Voltar',
-        titleColor: '#c62828', // Vermelho
+        titleColor: '#c62828',
         action: () => {
           return of(true).pipe(
             delay(500),
@@ -443,13 +442,14 @@ export class PgsGerarProvaComponent implements OnInit {
       .subscribe((sucesso) => {
         if (sucesso) {
           this.currentStep.next(
-            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR ? 0 : 1
+            this.userProfile?.perfilProfessor === TipoProfessor.COORDENADOR
+              ? 0
+              : 1
           );
         }
       });
   }
 
-  // --- DIALOG EM CANCELAR SELEÇÃO DE DISCIPLINA ---
   cancelarSelecaoDisciplina(): void {
     this.dialogService
       .confirmAction({
