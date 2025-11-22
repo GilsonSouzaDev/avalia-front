@@ -12,31 +12,28 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
+import { EsqueciSenha } from '../../interfaces/EsqueciSenha';
 
 /**
- * Validador customizado para verificar se os campos 'password' e 'confirmPassword' coincidem.
+ * Validador customizado para verificar se os campos 'novaSenha' e 'confirmPassword' coincidem.
  * @returns ValidatorFn - A função de validação.
  */
 export function senhasCoincidemValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    // Acessa o FormGroup pai para comparar com o campo 'password'
     const formGroup = control.parent;
     if (formGroup) {
-      const senhaControl = formGroup.get('password');
+      const senhaControl = formGroup.get('novaSenha');
       const confirmarSenhaControl = control;
 
-      // Se os controles não existirem ou a senha ainda não foi tocada, não valide.
       if (!senhaControl || !confirmarSenhaControl) {
         return null;
       }
 
-      // Define o erro no controle 'confirmarSenha' se os valores não baterem.
+
       if (senhaControl.value !== confirmarSenhaControl.value) {
-        // Retorna o objeto de erro.
         return { senhasNaoCoincidem: true };
       }
     }
-    // Retorna null se a validação passar (senhas coincidem).
     return null;
   };
 }
@@ -56,10 +53,7 @@ export function senhasCoincidemValidator(): ValidatorFn {
 })
 export class CptSenhaformsComponent implements OnInit {
 
-  @Output() submitSenha = new EventEmitter<{
-    email: string;
-    password: string;
-  }>();
+  @Output() submitSenha = new EventEmitter<EsqueciSenha>();
 
   senhaForms!: FormGroup;
 
@@ -68,8 +62,7 @@ export class CptSenhaformsComponent implements OnInit {
   ngOnInit() {
     this.senhaForms = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      // O campo 'confirmPassword' agora tem seu próprio validador customizado.
+      novaSenha: ['', Validators.required],
       confirmPassword: ['', [Validators.required, senhasCoincidemValidator()]],
     });
   }
@@ -79,8 +72,8 @@ export class CptSenhaformsComponent implements OnInit {
     return this.senhaForms.get('email')!;
   }
 
-  get password() {
-    return this.senhaForms.get('password')!;
+  get novaSenha() {
+    return this.senhaForms.get('novaSenha')!;
   }
 
   get confirmPassword() {
@@ -92,7 +85,7 @@ export class CptSenhaformsComponent implements OnInit {
       // Emite apenas os dados necessários, sem a confirmação de senha.
       this.submitSenha.emit({
         email: this.email.value,
-        password: this.password.value,
+        novaSenha: this.novaSenha.value,
       });
     } else {
       // Marca todos os campos como 'touched' para exibir os erros de validação.

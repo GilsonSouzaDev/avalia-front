@@ -143,8 +143,6 @@ export class CptProfessorFormsComponent implements OnInit {
 
     if (senha) {
       professorPayload.senha = senha;
-    } else if (this.editando) {
-      professorPayload.senha = this.professorAtivo?.senha || '';
     }
 
     this.onSave.emit(professorPayload);

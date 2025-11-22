@@ -138,11 +138,10 @@ export class PgsGerenciarProfessorComponent {
     return contarPerguntasPorDisciplinaEProfessorEspecifico(
       disciplina.id,
       usuario,
-      this.perguntas() // Passamos a lista global de perguntas carregada do backend
+      this.perguntas()
     );
   }
 
-  // ---- Total geral de perguntas no sistema ----
   contarPerguntasGerais(): number {
     return this.perguntas().length;
   }

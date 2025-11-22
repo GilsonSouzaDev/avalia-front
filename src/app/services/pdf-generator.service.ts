@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Pergunta } from '../interfaces/Pergunta';
-import { Alternativa } from '../interfaces/Alternativa';
+import { AvaliacaoDraft } from '../interfaces/Avaliacao';
 import {
   TDocumentDefinitions,
   Content,
   StyleDictionary,
 } from 'pdfmake/interfaces';
-import { AvaliacaoDraft } from '../interfaces/Avaliacao';
 
 @Injectable({
   providedIn: 'root',
@@ -54,21 +53,37 @@ export class PdfGeneratorService {
       },
       pageSize: 'A4',
       // Margens: [esquerda, cima, direita, baixo]
-      pageMargins: [30, 60, 30, 40],
+      // Margem superior ajustada para 80 para acomodar o cabeçalho fixo
+      pageMargins: [30, 80, 30, 40],
 
+      // Cabeçalho fixo (Linha superior com Curso e Instituição)
       header: (currentPage, pageCount) => {
         return {
           stack: [
             {
               columns: [
-                { text: cab.curso || 'Curso Geral', style: 'headerTopLeft' },
-                { text: this.INSTITUICAO_NOME, style: 'headerTopRight' },
+                {
+                  text: cab.curso || 'Análise e Desenvolvimento de Sistemas',
+                  style: 'headerTopLeft',
+                },
+                {
+                  text: this.INSTITUICAO_NOME,
+                  style: 'headerTopRight',
+                },
               ],
-              margin: [30, 20, 30, 0],
+              margin: [30, 20, 30, 2],
             },
             {
               canvas: [
-                { type: 'line', x1: 0, y1: 5, x2: 535, y2: 5, lineWidth: 1 },
+                {
+                  type: 'line',
+                  x1: 0,
+                  y1: 0,
+                  x2: 535,
+                  y2: 0,
+                  lineWidth: 1,
+                  lineColor: 'black',
+                },
               ],
               margin: [30, 0, 30, 0],
             },
@@ -77,7 +92,8 @@ export class PdfGeneratorService {
       },
 
       content: [
-        this.buildExamMetadata(cab),
+        this.buildMainHeader(cab),
+        this.buildMetadataTable(cab),
         this.buildStudentLine(cab),
         this.buildInstructions(cab),
         this.buildQuestions(draft),
@@ -91,7 +107,7 @@ export class PdfGeneratorService {
           alignment: 'center',
           margin: [0, 10, 0, 0],
           fontSize: 9,
-          color: '#555',
+          color: '#333',
         };
       },
     };
@@ -99,87 +115,89 @@ export class PdfGeneratorService {
     pdfMake.createPdf(docDefinition).open();
   }
 
-  private buildExamMetadata(cab: any): Content {
-    return [
-      {
-        stack: [
-          {
-            text: this.INSTITUICAO_NOME,
-            fontSize: 10,
-            bold: false,
-            alignment: 'center',
-            margin: [0, 5, 0, 0],
-          },
-          {
-            text: cab.titulo || 'Avaliação',
-            fontSize: 14,
-            bold: true,
-            alignment: 'center',
-            margin: [0, 2, 0, 15],
-          },
+  private buildMainHeader(cab: any): Content {
+    return {
+      stack: [
+        {
+          text: this.INSTITUICAO_NOME,
+          fontSize: 10,
+          alignment: 'center',
+          margin: [0, 5, 0, 2],
+        },
+        {
+          text: cab.titulo || 'UNI FATEC',
+          fontSize: 16,
+          alignment: 'center',
+          margin: [0, 0, 0, 15],
+        },
+      ],
+    };
+  }
+
+  private buildMetadataTable(cab: any): Content {
+    return {
+      table: {
+        widths: ['*', '*', 80],
+        body: [
+          [
+            {
+              text: [
+                { text: 'Disciplina: ', bold: false },
+                { text: cab.disciplina || '', bold: false },
+              ],
+              style: 'tableCell',
+            },
+            {
+              text: [
+                { text: 'Professor: ', bold: false },
+                { text: cab.professor || '', bold: false },
+              ],
+              style: 'tableCell',
+            },
+            {
+              text: [
+                { text: 'Pontos Totais:\n', bold: false },
+                { text: cab.totalPontos || '10.0', bold: false },
+              ],
+              style: 'tableCell',
+            },
+          ],
+          [
+            {
+              text: [
+                { text: 'Turma: ', bold: false },
+                { text: cab.turma || '', bold: false },
+              ],
+              style: 'tableCell',
+            },
+            {
+              text: [
+                { text: 'Período: ', bold: false },
+                { text: cab.periodo || '', bold: false },
+              ],
+              style: 'tableCell',
+            },
+            {
+              text: '',
+              style: 'tableCell',
+            },
+          ],
         ],
       },
-      {
-        table: {
-          headerRows: 0,
-          widths: ['*', '*', 90],
-          body: [
-            [
-              {
-                text: [
-                  { text: 'Disciplina: ', bold: true },
-                  { text: cab.disciplina || '', bold: false },
-                ],
-                style: 'tableCell',
-              },
-              {
-                text: [
-                  { text: 'Professor: ', bold: true },
-                  { text: cab.professor || '', bold: false },
-                ],
-                style: 'tableCell',
-              },
-              {
-                text: [
-                  { text: 'Pontos Totais:\n', bold: true },
-                  { text: cab.totalPontos || '10.0', bold: false },
-                ],
-                style: 'tableCell',
-              },
-            ],
-            [
-              {
-                text: [
-                  { text: 'Turma: ', bold: true },
-                  { text: cab.turma || '', bold: false },
-                ],
-                style: 'tableCell',
-              },
-              {
-                text: [
-                  { text: 'Período: ', bold: true },
-                  { text: cab.periodo || '', bold: false },
-                ],
-                colSpan: 2,
-                style: 'tableCell',
-              },
-              {},
-            ],
-          ],
-        },
-        layout: {
-          hLineWidth: () => 1,
-          vLineWidth: () => 1,
-          paddingTop: () => 5,
-          paddingBottom: () => 5,
-        },
-        margin: [0, 0, 0, 15],
+      layout: {
+        hLineWidth: () => 1,
+        vLineWidth: () => 1,
+        paddingTop: () => 4,
+        paddingBottom: () => 4,
+        paddingLeft: () => 4,
+        paddingRight: () => 4,
       },
-    ];
+      margin: [0, 0, 0, 20],
+    };
   }
 
   private buildStudentLine(cab: any): Content {
-    let dataFormatada = '__/__/____';
+    let dataFormatada = '';
     if (cab.data) {
       const d = new Date(cab.data);
       if (!isNaN(d.getTime())) {
@@ -188,54 +206,51 @@ export class PdfGeneratorService {
     }
 
     return {
-      stack: [
-        {
-          columns: [
+      table: {
+        widths: ['auto', '*', 'auto', 80],
+        body: [
+          [
             {
-              text: [
-                { text: 'Aluno(a): ', bold: true },
-                '____________________________________________________________',
-              ],
-              width: '*',
+              text: 'Aluno(a): ',
+              border: [false, false, false, true],
+              margin: [0, 0, 0, 2],
             },
             {
-              text: [{ text: 'Data: ', bold: true }, dataFormatada],
-              width: 'auto',
+              text: ' ',
+              border: [false, false, false, true],
+              margin: [0, 0, 0, 2],
+            },
+            {
+              text: 'Data: ',
+              border: [false, false, false, false],
+              margin: [10, 0, 0, 2],
+            },
+            {
+              text: dataFormatada,
+              border: [false, false, false, false],
+              margin: [0, 0, 0, 2],
             },
           ],
-        },
-        {
-          canvas: [
-            { type: 'line', x1: 0, y1: 5, x2: 535, y2: 5, lineWidth: 1.5 },
-          ],
-          margin: [0, 5, 0, 10],
-        },
-      ],
-    } as Content;
+        ],
+      },
+      margin: [0, 0, 0, 20],
+    };
   }
 
-  // --- CORREÇÃO DE ALINHAMENTO AQUI ---
+  // --- AQUI ESTÁ O AJUSTE SOLICITADO ---
   private buildInstructions(cab: any): Content {
-    const duracao = cab.duracao || '2 horas';
+    const duracao = cab.duracao || '4 horas';
 
     return [
       { text: 'Instruções Gerais', style: 'sectionTitle' },
       {
-        // Usamos COLUMNS para separar Texto do Quadrado, garantindo alinhamento perfeito
-        columns: [
-          {
-            text: `Verifique se sua prova está completa. Leia com atenção cada questão antes de responder. A prova deve ser respondida com caneta esferográfica azul ou preta. Salvo disposição em contrário ou autorização expressa do professor, não é permitido o uso de equipamentos eletrônicos ou materiais de consulta. A interpretação das questões faz parte da avaliação. A duração da prova é de ${duracao}.`,
-            style: 'instructionText',
-            width: '*', // O texto ocupa todo o espaço disponível
-          },
-          {
-            text: '☐',
-            fontSize: 16, // Tamanho do quadrado
-            alignment: 'right',
-            width: 20, // Largura fixa para o quadrado não quebrar
-            margin: [0, 0, 0, 0], // Margem zerada para alinhar com o topo do texto
-          },
+        // Texto composto (array) para permitir formatação individual
+        text: [
+          'Verifique se sua prova está completa. Leia com atenção cada questão antes de responder. A prova deve ser respondida com caneta esferográfica azul ou preta. Salvo disposição em contrário ou autorização expressa do professor, não é permitido o uso de equipamentos eletrônicos ou materiais de consulta. A interpretação das questões faz parte da avaliação. A duração da prova é de ',
+          { text: duracao, bold: true }, // Apenas a duração em negrito
+          '.',
         ],
+        style: 'instructionText',
       },
       { text: 'Questões Objetivas', style: 'sectionTitle' },
     ];
@@ -249,7 +264,7 @@ export class PdfGeneratorService {
       content.push({
         stack: [
           { text: `Questão ${index + 1}`, style: 'questionTitle' },
-          { text: q.enunciado, margin: [0, 0, 0, 8], alignment: 'justify' },
+          { text: q.enunciado, style: 'questionBody' },
         ],
         unbreakable: true,
       });
@@ -257,8 +272,8 @@ export class PdfGeneratorService {
       if (q.alternativas && q.alternativas.length > 0) {
         q.alternativas.forEach((alt, i) => {
           content.push({
-            text: [{ text: `(${this.getLetra(i)}) `, bold: true }, alt.texto],
-            margin: [15, 2, 0, 2],
+            text: [{ text: `(${this.getLetra(i)}) `, bold: false }, alt.texto],
+            style: 'alternativeText',
           });
         });
       } else {
@@ -278,32 +293,52 @@ export class PdfGeneratorService {
     return String.fromCharCode(65 + index);
   }
 
-  // --- AJUSTE DE ESTILOS ---
   private getStyles(): StyleDictionary {
     return {
-      headerTopLeft: { fontSize: 9, alignment: 'left', italics: true },
-      headerTopRight: { fontSize: 9, alignment: 'right', italics: true },
-      tableCell: { fontSize: 10, color: 'black' },
-      sectionTitle: {
-        fontSize: 12,
-        bold: true,
-        alignment: 'center',
-        margin: [0, 10, 0, 10],
+      headerTopLeft: {
+        fontSize: 9,
+        italics: true,
+        alignment: 'left',
         color: 'black',
       },
-
-      // CORREÇÃO: Removemos o margin-right: 40 que empurrava o texto para longe
+      headerTopRight: {
+        fontSize: 9,
+        italics: true,
+        alignment: 'right',
+        color: 'black',
+      },
+      tableCell: {
+        fontSize: 10,
+        color: 'black',
+        alignment: 'left',
+      },
+      sectionTitle: {
+        fontSize: 12,
+        alignment: 'center',
+        margin: [0, 15, 0, 10],
+        color: 'black',
+      },
       instructionText: {
         fontSize: 10,
         alignment: 'justify',
-        margin: [0, 0, 0, 10],
+        lineHeight: 1.1,
+        margin: [0, 0, 0, 15],
       },
-
       questionTitle: {
         fontSize: 10,
-        bold: true,
-        margin: [0, 10, 0, 5],
+        margin: [0, 5, 0, 2],
         color: 'black',
+        alignment: 'left',
+      },
+      questionBody: {
+        fontSize: 10,
+        alignment: 'justify',
+        margin: [0, 0, 0, 5],
+      },
+      alternativeText: {
+        fontSize: 10,
+        margin: [10, 2, 0, 2],
+        alignment: 'left',
       },
     };
   }

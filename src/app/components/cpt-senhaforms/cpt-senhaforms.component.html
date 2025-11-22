@@ -20,9 +20,9 @@
     <h3 class="senha-forms__titulo">Senha</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Senha</mat-label>
-      <input type="password" matInput formControlName="password" placeholder="Ex. **********" />
+      <input type="password" matInput formControlName="novaSenha" placeholder="Ex. **********" />
 
-      @if (password.hasError('required') && password.touched) {
+      @if (novaSenha.hasError('required') && novaSenha.touched) {
         <mat-error>Senha é <strong>obrigatória</strong></mat-error>
       }
     </mat-form-field>

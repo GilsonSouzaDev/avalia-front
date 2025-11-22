@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { DialogService } from '../../shared/services/dialog.service';
 
 @Component({
   selector: 'app-pgs-navegacao',
@@ -11,8 +12,20 @@ import { AuthService } from '../../core/auth.service';
 export class PgsNavegacaoComponent {
   private authService = inject(AuthService);
 
-  deslogar() {
-    this.authService.logout();
+  private dialogService = inject(DialogService);
+
+    deslogar() {
+    this.dialogService.confirmAction({
+      title: 'Sair do Sistema',
+      message: 'Você tem certeza que deseja encerrar sua sessão?',
+      confirmButtonText: 'Sair',
+      cancelButtonText: 'Cancelar',
+      titleColor: '#d32f2f',
+      action: async () => {
+        this.authService.logout();
+        return true;
+      },
+    });
   }
 
   get isCoordenador() {

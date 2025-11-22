@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Professor } from '../interfaces/Professor';
 import { tap, Observable } from 'rxjs';
 import { environment } from '../../environments/environments';
+import { EsqueciSenha } from '../interfaces/EsqueciSenha';
 
 
 @Injectable({
@@ -17,6 +18,10 @@ export class ProfessorService {
 
   constructor() {
     this.loadAll();
+  }
+
+  public redefinirSenha(dados: EsqueciSenha): Observable<void> {
+    return this.http.put<void>(`${this.url}/recuperar-senha`, dados);
   }
 
   public getAll(): Observable<Professor[]> {
