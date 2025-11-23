@@ -23,18 +23,24 @@ export class CptAlternativaFormsComponent implements OnInit {
   textoTemp: string = '';
 
   ngOnInit(): void {
-    this.textoTemp = this.alternativa.texto;
+    this.textoTemp = this.alternativa?.texto || '';
   }
 
   habilitarEdicao(): void {
     if (!this.editavel) return;
+    this.textoTemp = this.alternativa.texto;
     this.editMode = true;
   }
 
   confirmarEdicao(): void {
+
+    const textoAntigo = this.alternativa.texto;
+    this.alternativa.texto = this.textoTemp;
+    
     this.editMode = false;
+
     this.textoChange.emit(this.alternativa);
-    console.log("card alternativa passou aqui",this.alternativa)
+    console.log('Enviando para salvar:', this.alternativa);
   }
 
   cancelarEdicao(): void {
