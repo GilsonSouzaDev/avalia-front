@@ -9,6 +9,7 @@ import { Professor } from '../../interfaces/Professor';
 import { CptProfessorFormsComponent } from '../../components/cpt-professor-forms/cpt-professor-forms.component';
 import { AuthService } from '../../core/auth.service';
 import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes/cpt-perfil-datalhes.component';
+import { PerguntaService } from '../../services/pergunta.service';
 
 @Component({
   selector: 'app-pgs-perfil-detalhes',
@@ -24,6 +25,7 @@ import { CptPerfilDatalhesComponent } from '../../components/cpt-perfil-datalhes
 export class PgsPerfilDetalhesComponent implements OnInit {
   private authService = inject(AuthService);
   private professorService = inject(ProfessorService);
+  private perguntaService = inject(PerguntaService)
   private dialogService = inject(DialogService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -76,16 +78,17 @@ export class PgsPerfilDetalhesComponent implements OnInit {
       .update(dadosAtualizados.id, dadosAtualizados)
       .subscribe({
         next: (profAtualizado) => {
-          // Atualiza o signal local da página
           this.professor.set(profAtualizado);
 
-          // SE estiver editando a si mesmo, atualiza também o AuthService global
+          // Atualiza o Auth Global
           const usuarioLogado = this.authService.currentUserSig();
           if (usuarioLogado && usuarioLogado.id === profAtualizado.id) {
             this.authService.currentUserSig.set(profAtualizado);
           }
 
           this.editando.set(false);
+
+          this.perguntaService.loadAll();
 
           this.dialogService
             .confirmAction({
@@ -101,7 +104,6 @@ export class PgsPerfilDetalhesComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          // Opcional: Mostrar erro via dialog
         },
       });
   }
@@ -119,7 +121,7 @@ export class PgsPerfilDetalhesComponent implements OnInit {
         title: 'Excluir Conta',
         message: isExcluindoASiMesmo
           ? 'Tem certeza que deseja excluir SUA conta? Você será deslogado.'
-          : `Tem certeza que deseja excluir o professor ${prof.nome}?`,
+          : `Esta ação irá EXCLUIR todas as PERGUNTAS criadas por este professor.Tem certeza que deseja excluir o professor ${prof.nome}?`,
         confirmButtonText: 'Excluir Definitivamente',
         cancelButtonText: 'Cancelar',
         titleColor: '#d32f2f', // Vermelho Warn

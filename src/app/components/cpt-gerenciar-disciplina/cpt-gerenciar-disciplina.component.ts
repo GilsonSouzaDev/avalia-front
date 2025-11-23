@@ -19,6 +19,9 @@ import { Disciplina } from '../../interfaces/Disciplina';
 import { Professor } from '../../interfaces/Professor';
 import { AuthService } from '../../core/auth.service';
 
+// IMPORTAR A DIRETIVA
+import { DisciplinaUnicaDirective } from '../../directives/disciplina-unica.directive'; // Ajuste o caminho
+
 @Component({
   selector: 'app-cpt-gerenciar-disciplina',
   standalone: true,
@@ -29,6 +32,7 @@ import { AuthService } from '../../core/auth.service';
     MatIconModule,
     MatButtonModule,
     MatPaginatorModule,
+    DisciplinaUnicaDirective,
   ],
   templateUrl: './cpt-gerenciar-disciplina.component.html',
   styleUrl: './cpt-gerenciar-disciplina.component.scss',
@@ -90,6 +94,9 @@ export class CptGerenciarDisciplinaComponent implements OnChanges {
   }
 
   confirmarEdicaoClick(id: number) {
+    // Validação extra: não enviar se vazio
+    if (!this.nomeEditando().trim()) return;
+
     this.confirmarEdicao.emit({
       id,
       nome: this.nomeEditando(),

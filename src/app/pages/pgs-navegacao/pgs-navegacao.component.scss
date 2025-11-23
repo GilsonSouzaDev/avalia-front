@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: 700;
     cursor: pointer;
     &:hover{
@@ -21,4 +21,29 @@
     }
   }
 
+}
+
+@media (min-width: 1600px) {
+
+  ul{
+    gap: 12px;
+  }
+
+  li{
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 1400px) {
+  .navegacao {
+
+    li {
+      font-size: 19px;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
 }

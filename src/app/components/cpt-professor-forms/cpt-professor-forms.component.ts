@@ -16,12 +16,14 @@ import { AuthService } from '../../core/auth.service';
 import { ProfessorService } from '../../services/professor.service';
 import { getNextCodigo } from '../../utils/codigo.util';
 import { MatIcon } from "@angular/material/icon";
+import { NomeUnicoDirective } from '../../directives/nome-unico.directive';
+import { EmailUnicoDirective } from '../../directives/email-unico.directive';
 
 
 @Component({
   selector: 'app-cpt-professor-forms',
   standalone: true,
-  imports: [FormsModule, CommonModule, MatIcon],
+  imports: [FormsModule, CommonModule, MatIcon, NomeUnicoDirective, EmailUnicoDirective],
   templateUrl: './cpt-professor-forms.component.html',
   styleUrl: './cpt-professor-forms.component.scss',
 })
@@ -37,7 +39,6 @@ export class CptProfessorFormsComponent implements OnInit {
 
   private authService = inject(AuthService);
   private disciplinaService = inject(DisciplinaService);
-  // 2. Injete o ProfessorService
   private professorService = inject(ProfessorService);
 
   disciplinasDisponiveis = this.disciplinaService.disciplinas;

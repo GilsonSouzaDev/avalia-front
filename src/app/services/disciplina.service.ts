@@ -67,5 +67,12 @@ export class DisciplinaService {
     });
   }
 
-  
+  public verificarNomeExistente(nome: string, idIgnorado?: number): boolean {
+    const lista = this.disciplinasSignal();
+    return lista.some(
+      (d) =>
+        d.nome.trim().toLowerCase() === nome.trim().toLowerCase() &&
+        d.id !== idIgnorado
+    );
+  }
 }

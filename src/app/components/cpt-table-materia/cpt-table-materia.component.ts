@@ -7,7 +7,9 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  effect, // <--- IMPORTANTE
+  effect,
+  ChangeDetectorRef,
+  untracked, // <--- IMPORTANTE
 } from '@angular/core';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
@@ -56,6 +58,7 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
   private perguntaService = inject(PerguntaService);
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
 
   expanded = false;
   pageIndex = 0;
@@ -65,14 +68,12 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
   paginatedPerguntas: Pergunta[] = [];
 
   constructor() {
-    // --- SOLUÇÃO DO BUG DO REFRESH ---
-    // O effect roda sempre que o Signal 'perguntaService.perguntas()' muda.
-    // Assim, se os dados chegarem atrasados (após o ngOnInit), a lista atualiza sozinha.
     effect(() => {
-      // Apenas acessamos o signal para registrar a dependência
-      this.perguntaService.perguntas();
-      // Chamamos a função de carga (usando untracked ou deixando reagir, aqui chamar direto funciona bem)
-      this.carregarPerguntas();
+      const perguntas = this.perguntaService.perguntas();
+      const usuario = this.authService.currentUserSig();
+      untracked(() => {
+        this.carregarPerguntas();
+      });
     });
   }
 
@@ -81,7 +82,6 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Atualiza se a disciplina ou o modo de filtro mudar
     if (changes['disciplina'] || changes['somenteMinhas']) {
       this.carregarPerguntas();
     }
@@ -89,20 +89,17 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
   get userTipo(): string {
     const usuario = this.authService.currentUserSig();
-    return usuario ? usuario.perfilProfessor : ''; // Ajuste conforme sua interface (perfil ou perfilProfessor)
+    return usuario ? usuario.perfilProfessor : '';
   }
 
   carregarPerguntas(): void {
     const todas = this.perguntaService.perguntas();
     const usuarioLogado = this.authService.currentUserSig();
 
-    // 1. Filtra pela Disciplina (Padrão)
     let filtradas = todas.filter(
       (p) => p.disciplina && p.disciplina.id === this.disciplina.id
     );
 
-    // 2. SOLUÇÃO DO BUG DE PERGUNTAS ALHEIAS
-    // Se a flag 'somenteMinhas' estiver ativa, filtra pelo código do professor
     if (this.somenteMinhas && usuarioLogado) {
       filtradas = filtradas.filter(
         (p) => p.codigoProfessor === usuarioLogado.codigo
@@ -111,6 +108,8 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
     this.perguntasDaDisciplina = filtradas;
     this.updatePaginatedPerguntas();
+
+    this.cdr.markForCheck(); 
   }
 
   toggleExpand(): void {
@@ -167,6 +166,6 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
   onAtualizarAlternativa(alternativa: Alternativa) {
     this.alterarAlternativa.emit(alternativa);
-    console.log("materia table parou por aqui",alternativa)
+    console.log('materia table parou por aqui', alternativa);
   }
 }

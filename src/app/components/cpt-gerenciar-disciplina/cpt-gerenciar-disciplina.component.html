@@ -29,37 +29,50 @@
             @for(disciplina of disciplinasPaginadas; track disciplina.id) {
 
               <tr>
-                <!-- NOME / EDIÇÃO -->
                 <td>
                   @if(editandoId() !== disciplina.id) {
                     <span>{{ disciplina.nome }}</span>
                   } @else {
-                    <!-- MODO EDIÇÃO (INPUT) -->
-                    <div class="edit-container">
-                      <input
-                        type="text"
-                        [ngModel]="nomeEditando()"
-                        (ngModelChange)="nomeEditando.set($event)"
-                        (keydown.enter)="confirmarEdicaoClick(disciplina.id)"
-                        (keydown.escape)="cancelarEdicaoClick()"
-                        autoFocus
-                      />
+                    <!-- MODO EDIÇÃO -->
+                    <div class="edit-wrapper" style="display: flex; flex-direction: column;">
 
-                      <!-- Botão Confirmar (Verde) -->
-                      <button
-                        mat-icon-button
-                        class="btn-success"
-                        (click)="confirmarEdicaoClick(disciplina.id)">
-                        <mat-icon>check</mat-icon>
-                      </button>
+                      <div class="edit-container">
+                        <!-- AQUI: Usamos apenas [appDisciplinaUnica] -->
+                        <input
+                          type="text"
+                          [ngModel]="nomeEditando()"
+                          (ngModelChange)="nomeEditando.set($event)"
+                          (keydown.enter)="!editInput.invalid ? confirmarEdicaoClick(disciplina.id) : null"
+                          (keydown.escape)="cancelarEdicaoClick()"
+                          autoFocus
+                          required
+                          #editInput="ngModel"
+                          [appDisciplinaUnica]="disciplina.id"
+                        />
 
-                      <!-- Botão Cancelar (Vermelho) -->
-                      <button
-                        mat-icon-button
-                        color="warn"
-                        (click)="cancelarEdicaoClick()">
-                        <mat-icon>close</mat-icon>
-                      </button>
+                        <button
+                          mat-icon-button
+                          class="btn-success"
+                          [disabled]="editInput.invalid"
+                          (click)="confirmarEdicaoClick(disciplina.id)">
+                          <mat-icon>check</mat-icon>
+                        </button>
+
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          (click)="cancelarEdicaoClick()">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+
+                      @if(editInput.errors?.['disciplinaExistente']) {
+                        <small style="color: red; margin-top: 5px;">Nome já existe.</small>
+                      }
+                      @if(editInput.errors?.['required'] && (editInput.dirty || editInput.touched)) {
+                        <small style="color: red; margin-top: 5px;">Nome obrigatório.</small>
+                      }
+
                     </div>
                   }
                 </td>
@@ -67,7 +80,6 @@
                 <td>{{ quantidadeQuestoes(disciplina) }}</td>
                 <td>{{ quantidadeMaterias(disciplina) }}</td>
 
-                <!-- AÇÕES (EDITAR / EXCLUIR) -->
                 <td class="col-acoes">
                   <div class="actions-flex">
                     <button
@@ -99,36 +111,50 @@
             </tr>
           }
 
-          <!-- CRIAÇÃO (NOVA LINHA) -->
+          <!-- CRIAÇÃO -->
           @if(criando()){
             <tr class="criacao-row">
               <td colspan="4">
-                <div class="novo-container">
-                  <input
-                    type="text"
-                    placeholder="Nome da nova disciplina"
-                    [ngModel]="nomeCriando()"
-                    (ngModelChange)="nomeCriando.set($event)"
-                    (keydown.enter)="confirmarCriacao()"
-                    (keydown.escape)="cancelarCriacao()"
-                    autoFocus
-                  />
+                <div class="novo-wrapper" style="display: flex; flex-direction: column;">
 
-                  <!-- Botão Confirmar (Verde) -->
-                  <button
-                    mat-icon-button
-                    class="btn-success"
-                    (click)="confirmarCriacao()">
-                    <mat-icon>check</mat-icon>
-                  </button>
+                  <div class="novo-container">
+                    <!-- AQUI: Passamos null explicitamente na propriedade -->
+                    <input
+                      type="text"
+                      placeholder="Nome da nova disciplina"
+                      [ngModel]="nomeCriando()"
+                      (ngModelChange)="nomeCriando.set($event)"
+                      (keydown.enter)="!createInput.invalid ? confirmarCriacao() : null"
+                      (keydown.escape)="cancelarCriacao()"
+                      autoFocus
+                      required
+                      #createInput="ngModel"
+                      [appDisciplinaUnica]="null"
+                    />
 
-                  <!-- Botão Cancelar (Vermelho) -->
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="cancelarCriacao()">
-                    <mat-icon>close</mat-icon>
-                  </button>
+                    <button
+                      mat-icon-button
+                      class="btn-success"
+                      [disabled]="createInput.invalid"
+                      (click)="confirmarCriacao()">
+                      <mat-icon>check</mat-icon>
+                    </button>
+
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="cancelarCriacao()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+
+                  @if(createInput.errors?.['disciplinaExistente']) {
+                    <small style="color: red; margin-top: 5px; margin-left: 10px;">Disciplina já cadastrada.</small>
+                  }
+                  @if(createInput.errors?.['required'] && (createInput.dirty || createInput.touched)) {
+                    <small style="color: red; margin-top: 5px; margin-left: 10px;">Nome obrigatório.</small>
+                  }
+
                 </div>
               </td>
             </tr>
@@ -138,7 +164,6 @@
       </table>
     </div>
 
-    <!-- PAGINADOR -->
     <mat-paginator
       [length]="length"
       [pageSize]="pageSize"
@@ -147,7 +172,6 @@
       (page)="trocarPagina($event)">
     </mat-paginator>
 
-    <!-- BOTÃO ADICIONAR (MANTIDO ESTILO RAISED PARA DESTAQUE) -->
     <div class="footer-actions">
       <button
         mat-raised-button

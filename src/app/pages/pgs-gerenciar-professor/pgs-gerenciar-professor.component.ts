@@ -40,19 +40,16 @@ export class PgsGerenciarProfessorComponent {
   private dialogService = inject(DialogService);
   private router = inject(Router);
 
-  // Estado Local
   modoCadastro = signal(false);
-  professorParaEdicao = signal<Professor | null>(null); // Para passar ao form se for editar
+  professorParaEdicao = signal<Professor | null>(null);
 
-  // Signals dos Serviços (Substituem os Mocks)
   professores = this.professorService.professores;
   disciplinas = this.disciplinaService.disciplinas;
-  perguntas = this.perguntaService.perguntas; // Necessário para contagem
+  perguntas = this.perguntaService.perguntas;
 
-  // --- Ações de Tela ---
 
   abrirCadastro() {
-    this.professorParaEdicao.set(null); // Limpa para novo cadastro
+    this.professorParaEdicao.set(null);
     this.modoCadastro.set(true);
   }
 
@@ -61,11 +58,8 @@ export class PgsGerenciarProfessorComponent {
     this.professorParaEdicao.set(null);
   }
 
-  /**
-   * Método chamado quando o formulário emite o evento de salvar
-   */
+
   handleSalvarProfessor(professor: Professor) {
-    // Remove o 'id' usando desestruturação e pega o resto das propriedades
     const { id, ...professorParaSalvar } = professor;
     console.log(professorParaSalvar);
 
@@ -76,7 +70,6 @@ export class PgsGerenciarProfessorComponent {
         confirmButtonText: 'Salvar',
         cancelButtonText: 'Cancelar',
         titleColor: '#2e7d32',
-        // O 'as Professor' engana o TS pois removemos o ID obrigatório, mas para o POST é o correto
         action: () =>
           this.professorService.add(professorParaSalvar as Professor),
       })
@@ -84,23 +77,11 @@ export class PgsGerenciarProfessorComponent {
       .subscribe((success) => {
         if (success) {
           this.fecharCadastro();
-          //this.router.navigate(['/gerenciar']);
         }
       });
   }
 
-  /**
-   * Método chamado pela tabela para deletar
-   */
-  handleDeletarProfessor(id: number) {
-    if (confirm('Tem certeza que deseja excluir este professor?')) {
-      this.professorService.delete(id).subscribe();
-    }
-  }
 
-  /**
-   * Método chamado pela tabela para editar
-   */
   handleEditarProfessor(professor: Professor) {
     this.professorParaEdicao.set(professor);
     this.modoCadastro.set(true);
@@ -122,19 +103,10 @@ export class PgsGerenciarProfessorComponent {
     return this.authService.currentUserSig();
   }
 
-  /**
-   * Retorna disciplinas filtradas para o usuário logado (caso queira exibir em algum card)
-   */
   get disciplinasFiltradas() {
-    // Nota: filtrarDisciplinasPorPerfil foi ajustado na resposta anterior
-    // para usar apenas a lista interna do professor se disponível
     return filtrarDisciplinasPorPerfil(this.disciplinas(), this.usuario);
   }
 
-  /**
-   * Conta perguntas de um professor específico em uma disciplina específica.
-   * Atualizado para passar a lista de perguntas global para a função utilitária.
-   */
   contarPerguntasNaDisciplina(
     disciplina: Disciplina,
     usuario: Professor | null | undefined

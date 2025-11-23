@@ -3,7 +3,6 @@
 
   <form #profForm="ngForm" (ngSubmit)="onSubmit(profForm)">
 
-    <!-- NOME -->
     <div class="campo">
       <label for="nome">Nome</label>
       <input
@@ -12,10 +11,16 @@
         name="nome"
         [(ngModel)]="nome"
         required
+        #nomeCtrl="ngModel"
+        appNomeUnico
+        [ignorarId]="professorAtivo?.id"
       />
+      <div *ngIf="nomeCtrl.invalid && (nomeCtrl.dirty || nomeCtrl.touched)" class="erro-msg">
+        <small *ngIf="nomeCtrl.errors?.['required']">Nome é obrigatório.</small>
+        <small *ngIf="nomeCtrl.errors?.['nomeExistente']" style="color: red;">Este nome já está cadastrado.</small>
+      </div>
     </div>
 
-    <!-- EMAIL -->
     <div class="campo">
       <label for="email">Email</label>
       <input
@@ -24,14 +29,21 @@
         name="email"
         [(ngModel)]="email"
         required
+        email
+        #emailCtrl="ngModel"
+        appEmailUnico
+        [ignorarId]="professorAtivo?.id"
       />
+      <div *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)" class="erro-msg">
+        <small *ngIf="emailCtrl.errors?.['required']">Email é obrigatório.</small>
+        <small *ngIf="emailCtrl.errors?.['email']">Formato de email inválido.</small>
+        <small *ngIf="emailCtrl.errors?.['emailExistente']" style="color: red;">Este email já está cadastrado.</small>
+      </div>
     </div>
 
-    <!-- SENHA -->
     <div class="campo">
       <label for="senha">{{ editando ? 'Nova Senha (Opcional)' : 'Senha' }}</label>
 
-      <!-- Wrapper para posicionar o ícone -->
       <div class="input-wrapper">
         <input
           [type]="ocultarSenha ? 'password' : 'text'"
@@ -42,7 +54,6 @@
           [required]="!editando"
           placeholder="Digite a senha"
         />
-        <!-- Botão do Olho -->
         <button
           type="button"
           class="btn-eye"
@@ -53,7 +64,6 @@
       </div>
     </div>
 
-    <!-- CONFIRMAR SENHA -->
     <div class="campo" *ngIf="senha">
       <label for="confirmarSenha">Confirmar Senha</label>
 
@@ -67,7 +77,6 @@
           [required]="!editando"
           placeholder="Confirme a senha"
         />
-        <!-- Botão do Olho -->
         <button
           type="button"
           class="btn-eye"
@@ -80,7 +89,6 @@
       <div *ngIf="erroSenha" class="erro-senha">{{ erroSenha }}</div>
     </div>
 
-    <!-- DISCIPLINAS -->
     <div class="campo" *ngIf="mostrarDisciplinas">
       <label>Disciplinas</label>
       <div class="disciplinas-grid">
@@ -98,12 +106,11 @@
       </div>
     </div>
 
-    <!-- AÇÕES -->
     <div class="form-actions">
       <button
         type="submit"
         class="btn-cadastrar"
-        [disabled]="!isFormValid()"
+        [disabled]="profForm.invalid || erroSenha"
       >
         {{ editando ? 'Atualizar' : 'Cadastrar' }}
       </button>

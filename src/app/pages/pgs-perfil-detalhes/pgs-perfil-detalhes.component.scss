@@ -18,17 +18,21 @@
   margin-top: 16px;
 }
 
-/* Estilo base para todos os botões */
 .buttons-perfil button {
-  width: 40%;
+  flex: 1;
+  height: 48px;
   border: none;
-  padding: 12px 24px;
+  padding: 0 24px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
   font-size: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .buttons-perfil__editar {
@@ -53,7 +57,6 @@
   box-shadow: 0 6px 14px rgba(244, 67, 54, 0.4);
 }
 
-/* Botão de Cancelar (mesmo padrão visual) */
 .buttons-perfil__cancelar {
   background-color: #607D8B;
   color: white;
@@ -65,7 +68,6 @@
   box-shadow: 0 6px 14px rgba(96, 125, 139, 0.4);
 }
 
-/* Se desejar, pode definir .perfil-edicao com o mesmo layout */
 .perfil-edicao {
   width: 100%;
   padding: 32px;

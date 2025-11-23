@@ -69,4 +69,30 @@ export class ProfessorService {
       })
     );
   }
+
+  /**
+   * Verifica se existe algum professor com este nome.
+   * @param nome O nome a ser verificado.
+   * @param idIgnorado (Opcional) ID do professor que está sendo editado para não validar contra ele mesmo.
+   */
+  public verificarNomeExistente(nome: string, idIgnorado?: number): boolean {
+    const lista = this.professoresSignal();
+    return lista.some(
+      (p) =>
+        p.nome.trim().toLowerCase() === nome.trim().toLowerCase() &&
+        p.id !== idIgnorado
+    );
+  }
+
+  /**
+   * Verifica se existe algum professor com este email.
+   */
+  public verificarEmailExistente(email: string, idIgnorado?: number): boolean {
+    const lista = this.professoresSignal();
+    return lista.some(
+      (p) =>
+        p.email.trim().toLowerCase() === email.trim().toLowerCase() &&
+        p.id !== idIgnorado
+    );
+  }
 }
