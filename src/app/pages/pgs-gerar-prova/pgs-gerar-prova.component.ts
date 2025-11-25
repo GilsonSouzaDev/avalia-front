@@ -24,6 +24,7 @@ import { Professor, TipoProfessor } from '../../interfaces/Professor';
 import { Cabecalho } from '../../interfaces/Cabecalho';
 import { AvaliacaoDraft } from '../../interfaces/Avaliacao';
 import { DialogService } from '../../shared/services/dialog.service';
+import { ProfessorService } from '../../services/professor.service';
 
 @Component({
   selector: 'app-gerar-prova',
@@ -47,6 +48,7 @@ export class PgsGerarProvaComponent implements OnInit {
   private perguntaService = inject(PerguntaService);
   private pdfGeneratorService = inject(PdfGeneratorService);
   private dialogService = inject(DialogService);
+  private professorService = inject(ProfessorService);
 
   public TipoProfessor = TipoProfessor;
 
@@ -116,12 +118,10 @@ export class PgsGerarProvaComponent implements OnInit {
 
   loadInitialData(): void {
     this.todasPerguntas = this.perguntaService.perguntas();
-    this.professores = [
-      { id: 1, nome: 'Prof. Gilson' },
-      { id: 2, nome: 'Prof. Maria' },
-    ];
+    this.professores = this.professorService.professores();
   }
 
+  
   initializeForms(): void {
     this.disciplinaForm = this.fb.group({
       disciplinaIds: [[] as number[], Validators.required],
