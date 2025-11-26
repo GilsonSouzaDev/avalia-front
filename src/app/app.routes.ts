@@ -10,11 +10,13 @@ import { AppLayoutComponent } from './layout/app-layout/app-layout.component';
 import { authGuard } from './core/auth.guard';
 import { PgsGerenciarProfessorComponent } from './pages/pgs-gerenciar-professor/pgs-gerenciar-professor.component';
 import { PgsGerenciarDisciplinaComponent } from './pages/pgs-gerenciar-disciplina/pgs-gerenciar-disciplina.component';
+import { guestGuard } from './core/guest.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: AuthLayoutComponent,
+    canActivate: [guestGuard],
     children: [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: PgsLoginComponent },
