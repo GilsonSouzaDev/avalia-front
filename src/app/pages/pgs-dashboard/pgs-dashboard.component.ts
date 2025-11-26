@@ -45,6 +45,14 @@ export class PgsDashboardComponent {
     ).length;
   });
 
+  ngOnInit() {
+    // Força uma busca nova no servidor ao entrar no dashboard
+    // para garantir que pegamos dados alterados por outros usuários
+    this.disciplinaService.loadAll();
+    this.perguntaService.loadAll();
+    this.professorService.loadAll();
+  }
+
   public disciplinasFiltradas = computed(() => {
     const todas = this.listaDisciplinas();
     const user = this.usuario();
