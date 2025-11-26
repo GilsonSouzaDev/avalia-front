@@ -2,7 +2,6 @@
   <img class="senha-forms__logo" src="assets/logo/logo-avalia.png" alt="logo avalia" />
 
   <form [formGroup]="senhaForms" (ngSubmit)="onSubmit()" class="example-form">
-    <!-- Email (Sem alterações) -->
     <h3 class="senha-forms__titulo">Email</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Email</mat-label>
@@ -13,29 +12,27 @@
       @if (email.hasError('email') && !email.hasError('required') && email.touched) {
         <mat-error>Por favor, insira um email válido</mat-error>
       }
+      @if (email.hasError('emailNaoEncontrado') && !email.hasError('required') && !email.hasError('email') && email.touched) {
+        <mat-error>Este email <strong>não foi encontrado</strong> no sistema</mat-error>
+      }
     </mat-form-field>
 
-    <!-- Senha -->
     <h3 class="senha-forms__titulo">Senha</h3>
     <mat-form-field class="example-full-width">
       <mat-label>Senha</mat-label>
-
-      <!-- 1. O type agora é dinâmico -->
       <input
         [type]="ocultarSenha ? 'password' : 'text'"
         matInput
         formControlName="novaSenha"
         placeholder="Ex. **********"
       />
-
-      <!-- 2. Botão do Olhinho -->
       <button
         mat-icon-button
         matSuffix
         (click)="ocultarSenha = !ocultarSenha"
         [attr.aria-label]="'Ocultar senha'"
         [attr.aria-pressed]="!ocultarSenha"
-        type="button"> <!-- IMPORTANTE: type="button" para não submeter o form -->
+        type="button">
         <mat-icon>{{ ocultarSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
 
@@ -44,19 +41,14 @@
       }
     </mat-form-field>
 
-    <!-- Confirmar Senha -->
     <mat-form-field class="example-full-width">
       <mat-label>Confirmar Senha</mat-label>
-
-      <!-- Type dinâmico -->
       <input
         [type]="ocultarConfirmacao ? 'password' : 'text'"
         matInput
         formControlName="confirmPassword"
         placeholder="Ex. **********"
       />
-
-      <!-- Botão do Olhinho -->
       <button
         mat-icon-button
         matSuffix
@@ -75,7 +67,6 @@
       }
     </mat-form-field>
 
-    <!-- Botão Salvar -->
     <button type="submit" class="senha-forms__button">Salvar</button>
   </form>
 
