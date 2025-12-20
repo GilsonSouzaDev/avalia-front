@@ -12,10 +12,10 @@ import { Pergunta } from '../interfaces/Pergunta';
  */
 export function filtrarPerguntasPorCodigo(
   perguntas: Pergunta[] = [],
-  codigoProfessor: number
+  professor: Professor | null | undefined
 ): Pergunta[] {
   if (!Array.isArray(perguntas) || perguntas.length === 0) return [];
-  return perguntas.filter((p) => p.codigoProfessor === codigoProfessor);
+  return perguntas.filter((p) => p.professorId === professor?.id);
 }
 
 /**
@@ -64,11 +64,11 @@ export function contarPerguntasPorDisciplinaEProfessorEspecifico(
 ): number {
   if (!usuario || !todasPerguntas.length) return 0;
 
-  const codigoProfessor = usuario.codigo;
+  const codigoProfessor = usuario.id;
 
   const contagem = todasPerguntas.filter(
     (pergunta) =>
-      pergunta.codigoProfessor === codigoProfessor &&
+      pergunta.professorId === codigoProfessor &&
       // Verifica se a pergunta pertence à disciplina (checamos objeto ou ID)
       pergunta.disciplina?.id === disciplinaId
   ).length;

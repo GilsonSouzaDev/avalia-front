@@ -102,7 +102,7 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
     if (this.somenteMinhas && usuarioLogado) {
       filtradas = filtradas.filter(
-        (p) => p.codigoProfessor === usuarioLogado.codigo
+        (p) => p.professorId === usuarioLogado.id
       );
     }
 

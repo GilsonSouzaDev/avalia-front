@@ -41,7 +41,7 @@ export class PgsDashboardComponent {
     const user = this.usuario();
     if (!user) return 0;
     return this.listaPerguntas().filter(
-      (p) => p.codigoProfessor === user.codigo
+      (p) => p.professorId === user.id
     ).length;
   });
 
@@ -78,7 +78,7 @@ export class PgsDashboardComponent {
 
     if (user && user.perfilProfessor === TipoProfessor.PROFESSOR) {
       return perguntasDaDisciplina.filter(
-        (p) => p.codigoProfessor === user.codigo
+        (p) => p.professorId === user.id
       ).length;
     }
 

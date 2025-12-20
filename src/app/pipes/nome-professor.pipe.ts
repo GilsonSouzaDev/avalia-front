@@ -11,7 +11,7 @@ export class NomeProfessorPipe implements PipeTransform {
       return 'Desconhecido';
     }
 
-    const professor = professores.find((p) => p.codigo === codigoProfessor);
+    const professor = professores.find((p) => p.id === codigoProfessor);
     return professor ? professor.nome : 'Desconhecido';
   }
 }

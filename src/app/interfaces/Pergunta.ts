@@ -4,7 +4,7 @@ import { Disciplina } from "./Disciplina";
 export interface Pergunta {
   id: number;
   enunciado: string;
-  codigoProfessor: number;
+  professorId: number;
   disciplina: Disciplina;
   alternativas: Alternativa[];
 }

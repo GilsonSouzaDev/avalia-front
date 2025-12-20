@@ -14,7 +14,6 @@ import { DisciplinaService } from '../../services/disciplina.service';
 import { AuthService } from '../../core/auth.service';
 // 1. Importe o Service de Professor e a função utilitária
 import { ProfessorService } from '../../services/professor.service';
-import { getNextCodigo } from '../../utils/codigo.util';
 import { MatIcon } from "@angular/material/icon";
 import { NomeUnicoDirective } from '../../directives/nome-unico.directive';
 import { EmailUnicoDirective } from '../../directives/email-unico.directive';
@@ -61,7 +60,6 @@ export class CptProfessorFormsComponent implements OnInit {
       // MODO EDIÇÃO: Usa os dados existentes
       this.nome = this.professorAtivo.nome || '';
       this.email = this.professorAtivo.email || '';
-      this.codigo = this.professorAtivo.codigo;
       this.perfilSelecionado = this.professorAtivo.perfilProfessor;
       this.senha = '';
       this.confirmarSenha = '';
@@ -78,16 +76,10 @@ export class CptProfessorFormsComponent implements OnInit {
     } else {
       // MODO CRIAÇÃO (Novo): Define o código automaticamente
       this.perfilSelecionado = TipoProfessor.PROFESSOR;
-      this.gerarCodigoAutomatico();
+  
     }
 
     this.validarSenhas();
-  }
-
-  // Função auxiliar para gerar o código
-  private gerarCodigoAutomatico() {
-    const listaProfessores = this.professorService.professores(); // Pega o valor atual do Signal
-    this.codigo = getNextCodigo(listaProfessores);
   }
 
   isDisciplinaSelecionada(disciplina: Disciplina): boolean {
@@ -181,12 +173,7 @@ export class CptProfessorFormsComponent implements OnInit {
     this.disciplinasSelecionadas = [];
     this.erroSenha = '';
 
-    // Se limpou os campos e não está editando, gera um novo código para o próximo cadastro
-    if (!this.editando) {
-      this.gerarCodigoAutomatico();
-    } else {
-      this.codigo = null;
-    }
+
   }
 
   cancelarCadastro() {

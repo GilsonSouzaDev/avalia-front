@@ -1,3 +1,5 @@
+
+/*
 // src/app/core/services/base.service.ts
 import { Injectable, signal, computed } from '@angular/core';
 import { Professor } from '../interfaces/Professor';
@@ -115,3 +117,4 @@ export class BaseService {
     );
   }
 }
+*/

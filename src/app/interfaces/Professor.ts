@@ -1,4 +1,5 @@
 import { Disciplina } from "./Disciplina";
+import { Pergunta } from "./Pergunta";
 
 export enum TipoProfessor {
   PROFESSOR = 'PROFESSOR',
@@ -7,10 +8,10 @@ export enum TipoProfessor {
 
 export interface Professor {
   id?: number;
-  codigo: number;
   nome: string;
   email: string;
   perfilProfessor: TipoProfessor;
   senha?: string;
-  disciplinas?: Disciplina[]; // Podemos tipar melhor depois se precisar
+  disciplinas?: Disciplina[];
+  perguntas?: Pergunta[];
 }

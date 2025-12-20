@@ -65,7 +65,7 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
       const payloadAtualizacao = {
         ...formValue,
         id: id,
-        codigoProfessor: this.perguntaParaEdicao.codigoProfessor,
+        codigoProfessor: this.perguntaParaEdicao.professorId,
       };
 
       this.perguntaService.update(id, payloadAtualizacao).subscribe({
@@ -84,7 +84,7 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
       // --- MODO CADASTRO ---
       const novaPergunta: CadastrarPergunta = {
         ...formValue,
-        codigoProfessor: this.usuario.codigo, // Define o dono atual
+        codigoProfessor: this.usuario.id, // Define o dono atual
       };
 
       this.perguntaService.add(novaPergunta).subscribe({

@@ -90,7 +90,7 @@ export class PgsGerenciarProfessorComponent {
 
   quantidadeQuestoes = (professor: Professor) => {
     const todasPerguntas = this.perguntas(); // Pega valor atual do signal
-    return todasPerguntas.filter((p) => p.codigoProfessor === professor.codigo)
+    return todasPerguntas.filter((p) => p.professorId === professor.id)
       .length;
   };
 
