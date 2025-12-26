@@ -4,7 +4,6 @@ import { Pergunta, CadastrarPergunta } from '../interfaces/Pergunta';
 import { tap, Observable } from 'rxjs';
 import { environment } from '../../environments/environments';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -41,15 +40,33 @@ export class PerguntaService {
   }
 
   public add(pergunta: CadastrarPergunta): Observable<Pergunta> {
-    return this.http.post<Pergunta>(this.url, pergunta).pipe(
+    const formData = new FormData();
+    const { imagem, ...dto } = pergunta;
+
+    formData.append('pergunta', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+
+    if (imagem) {
+      formData.append('imagem', imagem as any);
+    }
+
+    return this.http.post<Pergunta>(this.url, formData).pipe(
       tap((created) => {
         this.perguntasSignal.update((list) => [...list, created]);
       })
     );
   }
 
-  public update(id: number, changes: Partial<Pergunta>): Observable<Pergunta> {
-    return this.http.put<Pergunta>(`${this.url}/${id}`, changes).pipe(
+  public update(id: number, changes: Partial<Pergunta> | any): Observable<Pergunta> {
+    const formData = new FormData();
+    const { imagem, ...dto } = changes;
+
+    formData.append('pergunta', new Blob([JSON.stringify(dto)], { type: 'application/json' }));
+
+    if (imagem && typeof imagem !== 'string') {
+      formData.append('imagem', imagem);
+    }
+
+    return this.http.put<Pergunta>(`${this.url}/${id}`, formData).pipe(
       tap((updated) => {
         this.perguntasSignal.update((list) =>
           list.map((p) => (p.id === id ? { ...p, ...updated } : p))
