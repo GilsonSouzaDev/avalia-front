@@ -1,51 +1,72 @@
-<div class="alternativa-item">
+<div class="alternativa-item" [class.editing]="editMode">
 
-  <!-- MODO VISUALIZAÇÃO -->
-  <ng-container *ngIf="!editMode; else editBlock">
-    <span class="alternativa-texto">{{ alternativa.texto || '— sem texto —' }}</span>
+  <!-- BOTÃO DE SELEÇÃO (Visual de Ícone + Ação de Toggle) -->
+  <div 
+    class="selection-wrapper" 
+    [class.clickable]="!editMode"
+    [class.disabled]="editMode"
+    (click)="solicitarSelecao($event)"
+    title="Marcar como correta">
+    
+    <!-- Se for correta: Ícone Verde Cheio -->
+    <mat-icon *ngIf="alternativa.correta" class="icon-checked">check_circle</mat-icon>
+    
+    <!-- Se não for correta: Ícone Cinza Vazio (estilo Radio Button) -->
+    <mat-icon *ngIf="!alternativa.correta" class="icon-unchecked">radio_button_unchecked</mat-icon>
+  </div>
 
-    <div class="actions" *ngIf="editavel">
-      <!-- Botão Editar: Azul Transparente (Igual ao do Card) -->
-      <button
-        mat-icon-button
-        color="primary"
-        (click)="habilitarEdicao(); $event.stopPropagation()"
-        matTooltip="Editar alternativa">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </div>
-  </ng-container>
+  <!-- ÁREA DE CONTEÚDO -->
+  <div class="content-wrapper">
+    
+    <!-- MODO VISUALIZAÇÃO -->
+    <ng-container *ngIf="!editMode; else editBlock">
+      <span class="alternativa-texto" [class.texto-correto]="alternativa.correta">
+        {{ alternativa.texto }}
+      </span>
 
-  <!-- MODO EDIÇÃO -->
-  <ng-template #editBlock>
-    <input
-      type="text"
-      [(ngModel)]="textoTemp"
-      class="alternativa-input"
-      placeholder="Digite o texto da alternativa..."
-      (click)="$event.stopPropagation()"
-      (keydown.enter)="confirmarEdicao()"
-      (keydown.escape)="cancelarEdicao()"
-      autoFocus
-    />
+      <div class="actions" *ngIf="editavel">
+        <button
+          type="button"
+          mat-icon-button
+          color="primary"
+          (click)="habilitarEdicao(); $event.stopPropagation()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </ng-container>
 
-    <div class="actions">
-      <!-- Botão Salvar (Check) -->
-      <button
-        mat-icon-button
-        class="btn-save"
-        (click)="confirmarEdicao(); $event.stopPropagation()">
-        <mat-icon>check</mat-icon>
-      </button>
+    <!-- MODO EDIÇÃO -->
+    <ng-template #editBlock>
+      <input
+        type="text"
+        [(ngModel)]="textoTemp"
+        class="alternativa-input"
+        placeholder="Digite o texto da alternativa..."
+        (click)="$event.stopPropagation()"
+        (keydown.enter)="isTextoValido ? confirmarEdicao() : null"
+        (keydown.escape)="cancelarEdicao()"
+        autoFocus
+      />
 
-      <!-- Botão Cancelar (X) - Vermelho -->
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="cancelarEdicao(); $event.stopPropagation()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-  </ng-template>
+      <div class="actions">
+        <button
+          type="button"
+          mat-icon-button
+          class="btn-save"
+          [disabled]="!isTextoValido"
+          (click)="confirmarEdicao(); $event.stopPropagation()">
+          <mat-icon>check</mat-icon>
+        </button>
+
+        <button
+          type="button"
+          mat-icon-button
+          color="warn"
+          (click)="cancelarEdicao(); $event.stopPropagation()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </div>
 
 </div>

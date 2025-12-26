@@ -1,14 +1,13 @@
 @use "sass:color";
 
-
-$primary-color: #38a169; // Verde do botão
-$secondary-color: #e6f0ff; // Azul claro do fundo do card
+$primary-color: #38a169;
+$secondary-color: #e6f0ff;
 $text-color: #333;
 $border-color: #ccc;
 $shadow-color: rgba(0, 0, 0, 0.1);
 
 .form-container {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   font-family: Arial, sans-serif;
 }
@@ -77,6 +76,8 @@ $shadow-color: rgba(0, 0, 0, 0.1);
   }
 
   .form-group {
+    margin-bottom: 20px;
+
     select {
       width: 50%;
     }
@@ -89,30 +90,29 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     }
   }
 
-.form-control {
-  width: 100%;
-  padding: 12px 15px;
-  border: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 16px;
-  background-color: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
   }
-}
 
-/* Estilo específico para o textarea da Questão - AGORA FIXO */
-.question-textarea {
-  resize: none;
-  height: 100px;
-  min-height: initial;
-}
+  .question-textarea {
+    resize: none;
+    height: 100px;
+    min-height: initial;
+  }
 
   .alternativas-list {
     display: flex;
@@ -120,58 +120,25 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     gap: 10px;
   }
 
-  .alternativa-item {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid transparent;
-    transition: border-color 0.2s;
-
-    &:focus-within {
-      border-color: $primary-color;
-    }
-
-    .alternativa-label {
-      font-weight: bold;
-      margin-right: 10px;
-      width: 20px;
-      flex-shrink: 0;
-    }
-
-    /* Input da alternativa - CORRIGIDO */
-    .alternativa-input {
-      flex-grow: 1;
-      border: none;
-      padding: 12px 12px;
-      background-color: transparent;
-      font-size: 16px;
-
-      &:focus {
-        outline: none;
-      }
-    }
-
-    .remove-btn {
-      background: none;
-      border: none;
-      color: #ff4d4d;
-      cursor: pointer;
-      font-weight: bold;
-      margin-left: 10px;
-      padding: 5px;
-      transition: color 0.2s;
-
-      &:hover {
-        color: #cc0000;
-      }
-    }
-  }
-
   .action-row {
     text-align: center;
     margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .global-error {
+    color: #d32f2f;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: rgba(211, 47, 47, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid rgba(211, 47, 47, 0.3);
   }
 
   .submit-btn {
@@ -200,5 +167,10 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     color: #ff4d4d;
     font-size: 12px;
     margin-top: 5px;
+  }
+
+
+  .upload-box{
+    cursor: pointer;
   }
 }

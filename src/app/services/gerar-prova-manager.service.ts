@@ -11,18 +11,14 @@ import { AvaliacaoDraft } from '../interfaces/Avaliacao';
 import { Pergunta } from '../interfaces/Pergunta';
 import { Cabecalho } from '../interfaces/Cabecalho';
 
-
-
 @Injectable({
-  providedIn: 'root' // ou providenciado apenas no componente se preferir
+  providedIn: 'root'
 })
 export class GerarProvaManagerService {
   private fb = inject(FormBuilder);
   private avaliacaoStateService = inject(AvaliacaoStateService);
   private pdfGeneratorService = inject(PdfGeneratorService);
   private dialogService = inject(DialogService);
-
-  // --- FORMULÁRIOS ---
 
   createDisciplinaForm(): FormGroup {
     return this.fb.group({
@@ -43,8 +39,6 @@ export class GerarProvaManagerService {
     });
   }
 
-  // --- LÓGICA DE DADOS ---
-
   generateDurationOptions(): string[] {
     const options = [];
     let minutes = 60;
@@ -61,8 +55,8 @@ export class GerarProvaManagerService {
     return options;
   }
 
-  filterDisciplinasByProfile(user: Professor, todas: Disciplina[]): Disciplina[] {
-    if (user.perfilProfessor === TipoProfessor.PROFESSOR) {
+  filterDisciplinas(user: Professor, todas: Disciplina[], modoSelecionado: TipoProfessor): Disciplina[] {
+    if (modoSelecionado === TipoProfessor.PROFESSOR) {
       const professor = user as any;
       const meusIds: number[] = Array.isArray(professor.disciplinas)
         ? professor.disciplinas.map((d: any) => (typeof d === 'object' ? d.id : d))
@@ -76,12 +70,9 @@ export class GerarProvaManagerService {
     return todasPerguntas.filter((q) => ids.includes(q.disciplina.id)).length;
   }
 
-  // --- SINCRONIZAÇÃO DE ESTADO ---
-
   syncFormWithDraft(draft: AvaliacaoDraft, discForm: FormGroup, cabForm: FormGroup): number[] {
     if (!draft) return [];
 
-    // 1. Resolver IDs de Disciplina
     let ids: number[] = [];
     if (draft.selectedDisciplinaIds?.length) {
       ids = draft.selectedDisciplinaIds;
@@ -93,7 +84,6 @@ export class GerarProvaManagerService {
         .filter((v, i, a) => a.indexOf(v) === i);
     }
 
-    // 2. Atualizar Form Disciplina
     if (ids.length) {
       discForm.get('disciplinaIds')?.setValue(ids);
     }
@@ -101,14 +91,20 @@ export class GerarProvaManagerService {
       discForm.get('quantidadeTotal')?.setValue((draft as any).quantidadePerguntas);
     }
 
-    // 3. Atualizar Form Cabeçalho
     if (draft.cabecalho) {
       const cab = draft.cabecalho;
       let dataStr = '';
+      
       if (cab.data) {
         const d = new Date(cab.data);
-        if (!isNaN(d.getTime())) dataStr = d.toISOString().split('T')[0];
+        if (!isNaN(d.getTime())) {
+          const ano = d.getFullYear();
+          const mes = String(d.getMonth() + 1).padStart(2, '0');
+          const dia = String(d.getDate()).padStart(2, '0');
+          dataStr = `${ano}-${mes}-${dia}`;
+        }
       }
+
       cabForm.patchValue({
         curso: cab.curso || '',
         titulo: cab.titulo || '',
@@ -120,7 +116,7 @@ export class GerarProvaManagerService {
       });
     }
 
-    return ids; // Retorna os IDs para que o componente possa atualizar a UI (selects)
+    return ids; 
   }
 
   saveStep1(discForm: FormGroup, draft: AvaliacaoDraft, disciplinasDisponiveis: Disciplina[]): void {
@@ -130,7 +126,6 @@ export class GerarProvaManagerService {
     const principalDiscId = ids.length === 1 ? ids[0] : null;
     const principalDisc = disciplinasDisponiveis.find((d) => d.id === principalDiscId);
 
-    // Salva configurações gerais
     this.avaliacaoStateService.updateState({
       disciplinaId: principalDiscId,
       disciplinaNome: principalDisc ? principalDisc.nome : 'Prova Multidisciplinar',
@@ -139,7 +134,6 @@ export class GerarProvaManagerService {
       selectedDisciplinaIds: ids,
     });
 
-    // Ajusta array de questões se diminuiu a quantidade
     const currentQuestions = draft.questoesSelecionadas || [];
     const validQuestions = currentQuestions.filter((q) => ids.includes(q.disciplina.id));
     
@@ -159,6 +153,12 @@ export class GerarProvaManagerService {
       ? 'Prova Geral' 
       : (draft.disciplinaNome || 'Disciplina');
 
+    let dataCorrigida = new Date();
+    if (val.data) {
+      const [ano, mes, dia] = val.data.split('-').map(Number);
+      dataCorrigida = new Date(ano, mes - 1, dia);
+    }
+
     const cabData: Partial<Cabecalho> = {
       curso: val.curso,
       titulo: val.titulo,
@@ -166,7 +166,7 @@ export class GerarProvaManagerService {
       periodo: val.periodo,
       totalPontos: val.totalPontos,
       duracao: val.duracao,
-      data: val.data ? new Date(val.data) : new Date(),
+      data: dataCorrigida,
       professor: nomeProfessor,
       disciplina: nomeDisciplina,
     };
@@ -186,8 +186,6 @@ export class GerarProvaManagerService {
 
     this.avaliacaoStateService.updateState({ questoesSelecionadas: questoes });
   }
-
-  // --- ACTIONS (Dialogs e PDF) ---
 
   confirmAndGeneratePDF(callbackSuccess: () => void) {
     const finalDraft = this.avaliacaoStateService.getCurrentState();

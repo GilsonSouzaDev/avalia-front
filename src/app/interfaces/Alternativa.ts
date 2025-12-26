@@ -1,6 +1,6 @@
 export interface Alternativa {
   id: number;
   texto: string;
-  estaCorreta: boolean; 
+  correta: boolean; 
   perguntaId: number;
 }

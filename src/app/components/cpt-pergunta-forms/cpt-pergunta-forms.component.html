@@ -3,12 +3,11 @@
 
   <form #questionForm="ngForm" (ngSubmit)="onSubmit(questionForm)" class="question-form">
     <div class="card">
-      <!-- Cabeçalho: Disciplina e Quantidade de Alternativas -->
+      
       <div class="header-group">
         <div class="form-group disciplina-group">
           <label for="disciplina">Disciplina</label>
 
-          <!-- MODO CADASTRO: Mostra o Select para escolher -->
           <ng-container *ngIf="!isEdicao">
             <select
               id="disciplina"
@@ -25,15 +24,8 @@
                 {{ disciplina.nome }}
               </option>
             </select>
-            <div
-              *ngIf="questionForm.controls['disciplina']?.invalid && questionForm.controls['disciplina']?.touched"
-              class="error-message"
-            >
-              Disciplina é obrigatória.
-            </div>
           </ng-container>
 
-          <!-- MODO EDIÇÃO: Mostra apenas o nome da disciplina travado -->
           <ng-container *ngIf="isEdicao">
             <input
               type="text"
@@ -44,32 +36,24 @@
               style="background-color: #e9ecef; cursor: not-allowed;"
             >
             <small style="color: #6c757d; margin-top: 5px; display: block; font-size: 0.85em;">
-              * A disciplina não pode ser alterada durante a edição da pergunta.
+              * A disciplina não pode ser alterada durante a edição.
             </small>
           </ng-container>
-
         </div>
 
         <div class="form-group quantidade-group">
-          <label>Quantidade de Alternativas</label>
+          <label>Qtde. Alternativas</label>
           <div class="question-count-selector">
             <span
               [class.active]="quantidadeAlternativas === 4"
-              (click)="setQuantidadeAlternativas(4)"
-            >
-              4
-            </span>
+              (click)="setQuantidadeAlternativas(4)">4</span>
             <span
               [class.active]="quantidadeAlternativas === 5"
-              (click)="setQuantidadeAlternativas(5)"
-            >
-              5
-            </span>
+              (click)="setQuantidadeAlternativas(5)">5</span>
           </div>
         </div>
       </div>
 
-      <!-- Questão (Corpo da Pergunta) -->
       <div class="form-group">
         <label for="enunciado">Questão</label>
         <textarea
@@ -89,35 +73,64 @@
         </div>
       </div>
 
-      <!-- Alternativas -->
+      <!-- ÁREA DE UPLOAD DE IMAGEM -->
+      <div class="form-group">
+        <label>Imagem da Questão (Opcional)</label>
+        
+        <input 
+          type="file" 
+          #fileInput 
+          (change)="onFileSelected($event)" 
+          accept="image/*" 
+          hidden 
+        />
+
+        <!-- Estado 1: Botão de Upload (Quando não tem imagem) -->
+        <div 
+          *ngIf="!imagePreview" 
+          class="upload-box" 
+          (click)="fileInput.click()">
+          <mat-icon>cloud_upload</mat-icon>
+          <span> adicionar imagem </span>
+        </div>
+
+        <!-- Estado 2: Preview da Imagem -->
+        <div *ngIf="imagePreview" class="preview-box">
+          <img [src]="imagePreview" alt="Preview da questão">
+          <button 
+            type="button" 
+            mat-icon-button 
+            color="warn" 
+            class="remove-btn"
+            (click)="removeImage()"
+            title="Remover imagem">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
       <div class="form-group">
         <label>Alternativas</label>
         <div class="alternativas-list">
-          <div *ngFor="let alternativa of alternativas; let i = index" class="alternativa-item">
-            <ng-container *ngIf="i < quantidadeAlternativas">
-              <input
-                type="text"
-                name="alternativa-{{i}}"
-                [(ngModel)]="alternativa.texto"
-                required
-                class="form-control alternativa-input"
-                placeholder="Texto da alternativa"
-              >
-              <div
-                *ngIf="questionForm.controls['alternativa-' + i]?.invalid && questionForm.controls['alternativa-' + i]?.touched"
-                class="error-message"
-              >
-                O texto da alternativa é obrigatório.
-              </div>
-            </ng-container>
-          </div>
+          <ng-container *ngFor="let alt of alternativas; let i = index">
+            <app-cpt-alternativa-forms
+              *ngIf="i < quantidadeAlternativas"
+              [alternativa]="alt"
+              [index]="i"
+              [editavel]="true"
+              (selectionRequest)="definirCorreta(i)"
+              (textoChange)="onAlternativaChange($event, i)">
+            </app-cpt-alternativa-forms>
+          </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- Botão de Ação -->
     <div class="action-row">
-      <button type="submit" [disabled]="questionForm.invalid" class="submit-btn">
+      <button 
+        type="submit" 
+        [disabled]="questionForm.invalid || !isAlternativasValidas" 
+        class="submit-btn">
         {{ textoBotao }}
       </button>
     </div>

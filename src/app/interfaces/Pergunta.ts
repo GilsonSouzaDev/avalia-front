@@ -5,6 +5,7 @@ export interface Pergunta {
   id: number;
   enunciado: string;
   professorId: number;
+  imagem: string | null;
   disciplina: Disciplina;
   alternativas: Alternativa[];
 }
@@ -12,6 +13,7 @@ export interface Pergunta {
 export interface CadastrarPergunta {
   enunciado: string;
   disciplinaId: number;
-  codigoProfessor: number;
+  imagem: string | null;
+  professorId: number;
   alternativas: { texto: string }[];
 }

@@ -1,10 +1,6 @@
 <app-cpt-pergunta-forms
   [disciplinas]="disciplinasFiltradas"
   [perguntaParaEdicao]="perguntaParaEdicao"
+  [professorId]="professorLogadoId || usuario?.id || null"
   (submitForm)="handleSave($event)"
 ></app-cpt-pergunta-forms>
-
-<!--
-  (submitForm)="handleSave($event)"
-  Isso captura o objeto Pergunta enviado pelo filho e passa para o método handleSave
--->

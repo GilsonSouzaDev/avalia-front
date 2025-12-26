@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   effect,
   ChangeDetectorRef,
-  untracked, // <--- IMPORTANTE
+  untracked,
 } from '@angular/core';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
@@ -42,10 +42,7 @@ import { DialogService } from '../../shared/services/dialog.service';
 export class CptTableMateriaComponent implements OnInit, OnChanges {
   @Input({ required: true }) disciplina!: Disciplina;
   @Input() professores: Professor[] = [];
-
-  // --- NOVO INPUT PARA CONTROLAR O FILTRO ---
   @Input() somenteMinhas: boolean = false;
-
   @Input() isSelectionMode: boolean = false;
   @Input() selectedQuestionIds: number[] = [];
   @Input() isLimitReached: boolean = false;
@@ -157,7 +154,6 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
       })
       .afterClosed()
       .subscribe((success: boolean | undefined) => {
-        // O effect cuidará da atualização, mas chamar aqui garante feedback imediato
         if (success) {
           this.carregarPerguntas();
         }
@@ -166,6 +162,5 @@ export class CptTableMateriaComponent implements OnInit, OnChanges {
 
   onAtualizarAlternativa(alternativa: Alternativa) {
     this.alterarAlternativa.emit(alternativa);
-    console.log('materia table parou por aqui', alternativa);
   }
 }

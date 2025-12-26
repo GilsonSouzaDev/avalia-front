@@ -1,17 +1,79 @@
 .alternativa-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-
-  background: #fff;
-  border-radius: 8px; // Um pouco mais arredondado para combinar com o card pai
-  border: 1px solid #eee; // Borda sutil
-  padding: 4px 8px 4px 16px; // Padding ajustado para os botões icon
+  
+  // MUDANÇA 1: Cor base no modo de visualização
+  background-color: #E2EBFB; 
+  // Sugestão: borda transparente ou de um azul levemente mais escuro para definição
+  border: 1px solid transparent; 
+  
+  border-radius: 8px;
+  padding: 8px 12px;
   margin-bottom: 8px;
-  transition: box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+
+  // MUDANÇA 2: Estilos do Modo Edição (Fundo Branco)
+  &.editing {
+    background-color: #fff; // Fundo branco para edição
+    border-color: #3f51b5;  // Borda de destaque
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); // Leve sombra para destacar que está sendo editado
+  }
 
   &:hover {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    // Escurece levemente o azul no hover do modo visualização
+    filter: brightness(0.97);
+  }
+  
+  // Ajuste para hover quando estiver editando (para não escurecer o branco)
+  &.editing:hover {
+    filter: none;
+  }
+
+  // --- WRAPPER DO ÍCONE (Mantido) ---
+  .selection-wrapper {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+
+    mat-icon {
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+    }
+
+    .icon-checked {
+      color: #2e7d32;
+    }
+
+    .icon-unchecked {
+      // Ajuste: Talvez precise escurecer um pouco se o fundo for azul claro, 
+      // mas #bdbdbd ou #757575 costumam funcionar bem sobre #E2EBFB.
+      color: #757575; 
+    }
+
+    &.clickable {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    &.disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+
+  // --- CONTEÚDO ---
+  .content-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .alternativa-texto {
@@ -20,33 +82,37 @@
     font-size: 0.95rem;
     color: #333;
     line-height: 1.4;
+
+    &.texto-correto {
+      color: #1b5e20; // Verde um pouco mais escuro para contraste no azul
+      font-weight: 600;
+    }
   }
 
   .alternativa-input {
     flex: 1;
     margin-right: 10px;
-
-    // Estilo do input mais moderno
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 8px 10px;
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s;
+    background-color: #fff; // Garante fundo branco no input
 
     &:focus {
-      border-color: #3f51b5; // Azul primary
+      border-color: #3f51b5;
     }
   }
 
   .actions {
     display: flex;
     align-items: center;
-    gap: 0; // O mat-icon-button já tem seu próprio espaçamento interno
+    gap: 0;
 
-    // Personalização específica para o botão de Salvar ficar verde
     .btn-save {
-      color: #2e7d32; // Verde Material Design
+      color: #2e7d32;
+      &:disabled { color: #bdbdbd; }
     }
   }
 }

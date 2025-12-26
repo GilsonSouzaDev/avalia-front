@@ -9,134 +9,166 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon'; 
+import { MatButtonModule } from '@angular/material/button'; 
+
 import { Disciplina } from '../../interfaces/Disciplina';
-import { Pergunta } from '../../interfaces/Pergunta';
+import { Pergunta, CadastrarPergunta } from '../../interfaces/Pergunta';
 import { Alternativa } from '../../interfaces/Alternativa';
+import { CptAlternativaFormsComponent } from "../cpt-alternativa-forms/cpt-alternativa-forms.component";
+
+// Importando nossa nova classe
+import { PerguntaFormUtils } from '../../utils/pergunta-form.utils';
 
 @Component({
   selector: 'app-cpt-pergunta-forms',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, CptAlternativaFormsComponent],
   templateUrl: './cpt-pergunta-forms.component.html',
   styleUrl: './cpt-pergunta-forms.component.scss',
 })
 export class CptPerguntaFormsComponent implements OnInit, OnChanges {
   @Input() perguntaParaEdicao: Pergunta | null = null;
   @Input() disciplinas: Disciplina[] = [];
-  @Output() submitForm = new EventEmitter<any>();
+  @Input() professorId: number | null = null;
+
+  @Output() submitForm = new EventEmitter<CadastrarPergunta | Pergunta>();
 
   titulo: string = 'Cadastro de Questão';
   textoBotao: string = 'Salvar';
   isEdicao: boolean = false;
 
+  // Dados do Formulário
   enunciado: string = '';
   disciplinaId: number | null = null;
-  alternativas: Partial<Alternativa>[] = [];
-
+  alternativas: Alternativa[] = [];
   quantidadeAlternativas: number = 4;
+  
+  // Imagem
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   constructor() {
-    this.resetForm();
+    // Inicializa via Utils
+    this.alternativas = PerguntaFormUtils.gerarAlternativasIniciais();
   }
 
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['perguntaParaEdicao']) {
-      this.isEdicao = !!this.perguntaParaEdicao;
-      this.updateUI();
-      this.loadFormModel();
+    if (changes['perguntaParaEdicao'] && this.perguntaParaEdicao) {
+      this.isEdicao = true;
+      this.carregarDadosEdicao();
     }
-
-    if (
-      changes['disciplinas'] &&
-      this.disciplinas.length > 0 &&
-      !this.disciplinaId
-    ) {
-      // Se houver apenas uma disciplina disponível e não estiver editando, seleciona automaticamente
-      if (this.disciplinas.length === 1 && !this.isEdicao) {
-        this.disciplinaId = this.disciplinas[0].id;
-      }
+    
+    // Auto-select disciplina se só houver uma
+    if (changes['disciplinas'] && this.disciplinas.length === 1 && !this.isEdicao) {
+      this.disciplinaId = this.disciplinas[0].id;
     }
+    
+    this.atualizarTextosUI();
   }
 
-  private resetForm(): void {
-    this.enunciado = '';
-    this.disciplinaId = null;
-    this.alternativas = [
-      { texto: '' },
-      { texto: '' },
-      { texto: '' },
-      { texto: '' },
-    ];
-    this.quantidadeAlternativas = 4;
+  // --- GETTERS & SETTERS SIMPLIFICADOS ---
+
+  get isAlternativasValidas(): boolean {
+    return PerguntaFormUtils.isFormularioValido(this.alternativas, this.quantidadeAlternativas);
   }
 
-  private updateUI(): void {
+  setQuantidadeAlternativas(qtd: number): void {
+    this.quantidadeAlternativas = qtd;
+    this.alternativas = PerguntaFormUtils.ajustarQuantidadeAlternativas(this.alternativas, qtd);
+  }
+
+  definirCorreta(index: number): void {
+    PerguntaFormUtils.definirUnicaCorreta(this.alternativas, index);
+  }
+
+  onAlternativaChange(alt: Alternativa, index: number): void {
+    this.alternativas[index] = alt;
+  }
+
+  // --- CARREGAMENTO DE DADOS ---
+
+  private carregarDadosEdicao(): void {
+    if (!this.perguntaParaEdicao) return;
+
+    this.enunciado = this.perguntaParaEdicao.enunciado;
+    this.disciplinaId = this.perguntaParaEdicao.disciplina?.id || null;
+    
+    if (!this.professorId) {
+      this.professorId = this.perguntaParaEdicao.professorId;
+    }
+
+    // Imagem existente
+    if (this.perguntaParaEdicao.imagem) {
+      this.imagePreview = this.perguntaParaEdicao.imagem;
+    }
+
+    // Clona alternativas para não mutar a prop original
+    this.alternativas = this.perguntaParaEdicao.alternativas.map(a => ({ ...a }));
+    
+    // Ajusta quantidade visual
+    this.quantidadeAlternativas = this.alternativas.length < 4 ? 4 : this.alternativas.length;
+    this.setQuantidadeAlternativas(this.quantidadeAlternativas);
+  }
+
+  private atualizarTextosUI(): void {
     this.titulo = this.isEdicao ? 'Edição de Questão' : 'Cadastro de Questão';
     this.textoBotao = this.isEdicao ? 'Atualizar' : 'Salvar';
   }
 
-  private loadFormModel(): void {
-    if (this.perguntaParaEdicao) {
-      this.enunciado = this.perguntaParaEdicao.enunciado;
-      // Carrega o ID da disciplina para memória, para ser enviado no submit
-      this.disciplinaId = this.perguntaParaEdicao.disciplina?.id || null;
-
-      this.alternativas = this.perguntaParaEdicao.alternativas.map((a) => ({
-        ...a,
-      }));
-
-      this.quantidadeAlternativas = this.alternativas.length;
-      this.adjustAlternativasArray(this.quantidadeAlternativas);
-    } else {
-      this.resetForm();
+  // --- UPLOAD DE IMAGEM (UI LOGIC) ---
+  // Mantemos no componente pois lida com FileReader (API do Browser/UI)
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => { this.imagePreview = reader.result as string; };
+      reader.readAsDataURL(file);
     }
   }
 
-  private adjustAlternativasArray(targetCount: number): void {
-    const currentCount = this.alternativas.length;
-
-    if (currentCount < targetCount) {
-      for (let i = currentCount; i < targetCount; i++) {
-        this.alternativas.push({ texto: '' });
-      }
-    } else if (currentCount > targetCount) {
-      this.alternativas.splice(targetCount);
-    }
+  removeImage(): void {
+    this.selectedFile = null;
+    this.imagePreview = null;
   }
+
+  // --- SUBMIT ---
 
   onSubmit(form: NgForm): void {
-    // Em modo edição, o campo select não existe no DOM, então o form pode estar válido
-    // mas precisamos garantir que o disciplinaId esteja setado na variável.
-    if (form.valid) {
-      if (!this.disciplinaId) {
-        return;
-      }
+    // Toda a complexidade de criar objeto foi para o Utils
+    const payload = PerguntaFormUtils.montarPayload({
+      isEdicao: this.isEdicao,
+      perguntaEdicao: this.perguntaParaEdicao,
+      enunciado: this.enunciado,
+      disciplinaId: this.disciplinaId,
+      professorId: this.professorId,
+      alternativas: this.alternativas,
+      qtdVisivel: this.quantidadeAlternativas,
+      imagemFile: this.selectedFile
+    });
 
-      const alternativasParaEnviar = this.alternativas
-        .slice(0, this.quantidadeAlternativas)
-        .map((alt) => ({ texto: alt.texto || '' }))
-        .filter((alt) => alt.texto.trim() !== '');
+    if (!payload) {
+      console.error('Erro de validação: Disciplina ou Professor faltando.');
+      return;
+    }
 
-      const payload = {
-        id: this.perguntaParaEdicao?.id,
-        enunciado: this.enunciado,
-        disciplinaId: this.disciplinaId,
-        alternativas: alternativasParaEnviar,
-      };
+    console.log('Enviando Payload:', payload);
+    this.submitForm.emit(payload);
 
-      this.submitForm.emit(payload);
-
-      if (!this.isEdicao) {
-        form.resetForm();
-        this.resetForm();
-      }
+    if (!this.isEdicao) {
+      this.resetarFormularioLocal(form);
     }
   }
 
-  setQuantidadeAlternativas(quantidade: number): void {
-    this.quantidadeAlternativas = quantidade;
-    this.adjustAlternativasArray(quantidade);
+  private resetarFormularioLocal(form: NgForm): void {
+    form.resetForm();
+    this.enunciado = '';
+    this.disciplinaId = null;
+    this.removeImage();
+    this.setQuantidadeAlternativas(4);
+    this.alternativas = PerguntaFormUtils.gerarAlternativasIniciais();
   }
 }

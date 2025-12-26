@@ -16,14 +16,19 @@ export class CptAlternativaFormsComponent implements OnInit {
   @Input() alternativa!: Alternativa;
   @Input() index!: number;
   @Input() editavel: boolean = true;
-
+  
   @Output() textoChange = new EventEmitter<Alternativa>();
+  @Output() selectionRequest = new EventEmitter<void>();
 
   editMode = false;
   textoTemp: string = '';
 
   ngOnInit(): void {
     this.textoTemp = this.alternativa?.texto || '';
+    
+    if (!this.alternativa.texto) {
+      this.editMode = true;
+    }
   }
 
   habilitarEdicao(): void {
@@ -33,18 +38,37 @@ export class CptAlternativaFormsComponent implements OnInit {
   }
 
   confirmarEdicao(): void {
-
-    const textoAntigo = this.alternativa.texto;
+    if (!this.textoTemp || this.textoTemp.trim() === '') {
+      return;
+    }
     this.alternativa.texto = this.textoTemp;
-    
     this.editMode = false;
-
-    this.textoChange.emit(this.alternativa);
-    console.log('Enviando para salvar:', this.alternativa);
+    this.emitirMudanca();
   }
 
   cancelarEdicao(): void {
+    if (!this.alternativa.texto && (!this.textoTemp || this.textoTemp.trim() === '')) {
+       return;
+    }
     this.editMode = false;
     this.textoTemp = this.alternativa.texto;
+  }
+
+  // Ação Mesclada: O clique no ícone dispara a seleção (como o toggle fazia)
+  solicitarSelecao(event: MouseEvent): void {
+    event.stopPropagation();
+    
+    // Se estiver editando o texto, bloqueamos a mudança de seleção para evitar confusão
+    if (!this.editMode) {
+      this.selectionRequest.emit();
+    }
+  }
+
+  private emitirMudanca(): void {
+    this.textoChange.emit(this.alternativa);
+  }
+
+  get isTextoValido(): boolean {
+    return !!(this.textoTemp && this.textoTemp.trim().length > 0);
   }
 }

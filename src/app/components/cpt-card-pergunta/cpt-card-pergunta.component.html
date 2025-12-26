@@ -3,10 +3,8 @@
   [class.selected]="isSelected"
   [class.disabled]="isDisabled && !isSelected">
 
-  <!-- CABEÇALHO: Clique no card expande/recolhe -->
   <div class="cabecalho" (click)="toggleExpand()">
 
-    <!-- CONTROLE DE SELEÇÃO (Apenas modo seleção) -->
     <div *ngIf="isSelectionMode" class="selection-control" (click)="$event.stopPropagation()">
       <input
         type="checkbox"
@@ -18,18 +16,26 @@
     </div>
 
     <div class="titulo-container">
-      <h3 class="titulo">{{ pergunta.enunciado }}</h3>
+      <div class="enunciado-row">
+        <h3 class="titulo">{{ pergunta.enunciado }}</h3>
+
+        <div 
+          *ngIf="pergunta.imagem" 
+          class="icone-imagem-badge" 
+          matTooltip="Visualizar imagem"
+          (click)="verImagem($event, imageDialog)">
+          <mat-icon>image</mat-icon>
+        </div>
+      </div>
+
       <span class="prof-label">Prof. {{ pergunta.professorId | nomeProfessor: professores }}</span>
     </div>
 
-    <!-- Ícone de expansão -->
     <mat-icon class="icone-expand" [class.rotated]="expanded">expand_more</mat-icon>
   </div>
 
-  <!-- CONTEÚDO EXPANDIDO -->
   <div class="conteudo-expandido" *ngIf="expanded">
 
-    <!-- MODO LEITURA (Visualização para Seleção) -->
     <div *ngIf="isSelectionMode" class="modo-leitura">
       <p class="label-alternativas">Alternativas:</p>
       <ul class="lista-alternativas-readonly">
@@ -40,10 +46,7 @@
       <div *ngIf="!pergunta.alternativas.length" class="aviso-vazio">Sem alternativas cadastradas.</div>
     </div>
 
-    <!-- MODO EDIÇÃO (CRUD) -->
     <div *ngIf="!isSelectionMode" class="modo-edicao">
-
-      <!-- Lista de Inputs das Alternativas -->
       <div class="alternativas-editaveis">
         <app-cpt-alternativa-forms
           *ngFor="let alt of pergunta.alternativas; let i = index"
@@ -53,11 +56,7 @@
         ></app-cpt-alternativa-forms>
       </div>
 
-      <!--
-        RODAPÉ DE AÇÕES
-      -->
       <div class="footer-actions">
-        <!-- Botão Editar: Azul (Primary) -->
         <button
           mat-button
           color="primary"
@@ -66,7 +65,6 @@
           <mat-icon>edit</mat-icon> Editar
         </button>
 
-        <!-- Botão Excluir: Vermelho (Warn) - Só COORDENADOR -->
         <button
           *ngIf="isCoordenador"
           mat-button
@@ -76,7 +74,16 @@
           <mat-icon>delete</mat-icon> Excluir
         </button>
       </div>
-
     </div>
   </div>
 </mat-card>
+
+<ng-template #imageDialog>
+  <div style="padding: 20px; text-align: center; position: relative;">
+    <h3 style="margin-top: 0; color: #333;">Imagem da Questão</h3>
+    <img [src]="pergunta.imagem" style="max-width: 100%; max-height: 80vh; border-radius: 8px;">
+    <div style="margin-top: 20px;">
+      <button mat-raised-button color="primary" [mat-dialog-close]="true">Fechar</button>
+    </div>
+  </div>
+</ng-template>

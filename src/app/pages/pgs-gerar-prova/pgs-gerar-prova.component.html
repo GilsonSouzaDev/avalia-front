@@ -1,38 +1,45 @@
 <div class="container">
   <h1>Gerar Avaliação (SPA)</h1>
 
-  <!-- PASSO 0 -->
-  <div *ngIf="userProfile?.perfilProfessor === TipoProfessor.COORDENADOR && currentStepValue === 0" class="step-card fade-in">
+  <div *ngIf="userProfile?.perfilProfessor === TipoProfessor.COORDENADOR && currentStepValue === 0" 
+       class="step-card fade-in">
     <h2>1. Seleção de Perfil</h2>
     <div class="profile-actions">
-      <button class="profile-button" (click)="selectProfile(TipoProfessor.PROFESSOR)">
+      <div class="profile-button" (click)="selectProfile(TipoProfessor.PROFESSOR)">
         <span class="icon">👨‍🏫</span>
         <span>Criar como Professor</span>
         <small>(Apenas minhas disciplinas)</small>
-      </button>
-      <button class="profile-button" (click)="selectProfile(TipoProfessor.COORDENADOR)">
+      </div>
+      <div class="profile-button" (click)="selectProfile(TipoProfessor.COORDENADOR)">
         <span class="icon">🎓</span>
         <span>Criar como Coordenador</span>
         <small>(Acesso a todas disciplinas)</small>
-      </button>
+      </div>
     </div>
   </div>
 
-  <!-- PASSO 1 -->
   <div *ngIf="currentStepValue === 1" class="step-card fade-in">
     <h2>2. Configuração da Prova</h2>
+    
     <form [formGroup]="disciplinaForm" (ngSubmit)="nextStep()">
       <div class="form-group">
         <label>
           Selecione a(s) disciplina(s):
-          <small *ngIf="perfilCriacao === TipoProfessor.PROFESSOR" style="font-weight:normal; color:#666;">(Apenas suas)</small>
-          <small *ngIf="perfilCriacao === TipoProfessor.COORDENADOR" style="font-weight:normal; color:#3f51b5;">(Multi-seleção com Ctrl)</small>
+          <small *ngIf="perfilCriacao === TipoProfessor.PROFESSOR" style="font-weight:normal; color:#666;">
+            (Apenas suas)
+          </small>
+          <small *ngIf="perfilCriacao === TipoProfessor.COORDENADOR" style="font-weight:normal; color:#3f51b5;">
+            (Multi-seleção com Ctrl)
+          </small>
         </label>
+        
         <select *ngIf="perfilCriacao === TipoProfessor.COORDENADOR"
-          class="form-control disciplina-select" multiple size="8"
+          class="form-control disciplina-select" 
+          multiple 
           (change)="onDisciplinaSelectChange($event)">
           <option *ngFor="let d of disciplinasDisponiveis" [value]="d.id">{{ d.nome }}</option>
         </select>
+
         <select *ngIf="perfilCriacao === TipoProfessor.PROFESSOR"
           class="form-control disciplina-select"
           (change)="onDisciplinaSelectChange($event)">
@@ -56,24 +63,27 @@
       </div>
 
       <div class="actions-right">
-        <button type="submit" class="btn-primary" [disabled]="disciplinaForm.invalid || disciplinasDisponiveis.length === 0">
+        <button type="submit" class="btn-primary" 
+          [disabled]="disciplinaForm.invalid || disciplinasDisponiveis.length === 0">
           Selecionar Questões &rarr;
         </button>
       </div>
     </form>
   </div>
 
-  <!-- PASSO 2 -->
   <div *ngIf="currentStepValue === 2" class="step-card fade-in">
     <div class="step-header">
       <h2>3. Seleção de Questões</h2>
       <div class="stats">
+        <!-- CORREÇÃO AQUI: removido o ? antes de .length, pois o array é obrigatório se o draft existe -->
         <span [class.complete]="isSelectionComplete()">
-          Selecionadas: <strong>{{ avaliacaoDraft.questoesSelecionadas.length || 0 }}</strong> / {{ quantidadeDesejada }}
+          Selecionadas: <strong>{{ avaliacaoDraft?.questoesSelecionadas!.length || 0 }}</strong> / {{ quantidadeDesejada }}
         </span>
       </div>
     </div>
+    
     <p class="instruction-text">Selecione até atingir o total de <strong>{{ quantidadeDesejada }}</strong> questões.</p>
+    
     <div class="question-selection-area">
       <div *ngFor="let d of selectedDisciplines" class="discipline-section">
         <h3 class="discipline-title">
@@ -90,35 +100,34 @@
         </app-cpt-table-materia>
       </div>
     </div>
+    
     <div class="actions-right">
-      <button class="btn-primary" (click)="nextStep()" [disabled]="!isSelectionComplete()">
+      <button type="button" class="btn-primary" (click)="nextStep()" [disabled]="!isSelectionComplete()">
         Próxima Etapa (Cabeçalho) &rarr;
       </button>
     </div>
   </div>
 
-  <!-- PASSO 3 (Etapa 4 Lógica) -->
   <div *ngIf="currentStepValue === 3" class="step-card fade-in">
     <h2>4. Montagem do Cabeçalho</h2>
     <p class="instruction-text">Preencha os dados da prova.</p>
 
     <form [formGroup]="cabecalhoForm" (ngSubmit)="nextStep()">
 
-      <!-- Informações Automáticas (Feedback Visual) -->
-      <div class="info-fixed" style="background:#f0f4ff; padding:10px; border-radius:5px; border:1px solid #ccd5f0; margin-bottom:15px;">
+      <div class="info-fixed">
         <strong>Informações Automáticas:</strong>
         <ul style="margin: 5px 0 0 20px; font-size:0.9rem; color:#555;">
           <li>Instituição: FATEC Guarulhos</li>
           <li>Professor: {{ userProfile?.nome || 'Você' }}</li>
-          <li>Disciplina: {{ perfilCriacao === TipoProfessor.COORDENADOR ? 'Prova Geral' : (avaliacaoDraft.disciplinaNome || 'Sua Disciplina') }}</li>
+          <!-- CORREÇÃO AQUI: TS permite nulo, então o '?' é válido agora -->
+          <li>Disciplina: {{ perfilCriacao === TipoProfessor.COORDENADOR ? 'Prova Geral' : (avaliacaoDraft?.disciplinaNome || 'Sua Disciplina') }}</li>
         </ul>
       </div>
 
-      <!-- Linha 1 -->
       <div class="form-row">
         <div class="form-group">
           <label>Curso *</label>
-          <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Engenharia de Software" />
+          <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Análise e Desenvolvimento de Sistemas" />
         </div>
         <div class="form-group">
           <label>Título da Prova *</label>
@@ -126,8 +135,7 @@
         </div>
       </div>
 
-      <!-- Linha 2 -->
-      <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div class="form-row">
         <div class="form-group">
           <label>Turma *</label>
           <input type="text" class="form-control" formControlName="turma" placeholder="Ex: ADS-03" />
@@ -136,29 +144,28 @@
           <label>Período *</label>
           <input type="text" class="form-control" formControlName="periodo" />
         </div>
+      </div>
+
+      <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="form-group">
+          <label>Data da Prova *</label>
+          <input type="date" class="form-control" formControlName="data" [min]="minDate" />
+        </div>
+        <div class="form-group">
+          <label>Duração *</label>
+          <select class="form-control" formControlName="duracao">
+            <option value="" disabled>Selecione...</option>
+            <option *ngFor="let opt of durationOptions" [value]="opt">{{ opt }}</option>
+          </select>
+        </div>
         <div class="form-group">
           <label>Total Pontos *</label>
           <input type="text" class="form-control" formControlName="totalPontos" placeholder="Ex: 10.0" />
         </div>
       </div>
 
-      <!-- Linha 3 -->
-      <div class="form-row">
-        <div class="form-group">
-          <label>Data da Prova *</label>
-          <!-- Bloqueia datas passadas -->
-          <input type="date" class="form-control" formControlName="data" [min]="minDate" />
-        </div>
-        <div class="form-group">
-          <label>Duração *</label>
-          <select class="form-control" formControlName="duracao">
-            <option value="" disabled>Selecione a duração</option>
-            <option *ngFor="let opt of durationOptions" [value]="opt">{{ opt }}</option>
-          </select>
-        </div>
-      </div>
-
       <div class="actions-right">
+        <button type="button" class="btn-text-secondary" (click)="currentStep.next(2)">Voltar</button>
         <button type="submit" class="btn-success" [disabled]="cabecalhoForm.invalid">
           ✅ Gerar PDF
         </button>
@@ -167,7 +174,7 @@
   </div>
 
   <div class="footer-controls">
-    <button class="btn-text-danger" (click)="cancelarProva()">✖ Cancelar Prova</button>
-    <button *ngIf="currentStepValue > 1" class="btn-text-secondary" (click)="cancelarSelecaoDisciplina()">↺ Voltar etapa</button>
+    <button type="button" class="btn-text-danger" (click)="cancelarProva()">✖ Cancelar Prova</button>
+    <button type="button" *ngIf="currentStepValue > 1" class="btn-text-secondary" (click)="cancelarSelecaoDisciplina()">↺ Voltar etapa</button>
   </div>
 </div>

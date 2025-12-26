@@ -20,6 +20,9 @@ import { AuthService } from '../../core/auth.service';
 })
 export class PgsCadastrarPerguntaComponent implements OnInit {
   perguntaParaEdicao: Pergunta | null = null;
+  
+  // CORREÇÃO 1: Inicialize explicitamente com null
+  professorLogadoId: number | null = null;
 
   private perguntaService = inject(PerguntaService);
   private disciplinaService = inject(DisciplinaService);
@@ -32,11 +35,19 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
+    const usuarioAtual = this.usuario;
+
+    // CORREÇÃO 2: Garante que undefined vire null imediatamente
+    // Se usuarioAtual?.id for undefined, usamos null.
+    this.professorLogadoId = usuarioAtual?.id ?? null;
+
     if (idParam) {
       const id = Number(idParam);
       this.perguntaService.getById(id).subscribe({
         next: (pergunta) => {
           this.perguntaParaEdicao = pergunta;
+          // Se a pergunta tem professorId, usa ele. Se não, mantém o do usuário logado.
+          this.professorLogadoId = pergunta.professorId ?? this.professorLogadoId;
         },
         error: () => {
           this.router.navigate(['/dashboard']);
@@ -60,12 +71,10 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
       // --- MODO EDIÇÃO ---
       const id = this.perguntaParaEdicao.id;
 
-      // CRÍTICO: Mescla os dados do form com o codigoProfessor original
-      // para garantir que a questão não perca o dono.
       const payloadAtualizacao = {
         ...formValue,
         id: id,
-        codigoProfessor: this.perguntaParaEdicao.professorId,
+        professorId: this.perguntaParaEdicao.professorId || this.usuario.id,
       };
 
       this.perguntaService.update(id, payloadAtualizacao).subscribe({
@@ -75,16 +84,13 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
             'A questão foi alterada com sucesso!'
           );
         },
-        error: (err) => {
-          console.error('Erro ao atualizar', err);
-          // Aqui você pode adicionar um dialog de erro se quiser
-        },
+        error: (err) => console.error('Erro ao atualizar', err),
       });
     } else {
       // --- MODO CADASTRO ---
       const novaPergunta: CadastrarPergunta = {
         ...formValue,
-        codigoProfessor: this.usuario.id, // Define o dono atual
+        professorId: this.usuario.id,
       };
 
       this.perguntaService.add(novaPergunta).subscribe({
@@ -105,21 +111,18 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
       disableClose: true,
       data: {
         title: titulo,
-        message: mensagem, // Removido "Redirecionando..." do texto fixo para ficar mais limpo
+        message: mensagem,
         confirmButtonText: 'OK',
         titleColor: 'green',
       },
     });
 
-    // Timer de segurança para fechar sozinho após 3s
     const timer = setTimeout(() => {
       dialogRef.close();
     }, 3000);
 
     dialogRef.afterClosed().subscribe(() => {
       clearTimeout(timer);
-      // Redireciona para a lista (Dashboard ou Listagem)
-      // Ajuste a rota conforme a estrutura do seu app
       this.router.navigate(['/dashboard']);
     });
   }

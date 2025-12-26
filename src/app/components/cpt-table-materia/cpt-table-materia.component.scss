@@ -1,5 +1,4 @@
 .card-disciplina {
-  /* Variáveis da cor */
   --disc-color: #999;
   --disc-color-soft: color-mix(in srgb, var(--disc-color) 30%, white);
   --disc-color-text: color-mix(in srgb, var(--disc-color) 45%, black);
@@ -8,26 +7,23 @@
   border-radius: 1rem;
   overflow: hidden;
   transition: box-shadow 0.25s ease;
-
-  /* Faixa lateral minimalista */
   border-left: 6px solid var(--disc-color);
 
   &:hover {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
   }
 
-  /* CABEÇALHO completamente clean */
   .cabecalho {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.2rem 2rem;
-    background: white;
-    /* mantém tudo branco */
+    padding: 1.6rem 2rem;
+    
+    background-color: #E2EBFB; 
+    
     cursor: pointer;
   }
 
-  /* TÍTULO com cor discreta */
   .titulo {
     font-size: 1.1rem;
     margin: 0;
@@ -35,7 +31,6 @@
     color: var(--disc-color-text);
   }
 
-  /* Ícone também suave */
   .icone {
     color: var(--disc-color-soft);
     transition: transform 0.25s ease;
@@ -45,11 +40,12 @@
     }
   }
 
-  /* CONTEÚDO EXPANDIDO — mantém seu fundo original */
   .conteudo-expandido {
-    padding: 1rem;
-    background-color: #E2EBFB;
-    /* exatamente como você pediu */
+    padding: 1.5rem;
+    
+    background-color: #fff;
+    
+    border-top: 1px solid #dcebfd; 
   }
 
   .mensagem-vazia {

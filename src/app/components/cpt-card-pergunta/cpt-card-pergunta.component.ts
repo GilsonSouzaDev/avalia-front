@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { Pergunta } from '../../interfaces/Pergunta';
 import { Professor } from '../../interfaces/Professor';
@@ -18,6 +20,8 @@ import { Alternativa } from '../../interfaces/Alternativa';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    MatTooltipModule,
+    MatDialogModule,
     NomeProfessorPipe,
     CptAlternativaFormsComponent,
   ],
@@ -27,12 +31,7 @@ import { Alternativa } from '../../interfaces/Alternativa';
 export class CptCardPerguntaComponent {
   @Input({ required: true }) pergunta!: Pergunta;
   @Input() professores: Professor[] = [];
-
-  // --- CONTROLE DE PERMISSÃO ---
-  // Recebe o tipo do usuário: 'PROFESSOR' ou 'COORDENADOR'
   @Input() userTipo: string = '';
-
-  // Estados do Card
   @Input() isSelectionMode: boolean = false;
   @Input() isSelected: boolean = false;
   @Input() isDisabled: boolean = false;
@@ -43,9 +42,8 @@ export class CptCardPerguntaComponent {
   @Output() editVariable = new EventEmitter<Alternativa>();
 
   expanded = false;
+  private dialog = inject(MatDialog);
 
-  // Helper para verificar permissão.
-  // Usa toUpperCase() para garantir que funcione mesmo se vier 'Coordenador' ou 'coordenador'
   get isCoordenador(): boolean {
     return this.userTipo?.toUpperCase() === 'COORDENADOR';
   }
@@ -67,7 +65,6 @@ export class CptCardPerguntaComponent {
   }
 
   onDelete(): void {
-    // Garante que só emite o evento se for coordenador (segurança lógica)
     if (!this.isSelectionMode && this.isCoordenador) {
       this.delete.emit(this.pergunta.id);
     }
@@ -76,11 +73,20 @@ export class CptCardPerguntaComponent {
   onAlterarTexto(alternativa: Alternativa) {
     if (!this.isSelectionMode) {
       this.editVariable.emit(alternativa);
-      console.log(" card passou aqui", alternativa)
     }
   }
 
   getLetra(index: number): string {
-    return String.fromCharCode(97 + index); // Retorna a, b, c...
+    return String.fromCharCode(97 + index);
+  }
+
+  verImagem(event: MouseEvent, templateRef: TemplateRef<any>): void {
+    event.stopPropagation();
+    this.dialog.open(templateRef, {
+      width: 'auto',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'custom-image-dialog'
+    });
   }
 }

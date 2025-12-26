@@ -11,11 +11,6 @@
   <div class="conteudo-expandido" *ngIf="expanded">
     <ng-container *ngIf="perguntasDaDisciplina.length; else semPerguntas">
 
-      <!--
-        CORREÇÃO APLICADA:
-        1. [userTipo]="userTipo" -> Passa o perfil (COORDENADOR/PROFESSOR) para o card
-        2. (delete)="onDeletePergunta($event)" -> Escuta o pedido de exclusão vindo do card
-      -->
       <app-cpt-card-pergunta
         *ngFor="let pergunta of paginatedPerguntas"
         [pergunta]="pergunta"

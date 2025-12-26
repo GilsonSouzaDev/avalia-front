@@ -39,10 +39,59 @@ export class PdfGeneratorService {
     }
   }
 
+  /**
+   * Converte uma URL de imagem para Base64 para ser usada no PDFMake.
+   */
+  private async getBase64ImageFromURL(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.setAttribute('crossOrigin', 'anonymous');
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          const dataURL = canvas.toDataURL('image/png');
+          resolve(dataURL);
+        } else {
+          reject(new Error('Falha ao criar contexto do canvas'));
+        }
+      };
+
+      img.onerror = (error) => {
+        console.warn('Erro ao carregar imagem para o PDF:', url, error);
+        // Em caso de erro, resolve vazio para não quebrar a geração, apenas não mostra a imagem
+        resolve('');
+      };
+
+      img.src = url;
+    });
+  }
+
   async generatePdf(draft: AvaliacaoDraft): Promise<void> {
     if (!(pdfMake as any).vfs) {
       this.initializeFonts();
     }
+
+    // 1. Pré-processamento: Baixar e converter imagens das questões
+    // Isso é necessário porque o pdfmake síncrono não baixa URLs durante a renderização
+    const questoesComImagens = await Promise.all(
+      (draft.questoesSelecionadas || []).map(async (q) => {
+        if (q.imagem && q.imagem.trim() !== '') {
+          try {
+            const base64 = await this.getBase64ImageFromURL(q.imagem);
+            // Retorna um objeto estendido (com propriedade temporária _imagemBase64)
+            return { ...q, _imagemBase64: base64 };
+          } catch (e) {
+            return q;
+          }
+        }
+        return q;
+      })
+    );
 
     const cab = draft.cabecalho || {};
 
@@ -52,7 +101,6 @@ export class PdfGeneratorService {
         author: cab.professor || 'Professor',
       },
       pageSize: 'A4',
-      // Margens revertidas para o padrão original [esquerda, cima, direita, baixo]
       pageMargins: [30, 60, 30, 40],
 
       header: (currentPage, pageCount) => {
@@ -82,7 +130,7 @@ export class PdfGeneratorService {
         this.buildExamMetadata(cab),
         this.buildStudentLine(cab),
         this.buildInstructions(cab),
-        this.buildQuestions(draft),
+        this.buildQuestions(questoesComImagens), // Passamos a lista processada
       ],
 
       styles: this.getStyles(),
@@ -101,7 +149,6 @@ export class PdfGeneratorService {
     pdfMake.createPdf(docDefinition).open();
   }
 
-  // Revertido para o nome e estrutura original
   private buildExamMetadata(cab: any): Content {
     return [
       {
@@ -115,7 +162,7 @@ export class PdfGeneratorService {
           },
           {
             text: cab.titulo || 'UNI FATEC',
-            fontSize: 16, // Ajustado para ficar parecido com o print
+            fontSize: 16,
             bold: false,
             alignment: 'center',
             margin: [0, 2, 0, 15],
@@ -181,7 +228,6 @@ export class PdfGeneratorService {
     ];
   }
 
-  // Revertido para o método original (sem tabela para a linha, usando underline)
   private buildStudentLine(cab: any): Content {
     let dataFormatada = '__/__/____';
     if (cab.data) {
@@ -218,41 +264,53 @@ export class PdfGeneratorService {
     } as Content;
   }
 
-  // AQUI FOI FEITO O AJUSTE DO NEGRITO
   private buildInstructions(cab: any): Content {
     const duracao = cab.duracao || '4 horas';
 
     return [
       { text: 'Instruções Gerais', style: 'sectionTitle' },
       {
-        // Alterado para array de objetos para permitir negrito apenas na variável 'duracao'
         text: [
           'Verifique se sua prova está completa. Leia com atenção cada questão antes de responder. A prova deve ser respondida com caneta esferográfica azul ou preta. Salvo disposição em contrário ou autorização expressa do professor, não é permitido o uso de equipamentos eletrônicos ou materiais de consulta. A interpretação das questões faz parte da avaliação. A duração da prova é de ',
           { text: duracao, bold: true },
           '.',
         ],
         style: 'instructionText',
-        // Removida a coluna do quadrado (checkbox) pois não existe no print do PDF
       },
       { text: 'Questões Objetivas', style: 'sectionTitle' },
     ];
   }
 
-  private buildQuestions(draft: AvaliacaoDraft): Content {
+  private buildQuestions(questoes: any[]): Content {
     const content: Content[] = [];
-    const questoes = draft.questoesSelecionadas || [];
 
-    questoes.forEach((q: Pergunta, index: number) => {
+    questoes.forEach((q: any, index: number) => {
+      // 1. Stack inicial com Título e Enunciado
+      const questionStack: any[] = [
+        { text: `Questão ${index + 1}`, style: 'questionTitle' },
+        { text: q.enunciado, margin: [0, 0, 0, 8], alignment: 'justify' },
+      ];
+
+      // 2. Se houver imagem processada, adiciona ao stack
+      // Formatação profissional: Centralizada, fit para não estourar a página, margem superior e inferior
+      if (q._imagemBase64) {
+        questionStack.push({
+          image: q._imagemBase64,
+          fit: [450, 300], // Largura máx, Altura máx (mantém proporção)
+          alignment: 'center',
+          margin: [0, 10, 0, 15] // Margem para separar do enunciado e das alternativas
+        });
+      }
+
+      // Adiciona o bloco da questão ao conteúdo principal
       content.push({
-        stack: [
-          { text: `Questão ${index + 1}`, style: 'questionTitle' },
-          { text: q.enunciado, margin: [0, 0, 0, 8], alignment: 'justify' },
-        ],
-        unbreakable: true,
+        stack: questionStack,
+        unbreakable: true, // Tenta manter enunciado + imagem + início das alternativas juntos
       });
 
+      // 3. Alternativas
       if (q.alternativas && q.alternativas.length > 0) {
-        q.alternativas.forEach((alt, i) => {
+        q.alternativas.forEach((alt: any, i: number) => {
           content.push({
             text: [{ text: `(${this.getLetra(i)}) `, bold: false }, alt.texto],
             margin: [15, 2, 0, 2],
@@ -282,7 +340,7 @@ export class PdfGeneratorService {
       tableCell: { fontSize: 10, color: 'black' },
       sectionTitle: {
         fontSize: 12,
-        bold: false, // No print parece regular, não bold
+        bold: false,
         alignment: 'center',
         margin: [0, 10, 0, 10],
         color: 'black',
