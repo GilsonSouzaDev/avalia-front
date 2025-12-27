@@ -10,6 +10,8 @@ import { Disciplina } from '../interfaces/Disciplina';
 import { AvaliacaoDraft } from '../interfaces/Avaliacao';
 import { Pergunta } from '../interfaces/Pergunta';
 import { Cabecalho } from '../interfaces/Cabecalho';
+import { CadernoAlunoGeneratorService } from './caderno-aluno-generator.service';
+import { CadernoProfessorGeneratorService } from './caderno-professor-generator.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,8 @@ export class GerarProvaManagerService {
   private fb = inject(FormBuilder);
   private avaliacaoStateService = inject(AvaliacaoStateService);
   private pdfGeneratorService = inject(PdfGeneratorService);
+  private answerSheetService = inject(CadernoAlunoGeneratorService);
+  private teacherKeyService = inject(CadernoProfessorGeneratorService);
   private dialogService = inject(DialogService);
 
   createDisciplinaForm(): FormGroup {
@@ -191,9 +195,9 @@ export class GerarProvaManagerService {
     const finalDraft = this.avaliacaoStateService.getCurrentState();
     
     this.dialogService.confirmAction({
-      title: 'Gerar PDF',
-      message: 'Tem certeza que deseja finalizar e gerar o arquivo PDF da prova?',
-      confirmButtonText: 'Gerar Prova',
+      title: 'Gerar Documentos',
+      message: 'Deseja finalizar a prova? Serão gerados 3 arquivos:\n1. Caderno de Questões (Prova)\n2. Folha de Respostas (Aluno)\n3. Gabarito Oficial (Professor)',
+      confirmButtonText: 'Gerar Tudo',
       cancelButtonText: 'Voltar',
       titleColor: '#1565c0',
       action: () => {
@@ -201,6 +205,8 @@ export class GerarProvaManagerService {
           delay(1000),
           tap(async () => {
             await this.pdfGeneratorService.generatePdf(finalDraft);
+            await this.answerSheetService.generateAnswerSheet(finalDraft);
+            await this.teacherKeyService.generateTeacherKey(finalDraft);
           })
         );
       },
