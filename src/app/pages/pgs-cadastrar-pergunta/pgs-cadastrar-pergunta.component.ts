@@ -65,6 +65,7 @@ export class PgsCadastrarPerguntaComponent implements OnInit {
   }
 
   handleSave(formValue: any): void {
+    console.log('Form Value:', formValue);
     if (!this.usuario) return;
 
     if (this.perguntaParaEdicao) {
