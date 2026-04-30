@@ -1,4 +1,4 @@
-.cabecalho{
+.cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6,14 +6,21 @@
   background-color: #09234F;
   height: 100%;
 
-  .logo{
+  .logo {
     height: 300px;
     width: 300px;
   }
+}
 
+@media (max-width: 768px) {
+  .cabecalho {
+    height: 64px;
+    padding: 0 16px;
+    flex-shrink: 0;
 
-
-
-
-
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+  }
 }
