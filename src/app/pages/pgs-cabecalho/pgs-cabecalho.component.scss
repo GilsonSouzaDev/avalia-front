@@ -24,10 +24,14 @@
     flex-shrink: 0;
     gap: 12px;
 
+    // Logo sem distorção — proporcional e centralizada
     .logo {
-      height: 36px;
-      width: auto;
+      height: 100px;
+      width: auto; // proporcional, sem distorção
+      max-width: 200px; // impede crescer demais
+      object-fit: contain; // garante proporção mesmo com container flexível
       flex: 1;
+      display: block;
     }
   }
 

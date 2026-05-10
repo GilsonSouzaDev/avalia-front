@@ -518,3 +518,46 @@ button {
     justify-content: center;
   }
 }
+
+// CORREÇÃO MOBILE — seleção de questões
+@media (max-width: 768px) {
+  .question-selection-area {
+    padding: 8px;
+    max-height: 100%;
+    overflow-y: visible;
+  }
+
+  .discipline-section {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+
+    .discipline-title {
+      font-size: 0.95rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding-bottom: 8px;
+
+      small {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    h2 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .stats {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+    }
+  }
+}
