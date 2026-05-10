@@ -1,4 +1,4 @@
-.cabecalho{
+.cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6,14 +6,69 @@
   background-color: #09234F;
   height: 100%;
 
-  .logo{
+  .logo {
     height: 300px;
     width: 300px;
   }
+}
 
+// Hamburguer oculto no desktop
+.hamburger {
+  display: none;
+}
 
+@media (max-width: 768px) {
+  .cabecalho {
+    height: 64px;
+    padding: 0 16px;
+    flex-shrink: 0;
+    gap: 12px;
 
+    // Logo sem distorção — proporcional e centralizada
+    .logo {
+      height: 100px;
+      width: auto; // proporcional, sem distorção
+      max-width: 200px; // impede crescer demais
+      object-fit: contain; // garante proporção mesmo com container flexível
+      flex: 1;
+      display: block;
+    }
+  }
 
+  // Hamburguer visível no mobile
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+    z-index: 101;
 
+    span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      transform-origin: center;
 
+      &.aberto:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      &.aberto:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+
+      &.aberto:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+  }
 }

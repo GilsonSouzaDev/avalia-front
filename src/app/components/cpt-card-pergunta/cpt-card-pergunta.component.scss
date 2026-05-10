@@ -4,16 +4,16 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  
+
   // 1. Removemos o padding daqui para controlar as cores internas
-  padding: 0; 
+  padding: 0;
   border: 1px solid transparent;
-  
+
   // Cor base (aparecerá no cabeçalho)
-  background-color: #E2EBFB; 
-  
+  background-color: #E2EBFB;
+
   // Importante: garante que o conteúdo interno respeite o border-radius do card
-  overflow: hidden; 
+  overflow: hidden;
 
   &.selected {
     border-color: #3f51b5;
@@ -37,12 +37,12 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
-    
+
     // 2. Adicionamos o padding aqui para manter o espaçamento visual
-    padding: 1rem; 
-    
+    padding: 1rem;
+
     // Mantém a cor base (opcional, pois herda do pai, mas bom para garantir)
-    background-color: inherit; 
+    background-color: inherit;
 
     .selection-control {
       display: flex;
@@ -88,11 +88,11 @@
         padding: 4px;
         width: 28px;
         height: 28px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         cursor: pointer;
         transition: transform 0.2s;
         z-index: 10;
-        
+
         mat-icon {
           font-size: 20px;
           width: 20px;
@@ -102,7 +102,7 @@
         &:hover {
           transform: scale(1.1);
           background-color: #fff;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
       }
 
@@ -127,15 +127,15 @@
   // --- ÁREA EXPANDIDA (Fundo Branco) ---
   .conteudo-expandido {
     // Removemos margin-top pois agora o padding controla o espaço
-    margin-top: 0; 
-    
+    margin-top: 0;
+
     // 3. Adicionamos padding aqui
-    padding: 1rem; 
-    
+    padding: 1rem;
+
     // 4. DEFINIMOS O FUNDO BRANCO PARA TODA A ÁREA EXPANDIDA
-    background-color: #fff; 
-    
-    border-top: 1px solid rgba(0,0,0,0.05);
+    background-color: #fff;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     animation: fadeIn 0.2s ease;
 
     .modo-leitura {
@@ -178,6 +178,7 @@
     }
 
     .modo-edicao {
+
       // Como o pai (.conteudo-expandido) já é branco, removemos estilos de background daqui
       .alternativas-editaveis {
         display: flex;
@@ -194,12 +195,12 @@
         margin-top: 1rem;
         padding-top: 0.5rem;
         border-top: 1px dashed #eee; // Opcional: separador sutil dos botões
-        
+
         button {
           font-weight: 500;
           // Ajuste para botões sobre fundo branco
-          background-color: #f5f5f5; 
-          
+          background-color: #f5f5f5;
+
           &:hover {
             background-color: #e0e0e0;
           }
@@ -214,8 +215,59 @@
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// MOBILE
+@media (max-width: 768px) {
+  .card-pergunta {
+    margin: 0.25rem 0;
+    border-radius: 0.5rem;
+
+    .cabecalho {
+      padding: 0.75rem;
+      gap: 8px;
+
+      .titulo-container {
+        .titulo {
+          font-size: 0.9rem;
+          line-height: 1.35;
+        }
+
+        .prof-label {
+          font-size: 0.7rem;
+        }
+      }
+
+      .icone-expand {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+      }
+    }
+
+    .conteudo-expandido {
+      padding: 0.75rem;
+
+      .modo-leitura {
+        .lista-alternativas-readonly li {
+          font-size: 0.85rem;
+          padding: 6px 10px;
+          margin-bottom: 4px;
+          flex-wrap: nowrap;
+          align-items: flex-start;
+
+          .letra {
+            min-width: 18px;
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
   }
 }

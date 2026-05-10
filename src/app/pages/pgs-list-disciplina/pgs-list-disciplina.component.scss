@@ -1,11 +1,13 @@
 @use '@angular/material' as mat;
 
-
 .list-disciplina {
   padding: 32px 64px;
   display: flex;
   flex-direction: column;
 }
 
-
-
+@media (max-width: 768px) {
+  .list-disciplina {
+    padding: 16px;
+  }
+}

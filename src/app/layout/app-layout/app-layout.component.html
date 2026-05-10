@@ -1,11 +1,27 @@
-<section class="avalia-container">
-  <app-pgs-cabecalho></app-pgs-cabecalho>
+<section class="avalia-container" [class.menu-aberto]="menuAberto">
+
+  <app-pgs-cabecalho
+    [menuAberto]="menuAberto"
+    (toggleMenu)="menuAberto = !menuAberto">
+  </app-pgs-cabecalho>
 
   <div class="avalia-container__main">
-    <app-pgs-navegacao></app-pgs-navegacao>
+
+    <!-- Overlay escuro quando menu aberto no mobile -->
+    <div
+      class="menu-overlay"
+      [class.ativo]="menuAberto"
+      (click)="menuAberto = false">
+    </div>
+
+    <app-pgs-navegacao
+      [class.menu-aberto]="menuAberto"
+      (fecharMenu)="menuAberto = false">
+    </app-pgs-navegacao>
 
     <div class="avalia-container__conteudo">
       <router-outlet></router-outlet>
     </div>
+
   </div>
 </section>

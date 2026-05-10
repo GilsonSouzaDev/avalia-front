@@ -2,167 +2,132 @@
   <h2 class="card__title">Gerenciar Disciplinas</h2>
 
   <div class="card__content">
-    <div class="table-responsive">
-      <table class="product-table">
-        <thead>
-          <tr>
-            <th>Disciplina</th>
-            <th>Questões</th>
-            <th>Professores</th>
-            <th class="acoes">Ações</th>
-          </tr>
-        </thead>
 
-        <tbody>
+    <!-- Loading -->
+    @if (!currentUser) {
+      <div class="loading-wrapper">
+        <div class="loading-spinner"></div>
+      </div>
+    }
 
-          <!-- LOADING -->
-          @if(!currentUser){
-            <tr>
-              <td colspan="4">
-                <div class="loading-spinner"></div>
-              </td>
-            </tr>
-          }
+    <!-- Lista de cards -->
+    @if (currentUser && disciplinas && disciplinas.length > 0) {
+      <ul class="disciplina-list">
+        @for (disciplina of disciplinasPaginadas; track disciplina.id) {
+          <li class="disciplina-card">
 
-          <!-- LISTAGEM -->
-          @if(currentUser && disciplinas && disciplinas.length > 0) {
-            @for(disciplina of disciplinasPaginadas; track disciplina.id) {
+            <div class="disciplina-card__cor" [style.background-color]="disciplina.cor || '#09234F'"></div>
 
-              <tr>
-                <td>
-                  @if(editandoId() !== disciplina.id) {
-                    <span>{{ disciplina.nome }}</span>
-                  } @else {
-                    <!-- MODO EDIÇÃO -->
-                    <div class="edit-wrapper" style="display: flex; flex-direction: column;">
+            <div class="disciplina-card__info">
 
-                      <div class="edit-container">
-                        <!-- AQUI: Usamos apenas [appDisciplinaUnica] -->
-                        <input
-                          type="text"
-                          [ngModel]="nomeEditando()"
-                          (ngModelChange)="nomeEditando.set($event)"
-                          (keydown.enter)="!editInput.invalid ? confirmarEdicaoClick(disciplina.id) : null"
-                          (keydown.escape)="cancelarEdicaoClick()"
-                          autoFocus
-                          required
-                          #editInput="ngModel"
-                          [appDisciplinaUnica]="disciplina.id"
-                        />
+              <!-- Modo visualização -->
+              @if (editandoId() !== disciplina.id) {
+                <span class="disciplina-card__nome">{{ disciplina.nome }}</span>
+                <div class="disciplina-card__tags">
+                  <span class="tag tag--questoes">
+                    <img src="assets/logo/questoes.png" alt="questões" class="tag__icon" />
+                    {{ quantidadeQuestoes(disciplina) }} questões
+                  </span>
+                  <span class="tag tag--professores">
+                    <img src="assets/logo/professor.png" alt="professores" class="tag__icon" />
+                    {{ quantidadeMaterias(disciplina) }} professores
+                  </span>
+                </div>
+              }
 
-                        <button
-                          mat-icon-button
-                          class="btn-success"
-                          [disabled]="editInput.invalid"
-                          (click)="confirmarEdicaoClick(disciplina.id)">
-                          <mat-icon>check</mat-icon>
-                        </button>
-
-                        <button
-                          mat-icon-button
-                          color="warn"
-                          (click)="cancelarEdicaoClick()">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </div>
-
-                      @if(editInput.errors?.['disciplinaExistente']) {
-                        <small style="color: red; margin-top: 5px;">Nome já existe.</small>
-                      }
-                      @if(editInput.errors?.['required'] && (editInput.dirty || editInput.touched)) {
-                        <small style="color: red; margin-top: 5px;">Nome obrigatório.</small>
-                      }
-
-                    </div>
-                  }
-                </td>
-
-                <td>{{ quantidadeQuestoes(disciplina) }}</td>
-                <td>{{ quantidadeMaterias(disciplina) }}</td>
-
-                <td class="col-acoes">
-                  <div class="actions-flex">
-                    <button
-                      mat-icon-button
-                      color="primary"
-                      (click)="entrarEdicao(disciplina)"
-                      matTooltip="Editar Disciplina">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      (click)="excluir.emit(disciplina.id)"
-                      matTooltip="Excluir Disciplina">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-
-            }
-          }
-
-          <!-- NENHUMA DISCIPLINA -->
-          @if(currentUser && (!disciplinas || disciplinas.length === 0)){
-            <tr>
-              <td colspan="4" class="text-center">Nenhuma disciplina cadastrada.</td>
-            </tr>
-          }
-
-          <!-- CRIAÇÃO -->
-          @if(criando()){
-            <tr class="criacao-row">
-              <td colspan="4">
-                <div class="novo-wrapper" style="display: flex; flex-direction: column;">
-
-                  <div class="novo-container">
-                    <!-- AQUI: Passamos null explicitamente na propriedade -->
+              <!-- Modo edição -->
+              @if (editandoId() === disciplina.id) {
+                <div class="edit-wrapper">
+                  <div class="edit-container">
                     <input
                       type="text"
-                      placeholder="Nome da nova disciplina"
-                      [ngModel]="nomeCriando()"
-                      (ngModelChange)="nomeCriando.set($event)"
-                      (keydown.enter)="!createInput.invalid ? confirmarCriacao() : null"
-                      (keydown.escape)="cancelarCriacao()"
+                      class="edit-input"
+                      aria-label="Editar nome da disciplina"
+                      [ngModel]="nomeEditando()"
+                      (ngModelChange)="nomeEditando.set($event)"
+                      (keydown.enter)="!editInput.invalid ? confirmarEdicaoClick(disciplina.id) : null"
+                      (keydown.escape)="cancelarEdicaoClick()"
                       autoFocus
                       required
-                      #createInput="ngModel"
-                      [appDisciplinaUnica]="null"
+                      #editInput="ngModel"
+                      [appDisciplinaUnica]="disciplina.id"
                     />
-
-                    <button
-                      mat-icon-button
-                      class="btn-success"
-                      [disabled]="createInput.invalid"
-                      (click)="confirmarCriacao()">
+                    <button mat-icon-button class="btn-success" [disabled]="editInput.invalid" (click)="confirmarEdicaoClick(disciplina.id)">
                       <mat-icon>check</mat-icon>
                     </button>
-
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      (click)="cancelarCriacao()">
+                    <button mat-icon-button color="warn" (click)="cancelarEdicaoClick()">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
-
-                  @if(createInput.errors?.['disciplinaExistente']) {
-                    <small style="color: red; margin-top: 5px; margin-left: 10px;">Disciplina já cadastrada.</small>
+                  @if (editInput.errors?.['disciplinaExistente']) {
+                    <small class="error-msg">Nome já existe.</small>
                   }
-                  @if(createInput.errors?.['required'] && (createInput.dirty || createInput.touched)) {
-                    <small style="color: red; margin-top: 5px; margin-left: 10px;">Nome obrigatório.</small>
+                  @if (editInput.errors?.['required'] && (editInput.dirty || editInput.touched)) {
+                    <small class="error-msg">Nome obrigatório.</small>
                   }
-
                 </div>
-              </td>
-            </tr>
-          }
+              }
 
-        </tbody>
-      </table>
-    </div>
+            </div>
+
+            <!-- Ações (só visíveis fora do modo edição) -->
+            @if (editandoId() !== disciplina.id) {
+              <div class="disciplina-card__actions">
+                <button mat-icon-button color="primary" (click)="entrarEdicao(disciplina)" matTooltip="Editar Disciplina">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="excluir.emit(disciplina.id)" matTooltip="Excluir Disciplina">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
+
+          </li>
+        }
+      </ul>
+    }
+
+    <!-- Estado vazio -->
+    @if (currentUser && (!disciplinas || disciplinas.length === 0)) {
+      <div class="empty-state">
+        <mat-icon class="empty-state__icon">menu_book</mat-icon>
+        <p>Nenhuma disciplina cadastrada.</p>
+      </div>
+    }
+
+    <!-- Row de criação inline -->
+    @if (criando()) {
+      <div class="criacao-card">
+        <div class="edit-container">
+          <input
+            type="text"
+            class="edit-input"
+            aria-label="Nome da nova disciplina"
+            placeholder="Nome da nova disciplina"
+            [ngModel]="nomeCriando()"
+            (ngModelChange)="nomeCriando.set($event)"
+            (keydown.enter)="!createInput.invalid ? confirmarCriacao() : null"
+            (keydown.escape)="cancelarCriacao()"
+            autoFocus
+            required
+            #createInput="ngModel"
+            [appDisciplinaUnica]="null"
+          />
+          <button mat-icon-button class="btn-success" [disabled]="createInput.invalid" (click)="confirmarCriacao()">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="cancelarCriacao()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        @if (createInput.errors?.['disciplinaExistente']) {
+          <small class="error-msg">Disciplina já cadastrada.</small>
+        }
+        @if (createInput.errors?.['required'] && (createInput.dirty || createInput.touched)) {
+          <small class="error-msg">Nome obrigatório.</small>
+        }
+      </div>
+    }
 
     <mat-paginator
       [length]="length"
@@ -173,11 +138,7 @@
     </mat-paginator>
 
     <div class="footer-actions">
-      <button
-        mat-raised-button
-        color="primary"
-        class="novo-btn"
-        (click)="iniciarCriacao()">
+      <button mat-raised-button color="primary" class="novo-btn" (click)="iniciarCriacao()">
         <mat-icon>add</mat-icon>
         Nova Disciplina
       </button>

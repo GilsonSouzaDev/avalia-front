@@ -2,62 +2,62 @@
   <h2 class="card__title">Lista de Professores</h2>
 
   <div class="card__content">
-    <div class="table-responsive">
 
-      <table class="product-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th class="col-categoria">Questões</th>
-            <th class="col-valor">Disciplinas</th>
-            <th class="acoes">Ações</th>
-          </tr>
-        </thead>
+    <!-- Loading -->
+    @if (!currentUser) {
+      <div class="loading-wrapper">
+        <div class="loading-spinner"></div>
+      </div>
+    }
 
-        <tbody>
-          <!-- Loading state -->
-          @if (!currentUser) {
-            <tr class="product-table__row--loading">
-              <td colspan="5"><div class="loading-spinner"></div></td>
-            </tr>
-          }
+    <!-- Lista de cards -->
+    @if (currentUser && professores && professores.length > 0) {
+      <ul class="professor-list">
+        @for (professor of professoresPaginados; track professor.id) {
+          <li class="professor-card">
 
-          <!-- Lista de Professores -->
-          @if (currentUser && professores && professores.length > 0) {
-            @for (professor of professoresPaginados; track professor.id) {
-              <tr>
-                <td>{{ professor.nome }}</td>
-                <td>{{ professor.email }}</td>
-                <td class="col-categoria">{{ quantidadeQuestoes(professor) }}</td>
-                <td class="col-valor">{{ quantidadeMaterias(professor) }}</td>
-                <td>
-                  <!--
-                    AQUI ESTÁ O PULO DO GATO:
-                    O routerLink envia o ID corretamente.
-                    Se o destino carrega errado, é o componente de DESTINO que precisamos consertar.
-                  -->
-                  <button
-                    type="button"
-                    [routerLink]="['/detalhes', professor.id]"
-                    class="product-table__action product-table__action--details"
-                    title="Ver detalhes do professor">
-                    <mat-icon>search</mat-icon>
-                  </button>
-                </td>
-              </tr>
-            }
-          }
+            <div class="professor-card__avatar">
+              {{ iniciais(professor.nome) }}
+            </div>
 
-          <!-- Estado Vazio -->
-          @if (currentUser && (!professores || professores.length === 0)) {
-            <tr class="product-table__row--empty">
-              <td colspan="5">Nenhum professor cadastrado.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+            <div class="professor-card__info">
+              <span class="professor-card__nome">{{ professor.nome }}</span>
+              <span class="professor-card__email">{{ professor.email }}</span>
+
+              <div class="professor-card__tags">
+                <span class="tag tag--questoes">
+                  <img src="assets/logo/questoes.png" alt="" class="tag__icon" />
+                  {{ quantidadeQuestoes(professor) }} questões
+                </span>
+                <span class="tag tag--disciplinas">
+                  <img src="assets/logo/disciplina.png" alt="" class="tag__icon" />
+                  {{ quantidadeMaterias(professor) }} disciplinas
+                </span>
+              </div>
+            </div>
+
+            <div class="professor-card__actions">
+              <button
+                type="button"
+                [routerLink]="['/detalhes', professor.id]"
+                class="action-btn action-btn--details"
+                title="Ver detalhes do professor">
+                <mat-icon>search</mat-icon>
+              </button>
+            </div>
+
+          </li>
+        }
+      </ul>
+    }
+
+    <!-- Estado vazio -->
+    @if (currentUser && (!professores || professores.length === 0)) {
+      <div class="empty-state">
+        <mat-icon class="empty-state__icon">group_off</mat-icon>
+        <p>Nenhum professor cadastrado.</p>
+      </div>
+    }
 
     <mat-paginator
       [length]="length"
@@ -67,13 +67,12 @@
       (page)="trocarPagina($event)">
     </mat-paginator>
 
-    <button
-      mat-raised-button
-      class="novo-professor-btn"
-      (click)="novoProfessor()"
-    >
-      Novo Professor
-    </button>
+    <div class="footer-actions">
+      <button mat-raised-button class="novo-btn" (click)="novoProfessor()">
+        <mat-icon>person_add</mat-icon>
+        Novo Professor
+      </button>
+    </div>
 
   </div>
 </div>

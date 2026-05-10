@@ -1,19 +1,15 @@
 @use 'sass:color';
 @use 'sass:math';
 
-// --- VARIÁVEIS (Limpo: Apenas o necessário) ---
-$primary-color: #60A5FA; // Azul Principal
-$second-color: #09234F; // Azul Escuro (Header Tabela)
-$success-color: #2ecc71; // Verde
-$danger-color: #e74c3c; // Vermelho
-
-$bg-card: #FFFDFD;
-$bg-light: #f5f5f5;
+$primary-color: #60A5FA;
+$second-color: #09234F;
+$success-color: #2ecc71;
+$danger-color: #e74c3c;
 $border-card-color: #E1E1E1;
-
 $text-primary: #333333;
 $text-secondary: #777777;
 $text-light: #ffffff;
+$bg-light: #f5f5f5;
 
 @function rem($pixels, $context: 16) {
   @return math.div($pixels, $context) * 1rem;
@@ -30,7 +26,6 @@ $text-light: #ffffff;
 }
 
 .card {
-  background-color: $bg-card;
   width: 90%;
   margin: 0 auto;
   background-color: #E2EBFB;
@@ -55,99 +50,157 @@ $text-light: #ffffff;
   }
 }
 
-.table-responsive {
-  overflow-x: auto;
+// Lista de disciplinas
+.disciplina-list {
+  list-style: none;
+  margin: 0;
+  padding: rem(16) rem(24);
+  display: flex;
+  flex-direction: column;
+  gap: rem(12);
 }
 
-.product-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-
-  th,
-  td {
-    padding: rem(16) rem(24);
-    text-align: left;
-    border-bottom: 1px solid $border-card-color;
-    vertical-align: middle;
-  }
-
-  thead th {
-    background-color: $second-color;
-    color: $text-light;
-    font-weight: 500;
-
-    &.acoes {
-      width: 120px; // Largura fixa para coluna de ações
-      text-align: center;
-    }
-  }
-
-  tbody tr {
-    transition: background-color 0.2s ease-in-out;
-
-    &:last-child td {
-      border-bottom: none;
-    }
-
-    &:hover {
-      background-color: rgba($primary-color, 0.05);
-    }
-  }
-
-  tbody td {
-    color: $text-secondary;
-  }
-
-  .text-center {
-    text-align: center;
-    padding: rem(32) rem(24);
-  }
-}
-
-/* ===========================================================
-    ESTILOS DE EDIÇÃO E INPUTS
-   =========================================================== */
-
-.edit-container,
-.novo-container {
+// Card individual
+.disciplina-card {
   display: flex;
   align-items: center;
-  gap: rem(4); // Gap menor pq o mat-icon-button tem padding interno
+  gap: rem(16);
+  background-color: #ffffff;
+  border-radius: rem(10);
+  border: 1px solid $border-card-color;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 
-  input {
-    flex: 1; // Ocupa espaço disponivel
-    padding: rem(8) rem(12);
-    border-radius: rem(4);
-    border: 1px solid $border-card-color;
-    background-color: $bg-light;
-    font-size: rem(14);
-    color: $text-primary;
-    outline: none;
-    transition: border-color 0.2s;
-    min-width: 200px;
-
-    &:focus {
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
-    }
+  &:hover {
+    box-shadow: 0 rem(4) rem(12) rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
   }
 
-  // Classe utilitária para o botão de Check ficar verde
-  .btn-success {
-    color: $success-color;
+  // Barra colorida lateral (usa disciplina.cor)
+  &__cor {
+    flex-shrink: 0;
+    width: rem(6);
+    align-self: stretch;
+    background-color: $second-color;
+  }
+
+  &__info {
+    flex: 1;
+    padding: rem(14) rem(8) rem(14) 0;
+    display: flex;
+    flex-direction: column;
+    gap: rem(6);
+    min-width: 0;
+  }
+
+  &__nome {
+    font-size: rem(15);
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rem(8);
+  }
+
+  &__actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: rem(2);
+    padding-right: rem(8);
   }
 }
 
-/* Estilo para centralizar botões na coluna de ações */
-.col-acoes .actions-flex {
+// Tags
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(4);
+  padding: rem(3) rem(10);
+  border-radius: rem(20);
+  font-size: rem(12);
+  font-weight: 500;
+
+  &__icon {
+    width: rem(14);
+    height: rem(14);
+    object-fit: contain;
+  }
+
+  &--questoes {
+    background-color: rgba($primary-color, 0.12);
+    color: color.adjust($primary-color, $lightness: -20%);
+  }
+
+  &--professores {
+    background-color: rgba($second-color, 0.08);
+    color: $second-color;
+  }
+}
+
+// Card de criação
+.criacao-card {
+  margin: 0 rem(24) rem(12);
+  background-color: rgba($primary-color, 0.05);
+  border: 1px dashed $primary-color;
+  border-radius: rem(10);
+  padding: rem(12) rem(16);
+  display: flex;
+  flex-direction: column;
+  gap: rem(4);
+}
+
+// Edição inline
+.edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: rem(4);
+  width: 100%;
+}
+
+.edit-container {
+  display: flex;
+  align-items: center;
+  gap: rem(4);
+  width: 100%;
+}
+
+.edit-input {
+  flex: 1;
+  padding: rem(8) rem(12);
+  border-radius: rem(6);
+  border: 1px solid $border-card-color;
+  background-color: $bg-light;
+  font-size: rem(14);
+  color: $text-primary;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+  }
+}
+
+.btn-success {
+  color: $success-color;
+}
+
+.error-msg {
+  color: $danger-color;
+  font-size: rem(12);
+  margin-left: rem(4);
+}
+
+// Loading e empty state
+.loading-wrapper {
   display: flex;
   justify-content: center;
-  gap: 4px;
-}
-
-.criacao-row td {
-  background-color: rgba($primary-color, 0.05);
+  padding: rem(48) 0;
 }
 
 .loading-spinner {
@@ -160,28 +213,64 @@ $text-light: #ffffff;
   margin: 0 auto;
 }
 
-/* ===========================================================
-    RODAPÉ E BOTÃO NOVO
-   =========================================================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: rem(48) rem(24);
+  color: $text-secondary;
+  gap: rem(8);
 
-.footer-actions {
-  padding: rem(16) rem(24);
+  &__icon {
+    font-size: rem(48);
+    width: rem(48);
+    height: rem(48);
+    opacity: 0.4;
+  }
 
-  .novo-btn {
-    // Personalização do mat-raised-button se necessário
-    font-weight: 600;
-    letter-spacing: 0.5px;
+  p {
+    margin: 0;
+    font-size: rem(15);
   }
 }
 
-@media (max-width: 750px) {
-  .product-table {
-    min-width: auto;
+.footer-actions {
+  padding: rem(8) rem(24);
+}
+
+.novo-btn {
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 
-  .product-table th,
-  .product-table td {
-    padding-left: rem(12);
-    padding-right: rem(12);
+  .disciplina-list {
+    padding: rem(12);
+    gap: rem(10);
+  }
+
+  .disciplina-card {
+    gap: rem(12);
+
+    &__info {
+      padding: rem(12) rem(8) rem(12) 0;
+    }
+  }
+
+  .criacao-card {
+    margin: 0 rem(12) rem(12);
+  }
+
+  .footer-actions {
+    padding: rem(8) rem(12);
   }
 }

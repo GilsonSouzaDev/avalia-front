@@ -1,14 +1,21 @@
 <section class="cabecalho">
 
+  <!-- Botão hamburguer — só aparece no mobile -->
+  <button class="hamburger" (click)="toggleMenu.emit()" aria-label="Abrir menu">
+    <span [class.aberto]="menuAberto"></span>
+    <span [class.aberto]="menuAberto"></span>
+    <span [class.aberto]="menuAberto"></span>
+  </button>
+
   <img
     src="assets/logo/logo-avalia-2.png"
     alt="logo Avalia"
     class="logo"
-    />
-
+  />
 
   <div class="cabecalho-perfil">
     <app-cpt-perfil></app-cpt-perfil>
   </div>
 
 </section>
+

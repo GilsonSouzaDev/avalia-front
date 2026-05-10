@@ -10,7 +10,6 @@
   gap: 1rem;
   margin: auto;
 
-
   &__logo {
     width: 15rem;
     height: 6rem;
@@ -19,7 +18,6 @@
   &__titulo {
     padding-bottom: 0.5rem;
   }
-
 
   &__button {
     display: flex;
@@ -51,7 +49,6 @@
     align-items: center;
     gap: 0.5rem;
   }
-
 }
 
 .cadastrar {
@@ -62,9 +59,9 @@
   color: #0A345B;
   font-weight: bold;
   transition: all 0.2s ease;
+  -webkit-user-select: none;
   user-select: none;
 }
-
 
 .cadastrar:hover {
   color: #2980b9;
@@ -86,7 +83,6 @@
   width: 100%;
 }
 
-/* Estilização profunda para forçar o estilo do Material Design Input */
 :host ::ng-deep .login-forms .mdc-text-field--filled {
   background-color: #FFFFFF !important;
   border-radius: 10px;
@@ -95,4 +91,28 @@
 :host ::ng-deep .login-forms .mdc-text-field__input,
 :host ::ng-deep .login-forms .mat-mdc-input-element {
   background: transparent !important;
+}
+
+@media (max-width: 768px) {
+  .login-forms {
+    height: 100%;
+    padding: 24px 20px;
+    justify-content: center;
+    background-color: #F5F7FA;
+
+    &__logo {
+      width: 10rem;
+      height: 4rem;
+    }
+
+    &__button {
+      width: 100%;
+      max-width: 320px;
+    }
+  }
+
+  .example-form {
+    max-width: 100%;
+    width: 100%;
+  }
 }

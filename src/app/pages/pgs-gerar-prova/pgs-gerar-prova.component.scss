@@ -453,3 +453,111 @@ button {
     transform: translateY(0);
   }
 }
+
+// ═══════════════════════════════════════
+// CORREÇÃO MOBILE — formulário de prova
+// ═══════════════════════════════════════
+@media (max-width: 768px) {
+  .container {
+    margin: 0;
+    padding: 12px;
+    border-radius: 0;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  // form-row de 2 colunas → coluna única
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+
+    .full-width {
+      grid-column: span 1;
+    }
+  }
+
+  // form-row de 3 colunas (Data + Duração + Total Pontos) → coluna única
+  .form-row[style*="grid-template-columns: 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  .step-card {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    text-align: left;
+  }
+
+  .actions-right {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .footer-controls {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .btn-primary,
+  .btn-success,
+  .btn-text-danger,
+  .btn-text-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// CORREÇÃO MOBILE — seleção de questões
+@media (max-width: 768px) {
+  .question-selection-area {
+    padding: 8px;
+    max-height: 100%;
+    overflow-y: visible;
+  }
+
+  .discipline-section {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+
+    .discipline-title {
+      font-size: 0.95rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding-bottom: 8px;
+
+      small {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    h2 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .stats {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+    }
+  }
+}
