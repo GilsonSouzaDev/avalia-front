@@ -1,8 +1,7 @@
-.materia{
+.materia {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
   background-color: #E2EBFB;
   border-radius: 8px;
   width: 340px;
@@ -10,21 +9,32 @@
   padding: 16px;
   gap: 32px;
 
-  .materia-texto{
+  .materia-texto {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-
-  .example-button-row{
+  .example-button-row {
     display: flex;
     justify-content: flex-end;
   }
 
-  span{
+  span {
     font-size: 18px;
   }
+}
 
+@media (max-width: 768px) {
+  :host {
+    width: 100%;
+    display: block;
+  }
 
+  .materia {
+    width: 100%;
+    height: auto;
+    min-height: 120px;
+    box-sizing: border-box;
+  }
 }

@@ -169,8 +169,71 @@ $shadow-color: rgba(0, 0, 0, 0.1);
     margin-top: 5px;
   }
 
-
-  .upload-box{
+  .upload-box {
     cursor: pointer;
+  }
+}
+
+// MOBILE
+@media (max-width: 768px) {
+  .form-container {
+    width: 100%;
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .question-form {
+    .card {
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    // Header: disciplina e qtde alternativas em coluna no mobile
+    .header-group {
+      flex-direction: column;
+      gap: 16px;
+
+      .disciplina-group {
+        margin-right: 0;
+        width: 100%;
+
+        select {
+          width: 100%;
+        }
+      }
+
+      .quantidade-group {
+        text-align: left;
+      }
+
+      .question-count-selector {
+        justify-content: flex-start;
+      }
+    }
+
+    // Alternativas — esconder botão de check que transborda
+    .alternativas-list {
+      overflow: hidden;
+
+      app-cpt-alternativa-forms {
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+    }
+
+    .submit-btn {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px;
+    }
+
+    .form-group select {
+      width: 100%;
+    }
   }
 }
