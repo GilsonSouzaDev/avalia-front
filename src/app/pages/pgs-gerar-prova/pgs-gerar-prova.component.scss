@@ -1,7 +1,6 @@
 @use "sass:color";
 
-// --- Variáveis ---
-$panel-background: #E2EBFB; // Cor do fundo do container interno
+$panel-background: #E2EBFB;
 $primary-color: #3f51b5;
 $primary-hover: #303f9f;
 $secondary-color: #6c757d;
@@ -11,30 +10,21 @@ $warning-bg: #fff3e0;
 $warning-text: #e65100;
 $card-bg: #ffffff;
 $border-color: #e0e0e0;
-$radius: 12px; // Arredondamento um pouco maior para o container
+$radius: 12px;
 
-// --- Mixins ---
 @mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-// --- Layout Principal ---
-
-// .container é o bloco colorido onde os itens do componente ficam.
-// Ele tem margem automática para centralizar na tela branca de fora.
 .container {
   max-width: 1000px;
-  margin: 40px auto; // Margem externa (fica branca/transparente)
-  padding: 40px; // Espaçamento interno do fundo azul
-
-  background-color: $panel-background; // O Fundo Azul aplica AQUI
-  border-radius: $radius; // Bordas arredondadas do painel azul
-
-  // Opcional: Sombra suave para destacar o painel azul do fundo branco da página
+  margin: 40px auto;
+  padding: 40px;
+  background-color: $panel-background;
+  border-radius: $radius;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -49,7 +39,6 @@ h1 {
   margin-bottom: 10px;
   text-align: center;
   font-weight: 700;
-  // Sombra branca sutil no texto para garantir leitura sobre o azul
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
 }
 
@@ -77,8 +66,6 @@ h2 {
   font-size: 1rem;
 }
 
-// --- Card da Etapa (Step Card) ---
-// Estes continuam BRANCOS para contrastar com o painel AZUL (.container)
 .step-card {
   background: $card-bg;
   padding: 30px;
@@ -92,16 +79,11 @@ h2 {
   }
 }
 
-// --- PASSO 0: Botões de Perfil ---
 .profile-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 25px;
   margin-top: 10px;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 .profile-button {
@@ -142,7 +124,6 @@ h2 {
   }
 }
 
-// --- Formulários e Inputs ---
 .form-group {
   margin-bottom: 20px;
   display: flex;
@@ -196,8 +177,6 @@ h2 {
   }
 }
 
-// --- PASSO 1: Bloco de Total ---
-// Fundo sutilmente diferente do branco puro para destacar dentro do card
 .total-block {
   margin-top: 25px;
   padding: 25px;
@@ -231,7 +210,6 @@ h2 {
   }
 }
 
-// --- PASSO 2: Área de Seleção de Questões ---
 .step-header {
   display: flex;
   justify-content: space-between;
@@ -256,7 +234,7 @@ h2 {
 .question-selection-area {
   border: 1px solid $border-color;
   border-radius: 8px;
-  background: #fafafa; // Fundo cinza claro interno
+  background: #fafafa;
   padding: 20px;
   max-height: 650px;
   overflow-y: auto;
@@ -309,7 +287,6 @@ h2 {
   }
 }
 
-// --- Mensagens e Infos ---
 .info-fixed {
   background: #fff;
   padding: 15px;
@@ -333,7 +310,6 @@ h2 {
   }
 }
 
-// --- Botões ---
 .actions-right {
   display: flex;
   justify-content: flex-end;
@@ -398,7 +374,6 @@ button {
 }
 
 .btn-text-danger {
-  // Fundo branco para o botão de cancelar ficar legível no fundo azul
   background: #fff;
   border: 1px solid rgba($danger-color, 0.3);
   color: $danger-color;
@@ -431,7 +406,6 @@ button {
   }
 }
 
-// --- Animações ---
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -451,5 +425,63 @@ button {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// MOBILE
+@media (max-width: 768px) {
+  .container {
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .step-card {
+    padding: 16px;
+  }
+
+  .profile-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .profile-button {
+    padding: 20px 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .discipline-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .actions-right {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .footer-controls {
+    flex-direction: column;
+    gap: 8px;
   }
 }
