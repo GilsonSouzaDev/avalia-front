@@ -25,10 +25,22 @@
 
     .dashboard-resumo {
       gap: 12px;
+
+      app-cpt-card-resumo,
+      >* {
+        width: 100%;
+        flex: 1 1 100%;
+      }
     }
 
     .dashboard-materias {
       gap: 12px;
+
+      app-cpt-card-materia,
+      >* {
+        width: 100%;
+        flex: 1 1 100%;
+      }
     }
   }
 }

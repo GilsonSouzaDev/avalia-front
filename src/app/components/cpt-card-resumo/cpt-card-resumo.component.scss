@@ -21,6 +21,11 @@
 }
 
 @media (max-width: 768px) {
+  :host {
+    width: 100%;
+    display: block;
+  }
+
   .resumo {
     width: 100%;
     height: auto;

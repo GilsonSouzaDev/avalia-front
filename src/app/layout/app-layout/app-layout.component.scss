@@ -18,6 +18,7 @@
     flex: 1;
     height: 85%;
     overflow: hidden;
+    position: relative;
 
     app-pgs-navegacao {
       width: 20%;
@@ -34,6 +35,11 @@
     overflow-y: auto;
     color: black;
   }
+}
+
+// Overlay escuro por trás do menu mobile
+.menu-overlay {
+  display: none;
 }
 
 @media (max-width: 1599px) and (min-width: 1200px) {
@@ -59,30 +65,51 @@
       height: 100%;
       overflow: hidden;
       position: relative;
-
-      app-pgs-navegacao {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100dvh;
-        width: 75vw;
-        max-width: 300px;
-        z-index: 1000;
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        background-color: #E2EBFB;
-        overflow-y: auto;
-
-        &.menu-aberto {
-          transform: translateX(0);
-        }
-      }
     }
 
     &__conteudo {
       padding: 16px;
       width: 100%;
       overflow-y: auto;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // Sidebar mobile
+  app-pgs-navegacao {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100dvh !important;
+    width: 75vw !important;
+    max-width: 300px !important;
+    min-width: unset !important;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: #E2EBFB !important;
+    overflow-y: auto;
+
+    &.menu-aberto {
+      transform: translateX(0);
+    }
+  }
+
+  // Overlay
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+    &.ativo {
+      opacity: 1;
+      pointer-events: all;
     }
   }
 }

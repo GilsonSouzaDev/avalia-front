@@ -42,6 +42,7 @@
                     <input
                       type="text"
                       class="edit-input"
+                      aria-label="Editar nome da disciplina"
                       [ngModel]="nomeEditando()"
                       (ngModelChange)="nomeEditando.set($event)"
                       (keydown.enter)="!editInput.invalid ? confirmarEdicaoClick(disciplina.id) : null"
@@ -101,6 +102,7 @@
           <input
             type="text"
             class="edit-input"
+            aria-label="Nome da nova disciplina"
             placeholder="Nome da nova disciplina"
             [ngModel]="nomeCriando()"
             (ngModelChange)="nomeCriando.set($event)"
