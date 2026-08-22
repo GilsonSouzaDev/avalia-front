@@ -178,7 +178,7 @@ $shadow-color: rgba(0, 0, 0, 0.1);
 @media (max-width: 768px) {
   .form-container {
     width: 100%;
-    padding: 0 12px;
+    padding: 0; /* Remove o padding duplicado */
     box-sizing: border-box;
   }
 
@@ -189,7 +189,7 @@ $shadow-color: rgba(0, 0, 0, 0.1);
 
   .question-form {
     .card {
-      padding: 16px;
+      padding: 12px; /* Reduz padding interno para dar mais espaço */
       border-radius: 8px;
     }
 
@@ -216,14 +216,11 @@ $shadow-color: rgba(0, 0, 0, 0.1);
       }
     }
 
-    // Alternativas — esconder botão de check que transborda
+    // Alternativas - removendo overflow hidden para evitar corte
     .alternativas-list {
-      overflow: hidden;
-
       app-cpt-alternativa-forms {
         width: 100%;
         box-sizing: border-box;
-        overflow: hidden;
       }
     }
 
