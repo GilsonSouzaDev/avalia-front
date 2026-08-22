@@ -123,10 +123,13 @@
 
   /* Widget no Mobile */
   .visitor-widget {
-    left: 16px;
-    right: 16px;
-    width: auto;
-    bottom: 16px;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    max-width: 320px;
+    margin-top: 32px;
   }
 }
 
