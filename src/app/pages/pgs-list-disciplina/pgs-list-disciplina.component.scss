@@ -8,6 +8,6 @@
 
 @media (max-width: 768px) {
   .list-disciplina {
-    padding: 16px;
+    padding: 8px 0; /* Remove padding lateral que já existe no avalia-container__conteudo */
   }
 }
