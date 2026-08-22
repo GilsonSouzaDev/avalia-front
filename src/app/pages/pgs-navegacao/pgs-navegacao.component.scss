@@ -59,11 +59,18 @@
 @media (max-width: 768px) {
   .navegacao {
     padding: 24px;
-    height: auto; /* Ocupar apenas o espaço necessário */
+    height: max-content !important;
+    min-height: 0; /* Remove qualquer min-height herdado */
+    flex: none; /* Evita que o flexbox tente esticar o elemento */
+
+    nav {
+      flex-grow: 0;
+      height: max-content;
+    }
 
     ul {
       gap: 12px;
-      height: auto;
+      height: max-content !important;
     }
 
     li {

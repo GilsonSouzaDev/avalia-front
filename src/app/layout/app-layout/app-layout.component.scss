@@ -83,7 +83,7 @@
     left: 0;
     width: 100% !important;
     max-width: 100% !important;
-    height: auto !important;
+    height: max-content !important;
     z-index: 100;
     transform: translateY(-150%);
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
