@@ -1,22 +1,37 @@
-<section class="perfil-detalhes">
-  <h2>{{ professor.perfilProfessor }}</h2>
-    <div>
-      <h3>Nome</h3>
-      <span class="perfil-texto">{{ professor.nome }}</span>
+<section class="perfil-card">
+  <div class="perfil-card-glow"></div>
+  
+  <div class="perfil-card-header">
+    <div class="avatar-placeholder">
+      <mat-icon>person</mat-icon>
     </div>
-    <div>
-      <h3>Email</h3>
-      <span class="perfil-texto">{{ professor.email }}</span>
+    <div class="user-info">
+      <span class="badge-role">{{ professor.perfilProfessor }}</span>
+      <h2 class="user-name">{{ professor.nome }}</h2>
+      <div class="user-email">
+        <mat-icon>mail_outline</mat-icon>
+        <span>{{ professor.email }}</span>
+      </div>
     </div>
-    <div>
-      <h3>Disciplinas</h3>
-      <div class="lista-disciplina">
+  </div>
+
+  <div class="perfil-card-body">
+    <div class="info-section">
+      <h3 class="section-title">
+        <mat-icon>menu_book</mat-icon>
+        Disciplinas
+      </h3>
+      <div class="disciplinas-tags">
         @for (disciplina of professor.disciplinas; track $index) {
-          <span class="perfil-texto">{{ disciplina.nome }}</span>
+          <span class="tag">{{ disciplina.nome }}</span>
+        } @empty {
+          <span class="tag-empty">Nenhuma disciplina vinculada</span>
         }
       </div>
     </div>
-    <div class="perfil-actions">
-      <ng-content></ng-content>
-    </div>
+  </div>
+
+  <div class="perfil-card-footer">
+    <ng-content></ng-content>
+  </div>
 </section>

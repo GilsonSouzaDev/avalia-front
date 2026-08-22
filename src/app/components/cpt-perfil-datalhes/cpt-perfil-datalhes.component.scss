@@ -1,44 +1,34 @@
-.perfil-detalhes {
+.perfil-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  margin: 0 auto;
-  align-items: flex-start;
   background-color: #E2EBFB;
-  border-radius: 12px;
-  padding: 32px 48px;
-  gap: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transition: all 0.4s ease;
-  position: relative;
+  border-radius: 16px;
   overflow: hidden;
-  animation: fadeInUp 0.6s ease forwards;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeInUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  
+  // Limita a largura no desktop para não ficar um retângulo esticado
+  width: 100%;
+  max-width: 600px; 
+  margin: 0 auto;
 
-  h2{
-    background-color: #ffffff;
-    color: #09234F;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 16px;
-    margin: 0;
-    align-self: flex-start;
-  }
-
-  // brilho de fundo dinâmico ao passar o mouse
   &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     transform: translateY(-4px);
+    
+    .perfil-card-glow {
+      opacity: 1;
+    }
   }
 
-  // efeito de borda luminosa ao focar/hover
-  &:before {
-    content: "";
+  &-glow {
     position: absolute;
     inset: 0;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 2px;
-    background: linear-gradient(120deg, #4c8bf5, #7ca9ff, #b0c8ff);
+    background: linear-gradient(135deg, rgba(76,139,245,0.8), rgba(124,169,255,0.8), rgba(176,200,255,0.8));
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     opacity: 0;
@@ -46,52 +36,176 @@
     pointer-events: none;
   }
 
-  &:hover::before {
-    opacity: 1;
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 32px;
+    background: linear-gradient(to right, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #09234F;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(9, 35, 79, 0.2);
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+      }
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-role {
+      align-self: flex-start;
+      background-color: #09234F;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .user-name {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #333;
+      line-height: 1.2;
+    }
+
+    .user-email {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #555;
+      font-size: 0.95rem;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+        color: #666;
+      }
+    }
   }
 
-  h3 {
-    font-size: 24px;
-    color: #333333;
-    font-weight: 600;
-    transition: color 0.3s ease;
+  &-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #333;
+
+      mat-icon {
+        color: #4CAF50;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    .disciplinas-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .tag {
+        background-color: #ffffff;
+        color: #09234F;
+        border: 1px solid rgba(9, 35, 79, 0.1);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      }
+
+      .tag-empty {
+        color: #888;
+        font-style: italic;
+        font-size: 0.9rem;
+      }
+    }
   }
 
-  h3:hover {
-    color: #1e4dd8;
-  }
-
-  .perfil-texto {
-    font-size: 20px;
-    color: #333333;
-    line-height: 1.4;
-    transition: color 0.3s ease;
-  }
-
-  .perfil-texto:hover {
-    color: #555555;
+  &-footer {
+    padding: 0 32px 32px 32px;
+    z-index: 2; /* Para os botões ficarem clicáveis sobre o glow */
   }
 }
 
-/* Animação de entrada suave */
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
-
-
-
 }
 
- .lista-disciplina {
-   display: flex;
-   flex-direction: column;
-   padding: 0 16px ;
-   gap: 4px;
- }
+/* RESPONSIVIDADE MOBILE */
+@media (max-width: 768px) {
+  .perfil-card {
+    border-radius: 12px;
+
+    &-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px 16px;
+      gap: 16px;
+
+      .badge-role {
+        align-self: center;
+      }
+      
+      .user-email {
+        justify-content: center;
+      }
+    }
+
+    &-body {
+      padding: 24px 16px;
+      
+      .section-title {
+        justify-content: center;
+      }
+      
+      .disciplinas-tags {
+        justify-content: center;
+      }
+    }
+
+    &-footer {
+      padding: 0 16px 24px 16px;
+    }
+  }
+}
