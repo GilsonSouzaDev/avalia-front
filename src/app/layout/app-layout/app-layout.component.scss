@@ -76,30 +76,30 @@
     }
   }
 
-  // Sidebar mobile
+  // Dropdown menu mobile
   app-pgs-navegacao {
-    position: fixed !important;
+    position: absolute !important;
     top: 0;
     left: 0;
-    height: 100dvh !important;
-    width: 75vw !important;
-    max-width: 300px !important;
-    min-width: unset !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
     z-index: 100;
-    transform: translateX(-100%);
+    transform: translateY(-150%);
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     background-color: #E2EBFB !important;
-    overflow-y: auto;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    border-radius: 0 0 16px 16px;
 
     &.menu-aberto {
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 
   // Overlay
   .menu-overlay {
     display: block;
-    position: fixed;
+    position: absolute; /* Mudado para absolute para cobrir apenas o __main */
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 99;
