@@ -123,6 +123,15 @@ export class CptLoginformsComponent implements OnInit {
     return this.loginForm.get('password')!;
   }
 
+  // --- WIDGET PARA VISITANTES ---
+  isVisitorWidgetOpen = false;
+
+  fillVisitorAccount(email: string, pass: string) {
+    this.loginForm.patchValue({ email, password: pass });
+    this.isVisitorWidgetOpen = false;
+  }
+  // ------------------------------
+
   onSubmit() {
     if (this.loginForm.valid) {
       this.submitLogin.emit(this.loginForm.value);

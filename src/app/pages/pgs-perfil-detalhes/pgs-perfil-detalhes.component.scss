@@ -10,16 +10,14 @@
 
 .buttons-perfil {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  width: 20%;
-  margin: 0 auto;
-  gap: 42px;
+  width: 100%;
+  gap: 16px;
   margin-top: 16px;
 }
 
 .buttons-perfil button {
-  flex: 1;
   height: 48px;
   border: none;
   padding: 0 24px;

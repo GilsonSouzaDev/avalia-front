@@ -28,11 +28,11 @@
     font-size: 1.1rem;
     margin: 0;
     font-weight: 600;
-    color: var(--disc-color-text);
+    color: #333333; // Dark color for contrast
   }
 
   .icone {
-    color: var(--disc-color-soft);
+    color: #333333;
     transition: transform 0.25s ease;
 
     &.rotated {
