@@ -76,30 +76,36 @@
     }
   }
 
-  // Sidebar mobile
+  // Dropdown menu mobile tipo "WhatsApp"
   app-pgs-navegacao {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    height: 100dvh !important;
-    width: 75vw !important;
-    max-width: 300px !important;
-    min-width: unset !important;
+    position: absolute !important;
+    top: 8px; /* Leve respiro do cabeçalho */
+    left: 16px; /* Leve respiro da borda esquerda */
+    width: auto !important;
+    min-width: 250px !important;
+    max-width: 85vw !important;
+    height: max-content !important;
     z-index: 100;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: scale(0.95);
+    transform-origin: top left;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s ease;
     background-color: #E2EBFB !important;
-    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    border-radius: 12px;
 
     &.menu-aberto {
-      transform: translateX(0);
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
     }
   }
 
   // Overlay
   .menu-overlay {
     display: block;
-    position: fixed;
+    position: absolute; /* Mudado para absolute para cobrir apenas o __main */
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 99;

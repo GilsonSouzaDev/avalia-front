@@ -58,3 +58,22 @@
     margin-top: 1rem;
   }
 }
+
+// Otimizações para Mobile
+@media (max-width: 768px) {
+  .card-disciplina {
+    margin: 0.75rem 0;
+    
+    .cabecalho {
+      padding: 1rem 1.25rem; // Reduz padding gigante de 2rem
+    }
+
+    .titulo {
+      font-size: 0.95rem; // Reduz o tamanho da fonte para evitar quebras excessivas
+    }
+    
+    .conteudo-expandido {
+      padding: 1rem; // Reduz padding interno quando aberto
+    }
+  }
+}
