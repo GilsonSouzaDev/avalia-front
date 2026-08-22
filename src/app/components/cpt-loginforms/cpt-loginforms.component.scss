@@ -125,7 +125,7 @@
 }
 
 /* ====================================
-   VISITOR DRAWER (Portfólio)
+   VISITOR DRAWER (APENAS MOBILE)
    ==================================== */
 .visitor-drawer {
   position: fixed;
@@ -227,13 +227,115 @@
   }
 }
 
+/* ====================================
+   VISITOR WIDGET (APENAS DESKTOP)
+   ==================================== */
+.visitor-widget-desktop {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border: 1px solid #E0E0E0;
+  z-index: 1000;
+  width: 320px;
+  overflow: hidden;
+  
+  .visitor-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    background: #09234F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    
+    span {
+      flex: 1;
+      text-align: left;
+      margin-left: 8px;
+    }
+  }
+
+  .visitor-content {
+    padding: 16px;
+    animation: slideDown 0.3s ease;
+    
+    p {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .account-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #F5F7FA;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #E0E0E0;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .account-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 0.8rem;
+        color: #555;
+        
+        strong {
+          color: #09234F;
+          font-size: 0.9rem;
+        }
+      }
+      
+      .btn-fill {
+        background: #44CCAA;
+        color: #000;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s;
+        
+        &:hover {
+          background: #3cb898;
+        }
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade do Componente de Visitantes */
 @media (min-width: 769px) {
   .visitor-drawer {
-    top: 50%; /* No desktop fica no meio da tela na esquerda */
-    transform: translateY(-50%) translateX(-280px);
-    
-    &.open {
-      transform: translateY(-50%) translateX(0);
-    }
+    display: none !important; /* Esconde o drawer lateral no Desktop */
+  }
+}
+
+@media (max-width: 768px) {
+  .visitor-widget-desktop {
+    display: none !important; /* Esconde o widget inferior no Mobile */
   }
 }

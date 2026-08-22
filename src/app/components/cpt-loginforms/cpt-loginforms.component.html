@@ -51,7 +51,7 @@
     </button>
   </form>
 
-  <!-- VISITOR DRAWER -->
+  <!-- VISITOR DRAWER (APENAS MOBILE) -->
   <div class="visitor-drawer" [class.open]="isVisitorWidgetOpen">
     <div class="drawer-content">
       <p style="margin-top:0; color:#555; font-size:0.9rem;"><strong>Contas de Teste</strong></p>
@@ -81,6 +81,41 @@
     <button class="drawer-tab" type="button" (click)="isVisitorWidgetOpen = !isVisitorWidgetOpen">
       <mat-icon>{{ isVisitorWidgetOpen ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
+  </div>
+
+  <!-- VISITOR WIDGET (APENAS DESKTOP) -->
+  <div class="visitor-widget-desktop" [class.open]="isVisitorWidgetOpen">
+    <button class="visitor-toggle" type="button" (click)="isVisitorWidgetOpen = !isVisitorWidgetOpen">
+      <mat-icon>info</mat-icon>
+      <span>Contas de Teste (Portfólio)</span>
+      <mat-icon class="chevron">{{ isVisitorWidgetOpen ? 'expand_more' : 'expand_less' }}</mat-icon>
+    </button>
+    
+    <div class="visitor-content" *ngIf="isVisitorWidgetOpen">
+      <p>Use uma das contas abaixo para acessar o sistema:</p>
+      
+      <div class="account-item">
+        <div class="account-info">
+          <strong>Coordenador</strong>
+          <span>mario.silva&#64;fatec.sp.gov.br</span>
+          <span>Senha: 123456</span>
+        </div>
+        <button type="button" class="btn-fill" (click)="fillVisitorAccount('mario.silva@fatec.sp.gov.br', '123456')">
+          Preencher
+        </button>
+      </div>
+
+      <div class="account-item">
+        <div class="account-info">
+          <strong>Professor</strong>
+          <span>ana.clara&#64;fatec.sp.gov.br</span>
+          <span>Senha: 123456</span>
+        </div>
+        <button type="button" class="btn-fill" (click)="fillVisitorAccount('ana.clara@fatec.sp.gov.br', '123456')">
+          Preencher
+        </button>
+      </div>
+    </div>
   </div>
 
 </section>
