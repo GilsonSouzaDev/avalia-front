@@ -45,12 +45,10 @@ $radius: 12px; // Arredondamento um pouco maior para o container
 
 h1 {
   font-size: 2rem;
-  color: $primary-color;
+  color: #333333;
   margin-bottom: 10px;
   text-align: center;
   font-weight: 700;
-  // Sombra branca sutil no texto para garantir leitura sobre o azul
-  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
 }
 
 h2 {
@@ -110,13 +108,13 @@ h2 {
   border-radius: 8px;
   padding: 35px 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 
   .icon {
     font-size: 3rem;
@@ -137,8 +135,8 @@ h2 {
   &:hover {
     border-color: $primary-color;
     background-color: #f8faff;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 }
 

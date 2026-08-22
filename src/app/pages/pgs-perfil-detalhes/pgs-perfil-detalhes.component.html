@@ -3,19 +3,19 @@
   <!-- MODO VISUALIZAÇÃO -->
   @if (!editando()) {
     <section class="pgs-perfil-detalhes">
-      <app-cpt-perfil-datalhes [professor]="prof"></app-cpt-perfil-datalhes>
-      
-      <div class="buttons-perfil">
-        <button class="buttons-perfil__editar" (click)="alternarEdicao()">
-          Editar Perfil
-        </button>
-
-        @if (podeExcluir) {
-          <button class="buttons-perfil__excluir" (click)="excluirPerfil()">
-            Excluir Conta
+      <app-cpt-perfil-datalhes [professor]="prof">
+        <div class="buttons-perfil">
+          <button class="buttons-perfil__editar" (click)="alternarEdicao()">
+            Editar Perfil
           </button>
-        }
-      </div>
+
+          @if (podeExcluir) {
+            <button class="buttons-perfil__excluir" (click)="excluirPerfil()">
+              Excluir Conta
+            </button>
+          }
+        </div>
+      </app-cpt-perfil-datalhes>
     </section>
   }
 

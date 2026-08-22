@@ -45,10 +45,45 @@
     </mat-form-field>
 
     <span class="cadastrar" routerLink="/nova">Esqueci a senha</span>
+
+    <button type="submit" class="login-forms__button">
+      Login
+    </button>
   </form>
 
-  <button type="submit" form="loginForm" class="login-forms__button">
-    Login
-  </button>
+  <!-- WIDGET PARA VISITANTES (Portfólio) -->
+  <div class="visitor-widget" [class.open]="isVisitorWidgetOpen">
+    <button class="visitor-toggle" type="button" (click)="isVisitorWidgetOpen = !isVisitorWidgetOpen">
+      <mat-icon>info</mat-icon>
+      <span>Contas de Teste (Portfólio)</span>
+      <mat-icon class="chevron">{{ isVisitorWidgetOpen ? 'expand_more' : 'expand_less' }}</mat-icon>
+    </button>
+    
+    <div class="visitor-content" *ngIf="isVisitorWidgetOpen">
+      <p>Use uma das contas abaixo para acessar o sistema:</p>
+      
+      <div class="account-item">
+        <div class="account-info">
+          <strong>Coordenador</strong>
+          <span>mario.silva&#64;fatec.sp.gov.br</span>
+          <span>Senha: 123456</span>
+        </div>
+        <button type="button" class="btn-fill" (click)="fillVisitorAccount('mario.silva@fatec.sp.gov.br', '123456')">
+          Preencher
+        </button>
+      </div>
+
+      <div class="account-item">
+        <div class="account-info">
+          <strong>Professor</strong>
+          <span>ana.clara&#64;fatec.sp.gov.br</span>
+          <span>Senha: 123456</span>
+        </div>
+        <button type="button" class="btn-fill" (click)="fillVisitorAccount('ana.clara@fatec.sp.gov.br', '123456')">
+          Preencher
+        </button>
+      </div>
+    </div>
+  </div>
 
 </section>
