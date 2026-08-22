@@ -36,7 +36,6 @@ export class GerarProvaManagerService {
       curso: ['', Validators.required],
       titulo: ['', Validators.required],
       turma: ['', Validators.required],
-      periodo: ['', Validators.required],
       data: ['', Validators.required],
       totalPontos: ['10.0', Validators.required],
       duracao: ['', Validators.required],
@@ -113,7 +112,6 @@ export class GerarProvaManagerService {
         curso: cab.curso || '',
         titulo: cab.titulo || '',
         turma: cab.turma || '',
-        periodo: cab.periodo || '2º Semestre de 2025',
         data: dataStr,
         totalPontos: cab.totalPontos || '10.0',
         duracao: cab.duracao || '2 horas',
@@ -158,16 +156,20 @@ export class GerarProvaManagerService {
       : (draft.disciplinaNome || 'Disciplina');
 
     let dataCorrigida = new Date();
+    let periodoFormatado = 'Não definido';
+    
     if (val.data) {
       const [ano, mes, dia] = val.data.split('-').map(Number);
       dataCorrigida = new Date(ano, mes - 1, dia);
+      const semestre = mes <= 6 ? 1 : 2;
+      periodoFormatado = `${semestre}º Semestre de ${ano}`;
     }
 
     const cabData: Partial<Cabecalho> = {
       curso: val.curso,
       titulo: val.titulo,
       turma: val.turma,
-      periodo: val.periodo,
+      periodo: periodoFormatado,
       totalPontos: val.totalPontos,
       duracao: val.duracao,
       data: dataCorrigida,

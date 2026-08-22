@@ -121,13 +121,17 @@
           <li>Professor: {{ userProfile?.nome || 'Você' }}</li>
           <!-- CORREÇÃO AQUI: TS permite nulo, então o '?' é válido agora -->
           <li>Disciplina: {{ perfilCriacao === TipoProfessor.COORDENADOR ? 'Prova Geral' : (avaliacaoDraft?.disciplinaNome || 'Sua Disciplina') }}</li>
+          <li>Período: Calculado automaticamente pela Data</li>
         </ul>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Curso *</label>
-          <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Análise e Desenvolvimento de Sistemas" />
+          <select class="form-control" formControlName="curso">
+            <option value="" disabled>Selecione um curso...</option>
+            <option *ngFor="let c of cursosFatec" [value]="c">{{ c }}</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Título da Prova *</label>
@@ -136,13 +140,9 @@
       </div>
 
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group full-width">
           <label>Turma *</label>
-          <input type="text" class="form-control" formControlName="turma" placeholder="Ex: ADS-03" />
-        </div>
-        <div class="form-group">
-          <label>Período *</label>
-          <input type="text" class="form-control" formControlName="periodo" />
+          <input type="text" class="form-control" formControlName="turma" placeholder="Ex: ADS-3M (Curso, Semestre, Turno)" />
         </div>
       </div>
 

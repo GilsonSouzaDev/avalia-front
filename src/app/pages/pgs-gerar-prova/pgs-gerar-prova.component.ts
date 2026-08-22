@@ -44,6 +44,16 @@ export class PgsGerarProvaComponent implements OnInit {
   cabecalhoForm!: FormGroup;
   minDate = new Date().toISOString().split('T')[0];
   durationOptions: string[] = [];
+  cursosFatec: string[] = [
+    'Análise e Desenvolvimento de Sistemas',
+    'Automação Industrial',
+    'Comércio Exterior',
+    'Desenvolvimento de Software Multiplataforma',
+    'Gestão Empresarial',
+    'Gestão da Tecnologia da Informação',
+    'Logística',
+    'Redes de Computadores'
+  ];
 
   userProfile: Professor | null = null;
   perfilCriacao: TipoProfessor = TipoProfessor.PROFESSOR;
